@@ -1,0 +1,43 @@
+dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.gson)
+
+    // Local
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.paging.common.android)
+    implementation(libs.androidx.paging.runtime.ktx)
+    androidTestImplementation(libs.room.testing)
+
+    // Remote
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.logging.interceptor)
+
+    // Coroutine
+    implementation(libs.room.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.lifecycle.livedata.ktx)
+
+    // Dagger Hilt
+    implementation(libs.fragment.ktx)
+    implementation(libs.hilt.android)
+
+    // Preference
+    implementation(libs.datastore)
+    implementation(libs.datastore.core)
+
+    // Glide
+    implementation(libs.glide)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+}

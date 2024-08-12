@@ -1,0 +1,11 @@
+package com.dicoding.membership.core.domain.story.tester.model
+
+data class StoryDomainTester(
+    val id: String,
+    val name: String?,
+    val description: String?,
+    val photoUrl: String?,
+    val createdAt: String?,
+    val lat: Double?,
+    val lon: Double?
+)

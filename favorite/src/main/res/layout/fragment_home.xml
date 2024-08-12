@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="32dp"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="32dp"
+    tools:context="com.dicoding.favorite.view.home.HomeFragment">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/textStyleSemIBold_20"
+            android:id="@+id/tvGreeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hi, Davis 👋"
+            android:textSize="18sp"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/custom_picture"
+            android:padding="16dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                style="@style/textStyleSemIBold_32"
+                android:id="@+id/tvMembershipType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ace Silver"
+                android:textColor="@color/white" />
+
+            <TextView
+                style="@style/textStyleMedium_14"
+                android:id="@+id/tvMembershipExpiry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exp 28 Desember 2023"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/custom_background_home">
+
+                <LinearLayout
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:id="@+id/tvCouponLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sisa Kupon"
+                        android:textSize="14sp"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/icons_coupon"
+                            android:layout_marginEnd="8dp"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            style="@style/textStyleSemIBold_16"
+                            android:id="@+id/tvCouponCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="16"
+                            android:textSize="24sp"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="4dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/white" />
+
+                <LinearLayout
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:id="@+id/tvPointsLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jumlah Poin"
+                        android:textSize="14sp"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/icons_point"
+                            android:layout_marginEnd="8dp"
+                            android:layout_gravity="center"/>
+                        <TextView
+                            style="@style/textStyleSemIBold_16"
+                            android:id="@+id/tvPointsCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="20.000"
+                            android:textSize="24sp"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/tvGreeting"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <Button
+                style="@style/textStyleButton3"
+                android:background="@drawable/custom_button"
+                android:id="@+id/btnTransfer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Transfer"
+                android:drawableLeft="@drawable/icons_transfer"
+                android:backgroundTint="@color/orange_100"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                style="@style/textStyleButton3"
+                android:background="@drawable/custom_button"
+                android:id="@+id/btnReferral"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Referral"
+                android:drawableLeft="@drawable/icons_referral"
+                android:backgroundTint="@color/orange_100"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/textStyleSemIBold_20"
+            android:id="@+id/tvPromoHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anda Sukai"
+            android:drawableLeft="@drawable/icons_favorite_clicked"
+            android:drawableTint="@color/orange_100"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPromo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal" />
+    </LinearLayout>
+</RelativeLayout>
