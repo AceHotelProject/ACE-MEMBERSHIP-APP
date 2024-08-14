@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.history.home.member.mlevel.HomeMemberLevelActivity"
+    tools:context=".view.dashboard.home.member.mlevel.HomeMemberLevelActivity"
     android:background="@color/light_grey">
 
     <LinearLayout

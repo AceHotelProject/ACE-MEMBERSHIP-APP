@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/custom_picture"
+        app:srcCompat="@drawable/background_welcome"
         android:scaleType="centerInside"
         android:importantForAccessibility="no" />
 
@@ -37,12 +37,13 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guidelineHorizontal"
+        android:gravity="center"
         android:alpha="0"
         tools:alpha="100"/>
 
     <TextView
         android:id="@+id/descTextView"
-
+        android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

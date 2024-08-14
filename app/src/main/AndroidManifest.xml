@@ -19,6 +19,15 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.history.historydetailpoin.HistoryDetailPoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.verification.VerificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.dashboard.home.member.mstatus.HomeMemberStatusActivity"
             android:exported="false" />
         <activity

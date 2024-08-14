@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Hotel"
         android:textColor="@color/orange_100"
-        android:background="@drawable/custom_button_welcome_register"
+        android:background="@drawable/custom_item_promo_type"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="5dp"

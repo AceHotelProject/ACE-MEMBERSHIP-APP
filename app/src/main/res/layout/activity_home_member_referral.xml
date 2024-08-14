@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.history.home.member.mreferral.HomeMemberReferralActivity"
+    tools:context=".view.dashboard.home.member.mreferral.HomeMemberReferralActivity"
     android:background="@color/white">
 
     <!-- Close Button -->

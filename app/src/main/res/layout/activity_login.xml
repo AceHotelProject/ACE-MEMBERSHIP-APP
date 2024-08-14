@@ -110,7 +110,7 @@
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <TextView
         android:id="@+id/btn_login"
         style="@style/textStyleButton"
         android:layout_width="0dp"
