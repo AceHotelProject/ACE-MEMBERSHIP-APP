@@ -3,8 +3,6 @@ package com.dicoding.membership.view.dashboard.history.historydetailpoin
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.dicoding.membership.R
 
 class HistoryDetailPoinActivity : AppCompatActivity() {
