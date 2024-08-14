@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dicoding.story.favorite.home.HomeFragment"
     android:background="@color/light_grey_100">
 
     <ImageView
@@ -36,7 +35,7 @@
         android:layout_height="44sp"
         android:layout_marginEnd="32sp"
         android:layout_marginTop="32sp"
-        android:src="@drawable/icons_serach"
+        android:src="@drawable/icons_search"
         android:background="@drawable/custom_button_search"
         android:padding="12sp"
         app:layout_constraintEnd_toEndOf="parent"
