@@ -121,7 +121,7 @@
                 android:id="@+id/profile_profil_diri_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -138,7 +138,7 @@
                 android:id="@+id/profile_membershipku_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/icons_profile_membershipku"
+                android:src="@drawable/icons_membershipku"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -159,7 +159,7 @@
                 android:id="@+id/profile_membershipku_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -176,7 +176,7 @@
                 android:id="@+id/profile_poinku_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/icons_profile_poinku"
+                android:src="@drawable/icons_poinku"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -197,7 +197,7 @@
                 android:id="@+id/profile_poinku_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -214,7 +214,7 @@
                 android:id="@+id/profile_referralku_icon"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/icons_profile_referralku"
+                android:src="@drawable/icons_referralku"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -235,7 +235,7 @@
                 android:id="@+id/profile_referralku_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -252,7 +252,7 @@
                 android:id="@+id/profile_customer_service_icon"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/icons_profile_customer_service"
+                android:src="@drawable/icons_customer_service"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -273,7 +273,7 @@
                 android:id="@+id/profile_customer_service_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -290,7 +290,7 @@
                 android:id="@+id/profile_keluar_icon"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/icons_profile_keluar"
+                android:src="@drawable/icons_keluar"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -311,7 +311,7 @@
                 android:id="@+id/profile_keluar_arrow"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:src="@drawable/icons_profile_chevron_right"
+                android:src="@drawable/icons_chevron_right"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

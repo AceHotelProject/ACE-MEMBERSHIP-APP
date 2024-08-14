@@ -36,5 +36,8 @@
     <color name="silver">#C2C2C2</color>
     <color name="orange_accent">#FFD8C9</color>
     <color name="light_green">#C7EFE5</color>
+    <color name="grey_stroke">#E0E0E0</color>
+
+    <color name="green_25">#4020C197</color>
 
 </resources>
