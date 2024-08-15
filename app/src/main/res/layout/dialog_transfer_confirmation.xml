@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Gunakan Promo?"
+            android:text="Konfirmasi Transfer?"
             style="@style/textStyleSemIBold_32"
             android:textColor="@android:color/black"
             android:textSize="20sp"

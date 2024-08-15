@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Gunakan Promo?"
+            android:text="Perbaharui Membership"
             style="@style/textStyleSemIBold_32"
             android:textColor="@android:color/black"
             android:textSize="20sp"
@@ -51,20 +51,8 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/custom_button"
                 android:backgroundTint="@color/orange_100"
-                android:text="Ya"
+                android:text="Lanjutkan"
                 android:textColor="@android:color/white" />
-
-            <Button
-                style="@style/textStyleButton3"
-                android:id="@+id/buttonNo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@android:color/white"
-                android:text="Tidak"
-                android:textColor="@color/orange_100"
-                android:background="@drawable/custom_button_welcome_register" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

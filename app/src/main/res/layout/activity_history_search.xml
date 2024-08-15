@@ -74,7 +74,6 @@
                 android:background="@drawable/custom_background_search"
                 android:drawableStart="@drawable/icons_search"
                 android:drawablePadding="12sp"
-
                 android:drawableTint="@color/dark_grey"
                 android:hint="Masukan pencarian"
                 android:inputType="textEmailAddress"
@@ -84,13 +83,13 @@
 
         <ImageView
             android:id="@+id/icon_filter"
-            android:layout_width="48dp"
-            android:layout_height="64dp"
+            android:layout_width="40dp"
+            android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginStart="8dp"
             android:background="@drawable/custom_button"
-            android:padding="12dp"
+            android:padding="8dp"
             android:src="@drawable/icons_filter"
             app:tint="@color/white" />
     </LinearLayout>
