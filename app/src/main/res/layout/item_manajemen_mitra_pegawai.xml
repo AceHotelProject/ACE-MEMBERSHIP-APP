@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/textStyleMedium_14"
+        android:id='@+id/manajemen_mitra_pegawai_title'
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Akun Mitra"/>
+
+    <TextView
+        android:fontFamily="@font/poppinsblack"
+        android:id="@+id/manajemen_mitra_pegawai_deskripsi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="12sp"
+        android:text="Resepsionis IBC - resepsionisaston@gmail.com"/>
+
+</LinearLayout>

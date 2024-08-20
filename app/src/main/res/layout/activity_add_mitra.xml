@@ -2,8 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.dashboard.profile.detail.detail.ProfileDetailActivity">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/btn_close"
@@ -16,12 +15,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ubah_profil_title"
+        android:id="@+id/tambah_mitra_title"
         style="@style/textStyleMedium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Ubah Profil"
+        android:text="Tambah Mitra"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,11 +29,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="52dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/tambah_mitra_title">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,35 +41,35 @@
             android:layout_marginEnd="24dp"
             android:orientation="vertical">
 
-            <!-- Photo Section -->
+            <!-- Photo Mitra -->
             <TextView
-                android:id="@+id/tv_photo_label"
+                android:id="@+id/add_mitra_foto_mitra_title"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Foto KTP/SIM" />
+                android:text="Foto Mitra" />
 
             <ImageView
-                android:id="@+id/img_ktp_sim"
+                android:id="@+id/add_mitra_foto_mitra_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/custom_edit_text"
                 android:scaleType="centerInside"
-                android:src="@drawable/icons_image" />
+                android:src="@drawable/image_empty" />
 
-            <!-- Name -->
+            <!-- Nama Mitra -->
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/add_mitra_nama_title"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Nama Lengkap" />
+                android:text="Nama Mitra" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_register_name"
+                android:id="@+id/layout_mitra_nama"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,31 +84,31 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_name"
+                    android:id="@+id/add_mitra_nama"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
                     android:drawablePadding="12sp"
                     android:ems="10"
-                    android:hint="Masukkan nama Anda"
+                    android:hint="Masukkan nama mitra"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- NIK -->
+            <!-- Tipe Mitra -->
             <TextView
-                android:id="@+id/tv_nik"
+                android:id="@+id/add_mitra_tipe_mitra_title"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="NIK" />
+                android:text="Tipe Mitra" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_register_nik"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/layout_tipe_mitra"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -123,69 +121,28 @@
                 app:errorTextColor="@color/red"
                 app:hintEnabled="false">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_nik"
+                <AutoCompleteTextView
+                    android:id="@+id/add_mitra_tipe_mitra"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/custom_edit_text"
-                    android:drawablePadding="12sp"
-                    android:ems="10"
-                    android:hint="Masukkan NIK Anda"
-                    android:inputType="text"
+                    android:background="@drawable/custom_edit_text_border_dark_grey"
+                    android:hint="Pilih tipe mitra"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Phone Number -->
-            <TextView
-                android:id="@+id/tv_phone"
-                style="@style/textStyleMedium_14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="No Telepon" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_register_phone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxStrokeWidth="0dp"
-                app:boxStrokeWidthFocused="0dp"
-                app:endIconTint="@color/dark_grey"
-                app:errorEnabled="true"
-                app:errorIconDrawable="@null"
-                app:errorIconTint="@color/red"
-                app:errorTextColor="@color/red"
-                app:hintEnabled="false">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/custom_edit_text"
-                    android:drawablePadding="12sp"
-                    android:ems="10"
-                    android:hint="Masukkan nomor Anda"
-                    android:inputType="phone"
-                    android:padding="16dp"
-                    android:textColorHint="@color/dark_grey"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Address -->
+            <!-- Deskripsi Mitra -->
             <TextView
                 android:id="@+id/tv_address"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Alamat" />
+                android:text="Deskripsi Mitra" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layout_register_address"
+                android:id="@+id/layout_deskripsi_mitra"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -200,23 +157,23 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_address"
+                    android:id="@+id/add_mitra_deskripsi_mitra"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
                     android:drawablePadding="12sp"
                     android:ems="10"
-                    android:hint="Masukkan alamat tinggal Anda"
+                    android:hint="Masukkan deskripsi mitra"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Submit Button -->
+            <!-- Lanjutkan Button -->
             <Button
-                android:id="@+id/btn_register"
-                style="@style/textStyleButton"
+                android:id="@+id/add_mitra_lanjutkan_btn"
+                style="@style/textStyleButton5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -224,7 +181,7 @@
                 android:background="@drawable/custom_button"
                 android:elevation="0dp"
                 android:padding="4dp"
-                android:text="Simpan"
+                android:text="Lanjutkan"
                 android:textAllCaps="false" />
         </LinearLayout>
 

@@ -19,6 +19,18 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.admin.addmitra.addpegawai.AddPegawaiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.addmitra.AddMitraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.manajemenmitra.status.MajamenMitraStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.manajemenmitra.ManajemenMitraActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity"
             android:exported="false" />
         <activity
