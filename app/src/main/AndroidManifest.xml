@@ -19,6 +19,22 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.admin.addpromo.addpromostatus.AddPromoStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.addpromo.AdminAddPromoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.profile.membershipku.statusupgrademembership.StatusUpgradeMembershipActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.profile.membershipku.statusextendmembership.StatusExtendMembershipActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.profile.membershipku.upgrademembership.UpgradeMambershipActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Membership" />
+        <activity
             android:name=".view.dashboard.history.historysearch.HistorySearchActivity"
             android:exported="false" />
         <activity

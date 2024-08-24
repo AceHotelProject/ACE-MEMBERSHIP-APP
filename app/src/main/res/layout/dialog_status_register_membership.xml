@@ -15,14 +15,14 @@
         android:background="@drawable/item_background_white">
 
         <TextView
-            style="@style/textStyleSemIBold_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Keluar Aplikasi?"
+            android:text="Daftar Membership"
+            style="@style/textStyleSemIBold_20"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -91,4 +91,7 @@ dependencies {
 
     // Additional Hilt Compiler for ViewModels
     ksp(libs.androidx.hilt.compiler)
+
+    // Floating Button
+    implementation(libs.floating.action.button)
 }
