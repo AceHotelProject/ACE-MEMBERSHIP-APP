@@ -1,0 +1,276 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.register.RegisterActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="32dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icons_back"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/detail_title"
+                    style="@style/textStyleMedium_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="80dp"
+                    android:text="Tambah Promo"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_name_mitra"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Nama Mitra" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_register_name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_register_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukan nama anda"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_type_mitra"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tipe Mitra" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/transfer_tujuan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/trasnfer_menu_tujuan_transfer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Pilih Tipe Mitra"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp"
+                    android:background="@drawable/custom_edit_text"
+                    android:padding="16dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Photo Section -->
+            <TextView
+                android:id="@+id/tv_photo_label"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Foto Promo" />
+
+            <ImageView
+                android:id="@+id/img_ktp_sim"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/custom_edit_text"
+                android:scaleType="centerInside"
+                android:src="@drawable/icons_image" />
+
+            <!-- NIK -->
+            <TextView
+                android:id="@+id/tv_nik"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nama Promo" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_register_nik"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_register_nik"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukan nama promo"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Phone Number -->
+            <TextView
+                android:id="@+id/tv_phone"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Deskripsi Promo" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_register_phone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_register_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukan deskripsi promo"
+                    android:inputType="phone"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Address -->
+            <TextView
+                android:id="@+id/tv_syarat_ketentuan"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Syarat dan keetentuan" />
+
+            <TextView
+                android:id="@+id/tv_list_syarat"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark_grey"
+                android:layout_marginTop="8dp"
+                android:text="Apabila lebih dari 1 dapat ditampilkan secara terpisah dengan tanda pemisah berupa titik koma (;) antar setiap poinnya" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_register_address"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ed_register_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukan Syarat dan Ketentuan"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btn_register"
+                style="@style/textStyleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/custom_button"
+                android:elevation="0dp"
+                android:padding="4dp"
+                android:text="Simpan"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

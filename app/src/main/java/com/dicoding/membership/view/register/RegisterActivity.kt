@@ -149,9 +149,8 @@ class RegisterActivity : AppCompatActivity() {
         binding.btnRegister.setOnClickListener {
             val email = binding.edRegisterEmail.text.toString()
             val password = binding.edRegisterPass.text.toString()
-            val name = binding.edRegisterName.text.toString()
 
-            registerViewModel.register(name, email, password).observe(this) { result ->
+            registerViewModel.register("Daffa", email, password).observe(this) { result ->
                 when (result) {
                     is Resource.Error -> {
                         showLoading(false)

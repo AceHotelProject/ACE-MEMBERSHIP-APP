@@ -3,26 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.history.home.member.mstatus.HomeMemberStatusActivity"
+    tools:context=".view.dashboard.home.member.mstatus.HomeMemberStatusActivity"
     android:background="@color/white">
-
-    <!-- Close Button -->
-    <ImageView
-        android:id="@+id/btn_close"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/icons_back"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/icons_success"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/icons_success"
+        android:src="@drawable/backgorund_join_member_success"
         app:layout_constraintBottom_toTopOf="@+id/tv_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -34,12 +24,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Membership Berhasil"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="@+id/btn_continue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Continue Button -->
+    <!-- Done Button -->
     <TextView
         android:id="@+id/tv_description"
         style="@style/textStyleMedium_14"
@@ -68,7 +59,7 @@
         android:background="@drawable/custom_button"
         android:elevation="0dp"
         android:padding="4dp"
-        android:text="Lanjutkan"
+        android:text="Selesai"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

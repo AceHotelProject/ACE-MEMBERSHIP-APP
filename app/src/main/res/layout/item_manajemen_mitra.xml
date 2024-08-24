@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:padding="12dp"
+    android:background="@drawable/custom_border_orange"
+    android:clipToPadding="false">
+    <!-- apabila tidak di click, border yang digunakan: custom_border_grey -->
+
+    <ImageView
+        android:id="@+id/admin_manajemen_mitra_dot_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_gravity="right"
+        android:src="@drawable/dots_three"/>
+
+    <TextView
+        style="@style/textStyleMedium_14"
+        android:id="@+id/tvPromoLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hotel"
+        android:textColor="@color/orange_100"
+        android:background="@drawable/custom_button_welcome_register"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:textSize="10sp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center" />
+
+    <TextView
+        style="@style/textStyleSemIBold_16"
+        android:id="@+id/admin_manajemen_mitra_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hotel Ace"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_stroke"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- RECYCLERVIEW UBAH HEIGHT MENJADI WRAP CONTENT KALAU SUDAH ADA-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/manajemen_mitra_pegawai_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        tools:listitem="@layout/item_manajemen_mitra_pegawai"/>
+
+
+</LinearLayout>

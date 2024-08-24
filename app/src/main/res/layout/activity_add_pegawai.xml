@@ -1,0 +1,379 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/icons_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/add_pegawai_title"
+        style="@style/textStyleMedium_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tambah Pegawai"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_pegawai_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical">
+
+            <!-- Nama Owner -->
+            <TextView
+                android:id="@+id/add_pegawai_nama_owner_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Nama Owner" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_nama_owner"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_nama_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nama owner"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Email Owner -->
+            <TextView
+                android:id="@+id/add_pegawai_email_owner_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Email Owner" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_email_owner"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_email_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan email owner"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Kata Sandi Owner -->
+            <TextView
+                android:id="@+id/add_pegawai_kata_sandi_owner_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Kata Sandi Owner" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_kata_sandi_owner"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconDrawable="@drawable/icons_see_pass"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_kata_sandi_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawableStart="@drawable/icons_pass"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan kata sandi"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Konfirmasi Kata Sandi Owner -->
+            <TextView
+                android:id="@+id/add_pegawai_konfirmasi_kata_sandi_owner_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Konfirmasi Kata Sandi Owner" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_konfirmasi_kata_sandi_owner"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconDrawable="@drawable/icons_see_pass"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_konfirmasi_kata_sandi_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawableStart="@drawable/icons_pass"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan konfirmasi kata sandi"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Nama Resepsionis -->
+            <TextView
+                android:id="@+id/add_pegawai_nama_resepsionis_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nama Resepsionis" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_nama_resepsionis"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_nama_resepsionis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nama resepsionis"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Email Resepsionis -->
+            <TextView
+                android:id="@+id/add_pegawai_email_resepsionis_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Email Resepsionis" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_email_resepsionis"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_email_resepsionis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan email resepsionis"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Kata Sandi Resepsionis -->
+            <TextView
+                android:id="@+id/add_pegawai_kata_sandi_resepsionis_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Kata Sandi Resepsionis" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_kata_sandi_resepsionis"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconDrawable="@drawable/icons_see_pass"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_kata_sandi_resepsionis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawableStart="@drawable/icons_pass"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan kata sandi"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Konfirmasi Kata Sandi Resepsionis -->
+            <TextView
+                android:id="@+id/add_pegawai_konfirmasi_kata_sandi_resepsionis_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Konfirmasi Kata Sandi Resepsionis" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_konfirmasi_kata_sandi_resepsionis"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconDrawable="@drawable/icons_see_pass"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_konfirmasi_kata_sandi_resepsionis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawableStart="@drawable/icons_pass"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan konfirmasi kata sandi"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Lanjutkan Button -->
+            <Button
+                android:id="@+id/add_mitra_lanjutkan_btn"
+                style="@style/textStyleButton5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/custom_button"
+                android:elevation="0dp"
+                android:padding="4dp"
+                android:text="Lanjutkan"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
