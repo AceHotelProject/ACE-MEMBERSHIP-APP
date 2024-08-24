@@ -35,7 +35,11 @@
         android:layout_height="44sp"
         android:layout_marginEnd="32sp"
         android:layout_marginTop="32sp"
+<<<<<<< HEAD
         android:src="@drawable/icons_search"
+=======
+        android:src="@drawable/icons_serach"
+>>>>>>> 623c93c0ea9d5970200c066de76b9e28221eac1f
         android:background="@drawable/custom_button_search"
         android:padding="12sp"
         app:layout_constraintEnd_toEndOf="parent"
