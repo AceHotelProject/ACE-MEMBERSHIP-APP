@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="textStyleMedium_14_selected_green">
+        <item name="android:textColor">@color/green</item>
+        <item name="fontFamily">@font/poppinsmedium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="textStyleSemIBold_20_selected_green">
+        <item name="android:textColor">@color/green</item>
+        <item name="fontFamily">@font/poppinssemibold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>
