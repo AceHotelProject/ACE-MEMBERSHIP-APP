@@ -48,10 +48,6 @@ class PromoFragment : Fragment() {
     private fun setupRecyclerView() {
         storyPagingAdapter = StoryPagingAdapter()
 
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = storyPagingAdapter
-        }
 
         storyPagingAdapter.setOnItemClickCallback(object : StoryPagingAdapter.OnItemClickCallback {
             override fun onItemClicked(context: Context, story: StoryDomainTester) {

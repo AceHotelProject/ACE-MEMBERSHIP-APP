@@ -1,0 +1,191 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/icons_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tambah_mitra_title"
+        style="@style/textStyleMedium_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tambah Mitra"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tambah_mitra_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical">
+
+            <!-- Photo Mitra -->
+            <TextView
+                android:id="@+id/add_mitra_foto_mitra_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Foto Mitra" />
+
+            <ImageView
+                android:id="@+id/add_mitra_foto_mitra_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/custom_edit_text"
+                android:scaleType="centerInside"
+                android:src="@drawable/image_empty" />
+
+            <!-- Nama Mitra -->
+            <TextView
+                android:id="@+id/add_mitra_nama_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Nama Mitra" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_mitra_nama"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_mitra_nama"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nama mitra"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Tipe Mitra -->
+            <TextView
+                android:id="@+id/add_mitra_tipe_mitra_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tipe Mitra" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_tipe_mitra"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <AutoCompleteTextView
+                    android:id="@+id/add_mitra_tipe_mitra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text_border_dark_grey"
+                    android:hint="Pilih tipe mitra"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Deskripsi Mitra -->
+            <TextView
+                android:id="@+id/tv_address"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Deskripsi Mitra" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_deskripsi_mitra"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_mitra_deskripsi_mitra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan deskripsi mitra"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Lanjutkan Button -->
+            <Button
+                android:id="@+id/add_mitra_lanjutkan_btn"
+                style="@style/textStyleButton5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/custom_button"
+                android:elevation="0dp"
+                android:padding="4dp"
+                android:text="Lanjutkan"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

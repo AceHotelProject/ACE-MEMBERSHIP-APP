@@ -1,0 +1,74 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <ImageView
+      android:id="@+id/btn_close"
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginTop="16dp"
+      android:src="@drawable/icons_back"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <TextView
+      android:id="@+id/admin_manajemen_mitra_title"
+      style="@style/textStyleMedium_20"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="Manajemen Mitra"
+      android:textColor="@color/black"
+      android:textSize="18sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      app:layout_constraintTop_toBottomOf="@+id/admin_manajemen_mitra_title"
+      app:layout_constraintBottom_toTopOf="@id/admin_manajemen_mitra_tambah_button">
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/detail_image_card_view"
+        tools:layout_editor_absoluteX="16dp">
+
+      <!-- RECYCLERVIEW HEIGHT DIBUAT WRAP CONTENT -->
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/admin_manajemen_mitra_recyclerview"
+          android:layout_width="match_parent"
+          android:layout_height="513dp"
+          tools:listitem="@layout/item_manajemen_mitra"
+          />
+
+    </LinearLayout>
+
+  </ScrollView>
+
+  <TextView
+      android:id="@+id/admin_manajemen_mitra_tambah_button"
+      style="@style/textStyleButton"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="16dp"
+      android:background="@drawable/custom_button"
+      android:gravity="center"
+      android:padding="12dp"
+      android:text="Tambah"
+      android:textColor="@color/white"
+      android:textSize="20sp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      tools:layout_editor_absoluteX="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
