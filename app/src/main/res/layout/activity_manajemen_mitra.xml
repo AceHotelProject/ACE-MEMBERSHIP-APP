@@ -4,71 +4,98 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <ImageView
-      android:id="@+id/btn_close"
-      android:layout_width="30dp"
-      android:layout_height="30dp"
-      android:layout_marginStart="16dp"
-      android:layout_marginTop="16dp"
-      android:src="@drawable/icons_back"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
-
-  <TextView
-      android:id="@+id/admin_manajemen_mitra_title"
-      style="@style/textStyleMedium_20"
-      android:layout_width="wrap_content"
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/upper_bar"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:text="Manajemen Mitra"
-      android:textColor="@color/black"
-      android:textSize="18sp"
-      app:layout_constraintEnd_toEndOf="parent"
+      android:layout_marginStart="24dp"
+      android:layout_marginEnd="24dp"
+      android:layout_marginTop="24dp"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+        android:id="@+id/ib_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+      <ImageView
+          android:id="@+id/btn_close"
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/icons_back"
+          android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_managemen_mitra"
+        style="@style/textStyleMedium_20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Manajemen Mitra"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
   <ScrollView
+      android:id="@+id/cl_body"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"
-      app:layout_constraintTop_toBottomOf="@+id/admin_manajemen_mitra_title"
-      app:layout_constraintBottom_toTopOf="@id/admin_manajemen_mitra_tambah_button">
-
+      android:layout_marginTop="32dp"
+      android:layout_marginStart="24dp"
+      android:layout_marginEnd="24dp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/upper_bar"
+      app:layout_constraintBottom_toTopOf="@id/cl_button">
     <LinearLayout
-        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/detail_image_card_view"
-        tools:layout_editor_absoluteX="16dp">
+        app:layout_constraintBottom_toTopOf="@id/cl_button">
 
-      <!-- RECYCLERVIEW HEIGHT DIBUAT WRAP CONTENT -->
       <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/admin_manajemen_mitra_recyclerview"
           android:layout_width="match_parent"
-          android:layout_height="513dp"
-          tools:listitem="@layout/item_manajemen_mitra"
-          />
-
+          android:layout_height="match_parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:itemCount="2"
+          tools:listitem="@layout/item_manajemen_mitra" />
     </LinearLayout>
-
   </ScrollView>
 
-  <TextView
-      android:id="@+id/admin_manajemen_mitra_tambah_button"
-      style="@style/textStyleButton"
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/cl_button"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:background="@drawable/custom_button"
-      android:gravity="center"
-      android:padding="12dp"
-      android:text="Tambah"
-      android:textColor="@color/white"
-      android:textSize="20sp"
+      android:layout_marginStart="24dp"
+      android:layout_marginEnd="24dp"
+      android:layout_marginBottom="32dp"
+      android:layout_marginTop="32dp"
       app:layout_constraintBottom_toBottomOf="parent"
-      tools:layout_editor_absoluteX="16dp" />
-
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent">
+    <Button
+        android:id="@+id/btn_login"
+        style="@style/textStyleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button"
+        android:elevation="0dp"
+        android:padding="10dp"
+        android:text="Tambah"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent" />
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

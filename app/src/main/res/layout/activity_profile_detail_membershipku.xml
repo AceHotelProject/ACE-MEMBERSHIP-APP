@@ -48,8 +48,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/background_mini_ace_silver"
                 android:orientation="vertical"
-                android:background="@drawable/custom_button_profile_membership"
                 android:padding="16dp">
 
                 <TextView
@@ -58,24 +58,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ace Silver"
-                    android:textSize="24sp"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
+
                 <TextView
                     android:id="@+id/membershipku_expiry"
                     style="@style/textStyleMedium_14"
-                    android:layout_marginTop="16px"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:layout_marginTop="16px"
                     android:text="Exp 28 Desember 2023"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/custom_button"
+                android:background="@drawable/custom_button_2"
                 android:padding="12dp"
                 android:gravity="center"
                 android:layout_gravity="center">
@@ -83,7 +84,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/up_arrow"/>
+                    android:src="@drawable/up_arrow" />
 
                 <TextView
                     style="@style/textStyleSemIBold_16"
@@ -91,12 +92,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Upgrade Benefit"
-                    android:textColor="@color/white"
+                    android:textColor="@color/orange_100"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
             </LinearLayout>
 
             <TextView
@@ -128,7 +128,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        style="@style/textStyleMedium_16"
+                        style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sisa Kupon Anda"
@@ -136,7 +136,7 @@
 
                     <TextView
                         android:id="@+id/membershipku_sisa_kupon_anda_jumlah"
-                        style="@style/textStyleMedium_16"
+                        style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="32"
@@ -158,7 +158,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        style="@style/textStyleMedium_16"
+                        style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Promo Digunakan"
@@ -237,6 +237,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                tools:itemCount="2"
                 tools:listitem="@layout/item_detail_syarat_dan_ketentuan"/>
 
         </LinearLayout>

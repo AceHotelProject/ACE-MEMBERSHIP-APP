@@ -6,7 +6,7 @@
 
     <color name="dark_grey">#B1B1B1</color>
     <color name="grey">#F8F8F8</color>
-    <color name="grey_bg">#FFF4F5F6</color>
+    <color name="grey_bg">#F3F3F3</color>
     <color name="grey_navbar">#FFC6CCD1</color>
     <color name="light_grey">#F3F3F3</color>
 
@@ -37,6 +37,7 @@
     <color name="silver">#C2C2C2</color>
     <color name="grey_stroke">#E0E0E0</color>
     <color name="orange_accent">#FFD8C9</color>
+
 
     <color name="green_25">#4020C197</color>
 

@@ -4,45 +4,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/btn_close"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/icons_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/poinku_title"
-        style="@style/textStyleMedium_20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Poinku"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/upper_bar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/poinku_title"
-        app:layout_constraintBottom_toBottomOf="parent">
-
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
-            android:id="@+id/linearLayout4"
+            android:id="@+id/ib_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/btn_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icons_back"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_poinku"
+            style="@style/textStyleMedium_20"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Poinku"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/upper_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_body_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintTop_toBottomOf="@+id/detail_image_card_view"
             tools:layout_editor_absoluteX="16dp">
 
             <TextView
@@ -59,13 +76,10 @@
                 android:background="@drawable/custom_button_light_grey"
                 android:gravity="center"
                 android:layout_gravity="center">
-
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:src="@drawable/icon_copper_coin_black"/>
-
                 <TextView
                     android:id="@+id/poinku_jumlah_poinku"
                     style="@style/textStyleSemIBold_32"
@@ -77,7 +91,6 @@
                     android:text="400.000"
                     android:textSize="40sp"
                     android:textColor="@color/black" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -97,7 +110,6 @@
                     app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -110,9 +122,7 @@
                         android:layout_marginStart="8dp"
                         android:text="Terima"
                         android:textSize="14sp" />
-
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -124,12 +134,10 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/icon_share_white"/>
-
                     <TextView
                         style="@style/textStyleSemIBold_16"
                         android:layout_width="wrap_content"
@@ -137,24 +145,30 @@
                         android:layout_marginStart="8dp"
                         android:text="Transfer"
                         android:textSize="14sp" />
-
                 </LinearLayout>
-
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_body_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/ll_body_1">
 
             <TextView
                 android:id="@+id/referralku_statistik_anda_title"
                 style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:text="Statistik Anda"
                 android:textColor="@color/black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="12dp">
 
                 <LinearLayout
@@ -170,25 +184,21 @@
                     app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-
                     <TextView
                         style="@style/textStyleMedium_16"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Poin Terima"
                         android:textColor="@color/green"
                         android:textSize="14sp" />
-
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/icon_copper_coin_green"/>
-
                         <TextView
                             android:id="@+id/poinku_poin_terima_jumlah"
                             style="@style/textStyleSemIBold_24"
@@ -198,7 +208,6 @@
                             android:text="200.000"
                             android:textColor="@color/green" />
                     </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -213,24 +222,20 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-
                     <TextView
                         style="@style/textStyleMedium_16"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Poin Transfer"
                         android:textSize="14sp" />
-
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/icon_copper_coin_black"/>
-
                         <TextView
                             android:id="@+id/poinku_poin_transfer_jumlah"
                             style="@style/textStyleSemIBold_24"
@@ -239,9 +244,7 @@
                             android:layout_marginStart="4dp"
                             android:text="200.000"/>
                     </LinearLayout>
-
                 </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
@@ -251,32 +254,27 @@
                 android:background="@drawable/custom_button_orange_accent"
                 android:gravity="center"
                 android:layout_gravity="center">
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="10dp">
-
                     <TextView
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Keuntungan Referral"
                         android:textColor="@color/orange_100"/>
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:layout_gravity="center">
-
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:src="@drawable/icon_copper_coin_orange"/>
-
                         <TextView
                             android:id="@+id/poinku_keuntungan_referral_jumlah"
                             style="@style/textStyleSemIBold_24"
@@ -285,30 +283,34 @@
                             android:layout_marginStart="4dp"
                             android:text="200.000"
                             android:textColor="@color/orange_100"/>
-
                     </LinearLayout>
-
                 </LinearLayout>
-
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_body_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/ll_body_2">
             <TextView
                 style="@style/textStyleMedium_16"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:text="Riwayat Terkini"
+                android:layout_marginBottom="12dp"
                 android:textColor="@color/black" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/referralku_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:itemCount="2"
                 tools:listitem="@layout/item_referralku_terima_poin"/>
-
         </LinearLayout>
-
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
