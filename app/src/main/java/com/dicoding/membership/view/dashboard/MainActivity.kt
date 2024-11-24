@@ -1,14 +1,20 @@
 package com.dicoding.membership.view.dashboard
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showLongToast
@@ -29,6 +35,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var splitInstallManager: SplitInstallManager
 
+    private var isFabMenuOpen = false
+
+    private lateinit var fabRotateOpenAnim: Animation
+    private lateinit var fabRotateCloseAnim: Animation
+    private lateinit var fabFromAnim: Animation
+    private lateinit var fabCloseAnim: Animation
+
+
 //    private var fabMenuState: FabMenuState = FabMenuState.COLLAPSED
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +56,12 @@ class MainActivity : AppCompatActivity() {
         validateLoginStatus()
 
         setupBottomNavbar()
+
+        setupFabMenu()
+
+        loadAnimations()
+
+        setFabClickListener()
 
         checkNotificationPermission()
     }
@@ -61,7 +81,9 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
                 R.id.homeFragment,
+                R.id.mitraFragment,
                 R.id.promoFragment,
+//                R.id.memberFragment,
                 R.id.historyFragment,
                 R.id.profileFragment,
             )
@@ -75,9 +97,15 @@ class MainActivity : AppCompatActivity() {
                 R.id.homeFragment -> {
                     checkAndNavigateToFeature("favorite", R.id.homeFragment, navViewController)
                 }
+                R.id.mitraFragment -> {
+                    navViewController.navigate(R.id.mitraFragment)
+                }
                 R.id.promoFragment -> {
                     navViewController.navigate(R.id.promoFragment)
                 }
+//                R.id.memberFragment -> {
+//                    navViewController.navigate(R.id.memberFragment)
+//                }
                 R.id.historyFragment -> {
                     navViewController.navigate(R.id.historyFragment)
                 }
@@ -87,6 +115,53 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    private fun setupFabMenu() {
+        binding.fbMenu.setOnClickListener {
+            toggleFabMenu()
+        }
+    }
+
+    private fun loadAnimations() {
+        fabRotateOpenAnim = AnimationUtils.loadAnimation(this, R.anim.floating_rotate_open_anim)
+        fabRotateCloseAnim = AnimationUtils.loadAnimation(this, R.anim.floating_rotate_close_anim)
+        fabFromAnim = AnimationUtils.loadAnimation(this, R.anim.floating_from_bottom_anim)
+        fabCloseAnim = AnimationUtils.loadAnimation(this, R.anim.floating_to_bottom_anim)
+    }
+
+    private fun toggleFabMenu() {
+        if (isFabMenuOpen) {
+            binding.fbCoupon.startAnimation(fabCloseAnim)
+            binding.fbValidMembership.startAnimation(fabCloseAnim)
+            binding.fbAddPromo.startAnimation(fabCloseAnim)
+
+            binding.tvCoupon.startAnimation(fabCloseAnim)
+            binding.tvValidMembership.startAnimation(fabCloseAnim)
+            binding.tvAddPromo.startAnimation(fabCloseAnim)
+
+            binding.fbMenu.startAnimation(fabRotateCloseAnim)
+
+            binding.lnFab2.visibility = View.INVISIBLE
+            binding.lnFab3.visibility = View.INVISIBLE
+            binding.lnFab4.visibility = View.INVISIBLE
+        } else {
+            binding.fbCoupon.startAnimation(fabFromAnim)
+            binding.fbValidMembership.startAnimation(fabFromAnim)
+            binding.fbAddPromo.startAnimation(fabFromAnim)
+
+            binding.tvCoupon.startAnimation(fabFromAnim)
+            binding.tvValidMembership.startAnimation(fabFromAnim)
+            binding.tvAddPromo.startAnimation(fabFromAnim)
+
+            binding.fbMenu.startAnimation(fabRotateOpenAnim)
+
+            binding.lnFab2.visibility = View.VISIBLE
+            binding.lnFab3.visibility = View.VISIBLE
+            binding.lnFab4.visibility = View.VISIBLE
+        }
+
+        isFabMenuOpen = !isFabMenuOpen
     }
 
     private fun checkAndNavigateToFeature(moduleName: String, destinationId: Int, navController: NavController) {
@@ -106,6 +181,54 @@ class MainActivity : AppCompatActivity() {
                 }
         }
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setFabClickListener() {
+        // Pair FABs with their corresponding TextViews
+        val fabTextViewPairs = listOf(
+            Pair(binding.fbCoupon, binding.tvCoupon),
+            Pair(binding.fbValidMembership, binding.tvValidMembership),
+            Pair(binding.fbAddPromo, binding.tvAddPromo),
+            Pair(binding.fbMenu, null) // No associated TextView for menu FAB
+        )
+
+        fabTextViewPairs.forEach { (fab, textView) ->
+            fab.setOnTouchListener { view, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        // Shrink FAB and TextView
+                        view.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100).start()
+                        textView?.animate()?.scaleX(0.8f)?.scaleY(0.8f)?.setDuration(100)?.start()
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        // Restore FAB and TextView to original size
+                        view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
+                        textView?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(100)?.start()
+                    }
+                }
+                false
+            }
+
+            // Optional: Add onClickListener for FAB
+            fab.setOnClickListener {
+                when (fab) {
+                    binding.fbCoupon -> {
+                        showToast("FAB Coupon clicked!")
+                    }
+                    binding.fbValidMembership -> {
+                        showToast("FAB Valid Membership clicked!")
+                    }
+                    binding.fbAddPromo -> {
+                        showToast("FAB Add Promo clicked!")
+                    }
+                    binding.fbMenu -> {
+                        toggleFabMenu() // Keep the existing menu FAB functionality
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun setupActionBar() {
         supportActionBar?.hide()

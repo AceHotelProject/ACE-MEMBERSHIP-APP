@@ -14,6 +14,11 @@
             app:uri="favoriteapp://story" />
     </fragment>
 
+    <fragment
+        android:id="@+id/mitraFragment"
+        android:name="com.dicoding.membership.view.dashboard.mitra.MitraFragment"
+        android:label="fragment_mitra"
+        tools:layout="@layout/fragment_mitra" />
 
     <fragment
         android:id="@+id/promoFragment"
@@ -24,7 +29,7 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.dicoding.membership.view.dashboard.history.HistoryFragment"
-        android:label="fragment_room"
+        android:label="fragment_history"
         tools:layout="@layout/fragment_history" />
 
     <fragment

@@ -9,8 +9,9 @@
         android:id="@+id/recyclerViewHistoryTransferPoint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:scrollbars="vertical" />
+        android:visibility="visible"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_referralku_terima_poin"/>
 
     <!--    Non Member History -->
     <LinearLayout
@@ -18,7 +19,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/detail_status_title"

@@ -6,6 +6,11 @@
         android:title="@string/home" />
 
     <item
+        android:id="@+id/mitraFragment"
+        android:icon="@drawable/icon_mitra"
+        android:title="Mitra" />
+
+    <item
         android:id="@+id/promoFragment"
         android:icon="@drawable/icons_promo"
         android:title="@string/promo" />

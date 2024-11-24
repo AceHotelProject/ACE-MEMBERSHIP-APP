@@ -19,7 +19,7 @@ class HistoryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -27,33 +27,61 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViewPager()
+
+        setupButtonListeners()
+
+        setupPageChangeCallback()
+
+    }
+
+    private fun setupViewPager() {
         val adapter = HistoryPagerAdapter(requireActivity())
         binding.viewPager.adapter = adapter
+    }
 
+    private fun setupButtonListeners() {
         binding.btnPromo.setOnClickListener {
-            binding.viewPager.currentItem = 0
-            setButtonState(binding.btnPromo, true)
-            setButtonState(binding.btnTransferPoin, false)
+            onPromoButtonClick()
         }
 
         binding.btnTransferPoin.setOnClickListener {
-            binding.viewPager.currentItem = 1
-            setButtonState(binding.btnPromo, false)
-            setButtonState(binding.btnTransferPoin, true)
+            onTransferPoinButtonClick()
         }
 
+        binding.btnMember.setOnClickListener {
+            onMemberButtonClick()
+        }
+    }
+
+    private fun onPromoButtonClick() {
+        binding.viewPager.currentItem = 0
+        updateButtonStates(binding.btnPromo, binding.btnTransferPoin, binding.btnMember)
+    }
+
+    private fun onTransferPoinButtonClick() {
+        binding.viewPager.currentItem = 1
+        updateButtonStates(binding.btnTransferPoin, binding.btnPromo, binding.btnMember)
+    }
+
+    private fun onMemberButtonClick() {
+        binding.viewPager.currentItem = 2
+        updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
+    }
+
+    private fun updateButtonStates(activeButton: Button, vararg inactiveButtons: Button) {
+        setButtonState(activeButton, true)
+        inactiveButtons.forEach { setButtonState(it, false) }
+    }
+
+    private fun setupPageChangeCallback() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 when (position) {
-                    0 -> {
-                        setButtonState(binding.btnPromo, true)
-                        setButtonState(binding.btnTransferPoin, false)
-                    }
-                    1 -> {
-                        setButtonState(binding.btnPromo, false)
-                        setButtonState(binding.btnTransferPoin, true)
-                    }
+                    0 -> updateButtonStates(binding.btnPromo, binding.btnTransferPoin, binding.btnMember)
+                    1 -> updateButtonStates(binding.btnTransferPoin, binding.btnPromo, binding.btnMember)
+                    2 -> updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
                 }
             }
         })

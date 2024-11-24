@@ -66,7 +66,7 @@
             android:text="Promo"
             android:textColor="@color/white"
             android:background="@drawable/custom_button"/>
-
+        <!--        Text Change on Member and Non Member-->
         <Button
             android:id="@+id/btnTransferPoin"
             style="@style/textStyleButton4"
@@ -74,7 +74,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Transfer Poin"
+            android:text="Poin"
+            android:textColor="@color/black"
+            android:background="@drawable/button_no_border"/>
+        <!--        View Gone on Member and Non Member-->
+        <Button
+            android:id="@+id/btnMember"
+            style="@style/textStyleButton4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Member"
             android:textColor="@color/black"
             android:background="@drawable/button_no_border"/>
     </LinearLayout>
@@ -83,8 +94,9 @@
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="48dp"
-
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintTop_toBottomOf="@id/buttonContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -21,6 +21,126 @@
         app:navGraph="@navigation/main_navigation"
         tools:ignore="FragmentTagUsage" />
 
+    <LinearLayout
+        android:id="@+id/ln_fab1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navbar"
+        android:gravity="center"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fb_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@color/orange_100"
+            app:tint="@android:color/white"
+            android:src="@drawable/icon_floating_menu"
+            style="@style/CustomFABStyle"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln_fab2"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/ln_fab1"
+        app:layout_constraintBottom_toTopOf="@+id/ln_fab1"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:background="@drawable/chip_app_bar_2"
+            android:id="@+id/tv_coupon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Redeem Coupon"
+            android:textColor="@android:color/black"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fb_coupon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@color/white"
+            app:tint="@color/orange_100"
+            android:src="@drawable/icon_floating_redeem_coupon"
+            style="@style/CustomFABStyle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln_fab3"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/ln_fab2"
+        app:layout_constraintBottom_toTopOf="@+id/ln_fab2"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:background="@drawable/chip_app_bar_2"
+            android:id="@+id/tv_valid_membership"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Validasi Membership"
+            android:textColor="@android:color/black"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fb_valid_membership"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@color/white"
+            app:tint="@color/orange_100"
+            android:src="@drawable/icon_floating_validation_membership"
+            style="@style/CustomFABStyle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ln_fab4"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/ln_fab3"
+        app:layout_constraintBottom_toTopOf="@+id/ln_fab3"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:background="@drawable/chip_app_bar_2"
+            android:id="@+id/tv_add_promo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tambah Promo"
+            android:textColor="@android:color/black"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fb_add_promo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@color/white"
+            app:tint="@color/orange_100"
+            app:layout_constraintEnd_toEndOf="@id/fb_valid_membership"
+            app:layout_constraintBottom_toTopOf="@+id/fb_valid_membership"
+            android:src="@drawable/icon_floating_add_promo"
+            style="@style/CustomFABStyle" />
+    </LinearLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navbar"
         android:layout_width="0dp"
@@ -37,5 +157,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_bottom_navbar_item" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

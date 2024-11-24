@@ -16,6 +16,9 @@
         <item name="android:fontFamily">@font/poppinsregular</item>
         <item name="fontFamily">@font/poppinsregular</item>
         <item name="android:buttonStyle">@style/NotAllCapsButtonStyle</item>
+
+        <!-- FloatingActionButton style customization -->
+        <item name="floatingActionButtonStyle">@style/CustomFABStyle</item>
     </style>
 
     <style name="Theme.Membership" parent="Base.Theme.Membership" />
@@ -177,6 +180,20 @@
 
     <!-- FOR TYPOGRAPHY   -->
 
+    <style name="textStyleMedium_14_selected_green">
+        <item name="android:textColor">@color/green</item>
+        <item name="fontFamily">@font/poppinsmedium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="textStyleSemIBold_20_selected_green">
+        <item name="android:textColor">@color/green</item>
+        <item name="fontFamily">@font/poppinssemibold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
     <!-- FOR CUSTOM GENERAL THEME   -->
 
     <style name="textStyleMedium_custom">
@@ -196,6 +213,16 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+
     <!-- FOR CUSTOM GENERAL THEME   -->
+    <style name="CustomFABStyle" parent="Widget.MaterialComponents.FloatingActionButton">
+        <!-- Remove shadow by setting elevation to 0 -->
+        <item name="elevation">0dp</item>
+        <!-- Optional: Set background color if needed -->
+        <item name="backgroundTint">@color/transparent</item>
+        <!-- Optional: Set border or ripple effect -->
+        <item name="rippleColor">@color/transparent</item>
+        <item name="pressedTranslationZ">0dp</item>
+    </style>
 
 </resources>

@@ -60,9 +60,9 @@
                     android:id="@+id/item_dashboard_promo_image_view"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
-                    android:backgroundTint="@color/green"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/custom_background_light_grey"
+                    android:background="@drawable/custom_background_light_grey"
+                    android:src="@drawable/image_dummy"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

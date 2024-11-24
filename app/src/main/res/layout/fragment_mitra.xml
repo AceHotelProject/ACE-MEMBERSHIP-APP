@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.dashboard.mitra.MitraFragment">
+
+    <!--    Mitra and Admin Section-->
+    <LinearLayout
+        android:id="@+id/linearLayoutAdminMitra"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvAMGreeting"
+            style="@style/textStyleSemIBold_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hi, Admin 👋"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/imgHotel"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/custom_background_light_grey"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_dummy"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAMGreeting" />
+
+        <TextView
+            android:id="@+id/tvAMMembershipType"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/custom_item_promo_type"
+            android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="5dp"
+            android:text="Hotel"
+            android:textColor="@color/orange_100"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvHotelName"
+            style="@style/textStyleSemIBold_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hotel Ace Indonesia"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgHotel" />
+
+        <TextView
+            android:id="@+id/tvStatistik"
+            style="@style/textStyleSemIBold_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="Statistik Mitra"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvHotelName" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <!-- Section 1: Promo Mitra and Promo Digunakan -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_background_light_grey"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Promo Mitra" />
+
+                    <TextView
+                        style="@style/textStyleSemIBold_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_background_light_grey"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Promo Digunakan" />
+
+                    <TextView
+                        style="@style/textStyleSemIBold_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="32" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Section 2: Poin Mitra -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/custom_background_light_grey"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Poin Mitra" />
+
+                <TextView
+                    style="@style/textStyleSemIBold_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/icons_point"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/black"
+                    android:text="400.000" />
+            </LinearLayout>
+
+            <!-- Section 3: Poin Terima and Poin Transfer -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_background_light_green"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14_selected_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poin Terima"
+                        android:textColor="@color/green" />
+
+                    <TextView
+                        style="@style/textStyleSemIBold_20_selected_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/icons_point"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/green"
+                        android:text="200.000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_background_light_grey"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poin Terima" />
+
+                    <TextView
+                        style="@style/textStyleSemIBold_20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/icons_point"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/black"
+                        android:text="200.000" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Deskripsi">
+
+        </TextView>
+
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/lorem_ipsum"
+            android:textColor="@color/dark_grey">
+
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/floatingMenuAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!--on below line we are creating a add fab-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/idFABPromoReedem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white"
+            android:contentDescription="@string/app_name"
+            android:padding="4dp"
+            android:src="@drawable/icons_promo_reedem"
+            android:visibility="gone"
+            app:backgroundTint="@color/white"
+            app:tint="@color/orange_100" />
+
+        <!--on below line we are creating a home fab
+             and setting its visibility to gone-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/idFABCouponReedem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white"
+            android:contentDescription="@string/app_name"
+            android:padding="4dp"
+            android:src="@drawable/icons_coupon_reedem"
+            android:visibility="gone"
+            app:backgroundTint="@color/white"
+            app:tint="@color/orange_100" />
+
+        <!--on below line we are creating a settings fab
+            and setting its visibility to gone-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/idFABAddMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/orange_100"
+            android:contentDescription="@string/app_name"
+            android:padding="12dp"
+            android:src="@drawable/icons_add"
+            app:backgroundTint="@color/orange_100"
+            app:tint="@color/white" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
