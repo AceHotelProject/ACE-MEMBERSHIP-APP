@@ -219,8 +219,5 @@
                 tools:listitem="@layout/item_referralku_terima_poin"/>
 
         </LinearLayout>
-
     </ScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

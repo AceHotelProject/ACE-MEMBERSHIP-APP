@@ -81,25 +81,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/custom_background_level_member_non_selected"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tv_package_title_1"
                 style="@style/textStyleSemIBold_20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="Paket Ace Silver" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="16dp"
@@ -107,68 +107,84 @@
                     android:src="@drawable/icons_clock" />
 
                 <TextView
-                    style="@style/textStyleMedium_14"
                     android:id="@+id/tvPromoDate"
+                    style="@style/textStyleMedium_14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="16dp"
                     android:text="Berlaku 3 Bulan"
                     android:textColor="@color/dark_grey"
-                    android:textSize="12sp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="16dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp">
+
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_1_1"
                         style="@style/textStyleMedium_14"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_1_2"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_1_3"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
             </TableLayout>
@@ -176,17 +192,17 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey_100"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:background="@color/light_grey_100" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="@drawable/custom_background_light_grey"
-                android:padding="10dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/tv_package_price_label_1"
@@ -211,11 +227,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+
+            android:layout_marginBottom="24dp"
             android:background="@drawable/custom_background_level_member_selected"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:clipToPadding="false">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tv_package_title_2"
@@ -228,8 +244,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="16dp"
@@ -237,68 +253,84 @@
                     android:src="@drawable/icons_clock" />
 
                 <TextView
-                    style="@style/textStyleMedium_14"
                     android:id="@+id/tvPromoDate_2"
+                    style="@style/textStyleMedium_14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="16dp"
                     android:text="Berlaku 6 Bulan"
                     android:textColor="@color/dark_grey"
-                    android:textSize="12sp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="16dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp">
+
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_2_1"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_2_2"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_2_3"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
             </TableLayout>
@@ -306,17 +338,17 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey_100"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:background="@color/light_grey_100" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="@drawable/custom_background_level_member_price_selected"
-                android:padding="10dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/tv_package_price_label_2"
@@ -341,11 +373,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/custom_background_level_member_non_selected"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tv_package_title_3"
@@ -358,8 +391,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="16dp"
@@ -367,68 +400,84 @@
                     android:src="@drawable/icons_clock" />
 
                 <TextView
-                    style="@style/textStyleMedium_14"
                     android:id="@+id/tvPromoDate_3"
+                    style="@style/textStyleMedium_14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="16dp"
                     android:text="Berlaku 12 Bulan"
                     android:textColor="@color/dark_grey"
-                    android:textSize="12sp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="16dp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp">
+
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_3_1"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_3_2"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
 
                 <TableRow>
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icons_dot"
-                        android:textSize="14sp"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="8dp"
-                        android:layout_gravity="center"/>
+                        android:background="@drawable/icons_dot"
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/tv_package_description_3_3"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:scrollHorizontally="false"
                         android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                 </TableRow>
             </TableLayout>
@@ -436,17 +485,17 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey_100"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:background="@color/light_grey_100" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="@drawable/custom_background_light_grey"
-                android:padding="10dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/tv_package_price_label_3"

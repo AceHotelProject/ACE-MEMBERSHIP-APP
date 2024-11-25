@@ -54,7 +54,6 @@
         android:layout_marginTop="32dp"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
-        app:endIconTint="@color/dark_grey"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:errorIconTint="@color/red"

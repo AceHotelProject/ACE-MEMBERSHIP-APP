@@ -131,8 +131,11 @@
                         <TextView
                             android:id="@+id/tv_package_description_1_1"
                             style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -151,6 +154,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -169,6 +175,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
                 </TableLayout>
@@ -271,6 +280,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -289,6 +301,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -307,6 +322,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
                 </TableLayout>
@@ -411,6 +429,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -429,6 +450,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
 
@@ -447,6 +471,9 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="none"
+                            android:scrollHorizontally="false"
                             android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
                     </TableRow>
                 </TableLayout>

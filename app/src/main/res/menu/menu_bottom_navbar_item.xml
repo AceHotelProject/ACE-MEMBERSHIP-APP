@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/icons_home"
@@ -14,6 +15,11 @@
         android:id="@+id/promoFragment"
         android:icon="@drawable/icons_promo"
         android:title="@string/promo" />
+
+<!--    <item-->
+<!--        android:id="@+id/memberFragment"-->
+<!--        android:icon="@drawable/icon_membership"-->
+<!--        android:title="Member"/>-->
 
     <item
         android:id="@+id/historyFragment"

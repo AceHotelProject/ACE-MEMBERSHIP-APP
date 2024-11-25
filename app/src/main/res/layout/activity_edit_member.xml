@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.dashboard.member.detailmember.DetailMemberActivity">
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/icons_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/detail_title"
+        style="@style/textStyleMedium_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Edit Membership"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detail_title">
+
+        <TextView
+            android:id="@+id/tv_tipe_member"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipe Member" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_layout_tipe_member"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconTint="@color/dark_grey"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null"
+            app:errorIconTint="@color/red"
+            app:errorTextColor="@color/red"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_tipe_member"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_edit_text"
+                android:drawablePadding="12sp"
+                android:ems="10"
+                android:hint="Masukkan tipe member"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColorHint="@color/dark_grey"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_bulan"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jumlah Bulan Berlaku" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_layout_bulan"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconTint="@color/dark_grey"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null"
+            app:errorIconTint="@color/red"
+            app:errorTextColor="@color/red"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_tipe_bulan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_edit_text"
+                android:drawablePadding="12sp"
+                android:ems="10"
+                android:hint="Masukkan jumlah bulan"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColorHint="@color/dark_grey"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_harga"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Harga Membership" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_layout_harga"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            android:background="@drawable/custom_edit_text">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Prefix Text -->
+                <TextView
+                    style="@style/textStyleSemIBold_14"
+                    android:id="@+id/prefix_rp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="RP"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="14sp" />
+
+                <!-- TextInputEditText -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_tipe_harga"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Masukkan harga"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_syarat_ketentuan"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Syarat dan ketentuan" />
+
+        <TextView
+            android:id="@+id/tv_syarat_ketentuan_deskripsi"
+            style="@style/textStyleMedium_12"
+            android:textColor="@color/dark_grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apabila lebih dari 1 dapat ditampilkan secara terpisah dengan tanda pemisah berupa titik koma (;) antar setiap poinnya" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_layout_syarat_ketentuan"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:endIconTint="@color/dark_grey"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null"
+            app:errorIconTint="@color/red"
+            app:errorTextColor="@color/red"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ti_tipe_syarat_ketentuan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_edit_text"
+                android:drawablePadding="12sp"
+                android:ems="10"
+                android:hint="Masukkan syarat dan ketentuan"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColorHint="@color/dark_grey"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_potongan_harga"
+            style="@style/textStyleMedium_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potongan Harga" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ti_layout_potongan_harga"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            android:background="@drawable/custom_edit_text">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Prefix Text -->
+                <TextView
+                    style="@style/textStyleSemIBold_14"
+                    android:id="@+id/prefix_rp_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="RP"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="14sp" />
+
+                <!-- TextInputEditText -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_tipe_potongan_harga"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Masukkan potongan harga"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_add"
+        style="@style/textStyleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button"
+        android:elevation="0dp"
+        android:padding="10dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="Tambah"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

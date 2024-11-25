@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.dashboard.member.detailmember.DetailMemberActivity">
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/icons_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/detail_title"
+        style="@style/textStyleMedium_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Detail Member"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btn_menu"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/icon_dots"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detail_title">
+
+        <TextView
+            style="@style/textStyleMedium_16"
+            android:id="@+id/tv_history_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_view"
+            android:layout_alignParentStart="true"
+            android:text="Detail Membership"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_history_data"
+            android:layout_marginTop="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_background_white"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <!-- Status -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tipe:"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/textStyleSemIBold_10_selected"
+                        android:id="@+id/tv_tipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="silver"
+                        android:background="@drawable/chip_category"
+                        android:paddingLeft="10dp"
+                        android:paddingBottom="4dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="4dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Tgl Aktivasi -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Exp Member:"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="07:52, 28 Agustus 2023"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+                <!-- Verifikator -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Verifikator:"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Krisna Erlangga"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Mitra -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tgl Transaksi:"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="07:52, 28 Agustus 2023"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            style="@style/textStyleMedium_16"
+            android:id="@+id/tv_member_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_view"
+            android:layout_alignParentStart="true"
+            android:text="Data Member"
+            android:layout_marginTop="32dp"
+            android:textColor="@color/black" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_history_data"
+            android:layout_marginTop="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_background_white"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <!-- Status -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Nama:"
+                        android:textColor="@color/dark_grey" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Benny Darmawan Usman"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <!-- Tgl Aktivasi -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="NIK:"
+                        android:textColor="@color/dark_grey" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="317401602530001"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+
+                <!-- Verifikator -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Telepon:"
+                        android:textColor="@color/dark_grey" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="081338665678"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Alamat:"
+                        android:textColor="@color/dark_grey" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jl. Tukad Pancoran No. 20 C"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Email:"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="krisnaerlangga08@gmail.com"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/detail_profile_ktp_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_close">
+
+            <ImageView
+                android:id="@+id/detail_profile_ktp_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/green"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ktp_example" />
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fb_ubah_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        style="@style/CustomFABStyle"
+        android:clickable="true"
+        android:focusable="true"
+        android:backgroundTint="@color/orange_100"
+        app:tint="@color/white"
+        android:src="@drawable/icon_pencil"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

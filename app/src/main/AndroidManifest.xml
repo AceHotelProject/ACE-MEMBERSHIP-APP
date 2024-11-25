@@ -19,6 +19,24 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.member.detailmember.ubahprofile.UbahProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.floatingvalidasi.detailvalidasi.DetailValidasiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.floatingvalidasi.ValidasiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.member.listeditmember.editmember.EditMemberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.member.listeditmember.ListEditMemberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.member.detailmember.DetailMemberActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.dashboard.admin.addpromo.addpromostatus.AddPromoStatusActivity"
             android:exported="false" />
         <activity

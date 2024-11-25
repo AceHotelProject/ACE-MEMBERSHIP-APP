@@ -110,9 +110,8 @@
 
                     <ImageView
                         android:id="@+id/detail_profile_ktp_image_view"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:backgroundTint="@color/green"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ktp_example" />

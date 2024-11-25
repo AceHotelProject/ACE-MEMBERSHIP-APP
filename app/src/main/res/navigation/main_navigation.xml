@@ -26,6 +26,12 @@
         android:label="fragment_booking"
         tools:layout="@layout/fragment_promo" />
 
+<!--    <fragment-->
+<!--        android:id="@+id/memberFragment"-->
+<!--        android:name="com.dicoding.membership.view.dashboard.member.MemberFragment"-->
+<!--        android:label="fragment_member"-->
+<!--        tools:layout="@layout/fragment_member" />-->
+
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.dicoding.membership.view.dashboard.history.HistoryFragment"

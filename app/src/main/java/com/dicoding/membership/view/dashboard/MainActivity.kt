@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.bottomNavbar
         val navViewController = findNavController(R.id.nav_host_fragment)
 
+//        Bottom Navbar LIMIT ONLY 5 MENU
         val appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
                 R.id.homeFragment,
