@@ -2,24 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".view.dashboard.admin.addmitra.AddMitraActivity">
 
     <ImageView
         android:id="@+id/btn_close"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/icons_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+<!--    Text view diubah Edit Mitra saat Edit Mitra  -->
     <TextView
         android:id="@+id/tambah_mitra_title"
         style="@style/textStyleMedium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="Tambah Mitra"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"

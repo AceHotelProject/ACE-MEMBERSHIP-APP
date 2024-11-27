@@ -93,9 +93,23 @@
                 android:text="Ajuan Promo"
                 android:layout_marginBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ajuan_promo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:itemCount="3"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_dashboard_promo"/>
+            <TextView
+                style="@style/textStyleMedium_16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Promo Mitra"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_promo_mitra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="1"
                 tools:listitem="@layout/item_dashboard_promo"/>
         </LinearLayout>
     </ScrollView>

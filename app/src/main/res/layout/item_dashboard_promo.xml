@@ -79,6 +79,7 @@
                         android:text="This good promo hotel, use plz. This good promo hotel, use plz. This good promo hotel, use plz. This good promo hotel, use plz. This good promo hotel, use plz. "
                         />
 
+<!--                    Visibility dibuat gone dalam keadaan tertentu    -->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

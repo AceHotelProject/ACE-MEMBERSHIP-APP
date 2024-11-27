@@ -19,6 +19,16 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.addpromo.reedempromo.RedeemPromoCodeActivity"
+            android:exported="false"
+            android:theme="@style/Base.Theme.Membership" />
+        <activity
             android:name=".view.dashboard.member.detailmember.ubahprofile.UbahProfileActivity"
             android:exported="false" />
         <activity

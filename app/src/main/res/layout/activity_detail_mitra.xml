@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.promo.detail.detailpromo.PromoDetailActivity">
+    tools:context=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upper_bar"
@@ -38,31 +40,11 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Detail Promo"
+            android:text="Detail Mitra"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/ib_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageView
-                android:id="@+id/btn_menu"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:paddingLeft="11dp"
-                android:paddingRight="11dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:src="@drawable/icon_dots"
-                android:layout_gravity="center_vertical"/>
-        </LinearLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/detail_image_card_view"
@@ -201,7 +183,7 @@
 
             <TextView
                 android:id="@+id/detail_deskripsi"
-                style="@style/textStyleMedium_14"
+                style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -218,42 +200,22 @@
                 android:textColor="@color/dark_grey" />
 
             <TextView
-                android:id="@+id/detail_syarat_dan_ketentuan"
-                style="@style/textStyleMedium_14"
+                android:id="@+id/promo_mitra"
+                style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Syarat dan Ketentuan"
+                android:text="Promo Mitra"
                 android:textColor="@color/black" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/detail_syarat_dan_ketentuan_recycler_view"
+                android:id="@+id/rv_ajuan_promo"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_detail_syarat_dan_ketentuan" />
-
+                tools:itemCount="1"
+                tools:listitem="@layout/item_dashboard_promo"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <Button
-        android:id="@+id/detail_button_pakai"
-        style="@style/textStyleButton"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:background="@drawable/custom_button_clicked"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Pakai"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
