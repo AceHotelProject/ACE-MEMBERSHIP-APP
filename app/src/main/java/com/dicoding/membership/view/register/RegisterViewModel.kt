@@ -3,6 +3,7 @@ package com.dicoding.membership.view.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import com.dicoding.core.domain.test.auth.usecase.AuthUseCaseTester
 import com.dicoding.membership.core.domain.auth.tester.model.RegisterResponseDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,13 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authUseCaseTester: AuthUseCaseTester
+//    private val authUseCaseTester: AuthUseCaseTester
+    private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
-    private val _registerResult = MutableStateFlow<Resource<RegisterResponseDomain>>(Resource.Loading())
-    val registerResult: StateFlow<Resource<RegisterResponseDomain>> = _registerResult
-
-    fun register(name: String, email: String, password: String) =
-        authUseCaseTester.registerUser(name, email, password).asLiveData()
-
+    fun register( email: String, password: String) =
+        authUseCase.register(email, password).asLiveData()
 }

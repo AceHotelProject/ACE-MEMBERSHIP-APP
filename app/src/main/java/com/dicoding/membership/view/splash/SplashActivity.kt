@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
                 }, DELAY.toLong())
             } else {
                 Handler().postDelayed({
-                    val intentToLogin = Intent(this, LoginActivity::class.java)
+                    val intentToLogin = Intent(this, WelcomeActivity::class.java)
                     intentToLogin.flags =
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intentToLogin)

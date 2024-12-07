@@ -15,6 +15,7 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
+import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.databinding.ActivityRegisterBinding
 import com.dicoding.membership.view.login.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +28,9 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         isButtonEnabled(false)
         handleEditText()
@@ -147,7 +151,7 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.edRegisterEmail.text.toString()
             val password = binding.edRegisterPass.text.toString()
 
-            registerViewModel.register("Daffa", email, password).observe(this) { result ->
+            registerViewModel.register(email, password).observe(this) { result ->
                 when (result) {
                     is Resource.Error -> {
                         showLoading(false)
@@ -177,7 +181,6 @@ class RegisterActivity : AppCompatActivity() {
                         isButtonEnabled(true)
                         showToast(getString(R.string.register_success))
 
-                        // Navigate to LoginActivity
                         navigateToLoginActivity()
                     }
 

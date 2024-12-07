@@ -10,7 +10,9 @@ import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.LoginUser
+import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.RegisterDomain
 import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.repository.IAuthRepository
 import com.dicoding.core.utils.datamapper.AuthDataMapper
@@ -46,6 +48,18 @@ class AuthRepository @Inject constructor(
                 localDataSource.insertUser(userEntity)
             }
         }
+    }
+
+    override fun register(email: String, password: String): Flow<Resource<RegisterDomain>> {
+        return object : NetworkBoundResource<RegisterDomain, RegisterResponse>() {
+            override suspend fun fetchFromApi(response: RegisterResponse): RegisterDomain {
+                return AuthDataMapper.mapRegisterResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<RegisterResponse>> {
+                return remoteDataSource.register(email, password)
+            }
+        }.asFlow()
     }
 
     override fun login(email: String, password: String): Flow<Resource<LoginDomain>> {

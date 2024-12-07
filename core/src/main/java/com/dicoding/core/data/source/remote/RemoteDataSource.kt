@@ -5,6 +5,7 @@ import android.util.Log
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
+import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
@@ -75,6 +76,19 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 Log.e(TAG, "Login failed: ${e.message}", e)
+                emit(ApiResponse.Error(e.toString()))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun register(email: String, password: String): Flow<ApiResponse<RegisterResponse>> {
+        return flow {
+            try {
+                Log.d(TAG, "Register attempt for email: $email")
+                val response = apiService.register(email, password)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                Log.e(TAG, "Register failed: ${e.message}", e)
                 emit(ApiResponse.Error(e.toString()))
             }
         }.flowOn(Dispatchers.IO)

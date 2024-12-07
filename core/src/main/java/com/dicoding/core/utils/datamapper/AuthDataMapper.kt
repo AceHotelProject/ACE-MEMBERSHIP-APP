@@ -3,7 +3,9 @@ package com.dicoding.core.utils.datamapper
 import com.dicoding.core.data.source.local.entity.auth.TokenEntity
 import com.dicoding.core.data.source.local.entity.auth.UserEntity
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
+import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.RegisterDomain
 import com.dicoding.core.domain.auth.model.TokensDomain
 import com.dicoding.core.domain.auth.model.TokensFormat
 import com.dicoding.core.domain.auth.model.UserDomain
@@ -22,6 +24,28 @@ object AuthDataMapper {
                 accessTokenExpire = domain.tokens.accessToken.expires,
                 refreshToken = domain.tokens.refreshToken.token,
                 refreshTokenExpire = domain.tokens.refreshToken.expires
+            )
+        )
+    }
+
+    fun mapRegisterResponseToDomain(response: RegisterResponse): RegisterDomain {
+        return RegisterDomain(
+            user = UserDomain(
+                id = response.user?.id.orEmpty(),
+                name = response.user?.name.orEmpty(),
+                email = response.user?.email.orEmpty(),
+                role = response.user?.role.orEmpty(),
+                isEmailVerified = response.user?.isEmailVerified ?: false
+            ),
+            tokens = TokensDomain(
+                accessToken = TokensFormat(
+                    token = response.tokens?.access?.token,
+                    expires = response.tokens?.access?.expires
+                ),
+                refreshToken = TokensFormat(
+                    token = response.tokens?.refresh?.token,
+                    expires = response.tokens?.refresh?.expires
+                )
             )
         )
     }

@@ -2,9 +2,12 @@ package com.dicoding.core.domain.auth.usecase
 
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.RegisterDomain
 import kotlinx.coroutines.flow.Flow
 
 interface AuthUseCase {
+
+    fun register(email: String, password: String): Flow<Resource<RegisterDomain>>
 
     fun login(email: String, password: String): Flow<Resource<LoginDomain>>
 
