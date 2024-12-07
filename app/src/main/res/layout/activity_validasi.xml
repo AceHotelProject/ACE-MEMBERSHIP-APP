@@ -153,6 +153,7 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/iv_buktipembayaran"
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:layout_marginTop="8dp"

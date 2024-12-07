@@ -5,52 +5,50 @@
     android:layout_height="match_parent"
     tools:context=".view.dashboard.admin.addpromo.AdminAddPromoActivity">
 
+    <!-- Header Section -->
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/icons_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/detail_title"
+        style="@style/textStyleMedium_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tambah Promo"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_back" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_back">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="24dp"
+            android:paddingTop="8dp"
             android:paddingEnd="24dp"
-            android:paddingTop="48dp"
             android:paddingBottom="32dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/icons_back"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                <TextView
-                    android:id="@+id/detail_title"
-                    style="@style/textStyleMedium_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="80dp"
-                    android:text="Tambah Promo"
-                    android:textColor="@color/black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_name_mitra"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:text="Nama Mitra" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -69,13 +67,13 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_name"
+                    android:id="@+id/ed_mitra_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
                     android:drawablePadding="12sp"
                     android:ems="10"
-                    android:hint="Masukan nama anda"
+                    android:hint="Masukan nama Mitra"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
@@ -106,7 +104,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
-                    android:id="@+id/trasnfer_menu_tujuan_transfer"
+                    android:id="@+id/ac_tipe_mitra"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Pilih Tipe Mitra"
@@ -127,7 +125,7 @@
                 android:text="Foto Promo" />
 
             <ImageView
-                android:id="@+id/img_ktp_sim"
+                android:id="@+id/iv_promo"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
@@ -160,7 +158,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_nik"
+                    android:id="@+id/ed_add_promo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
@@ -198,7 +196,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_phone"
+                    android:id="@+id/ed_deskripsi_promo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
@@ -245,7 +243,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_register_address"
+                    android:id="@+id/ed_syarat_ketentuan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
@@ -260,14 +258,14 @@
 
             <!-- Submit Button -->
             <Button
-                android:id="@+id/btn_register"
+                android:id="@+id/btn_simpan"
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/custom_button"
                 android:elevation="0dp"
-                android:padding="4dp"
+                android:padding="10dp"
                 android:text="Simpan"
                 android:textAllCaps="false" />
         </LinearLayout>

@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.dicoding.membership.R
+import com.dicoding.membership.databinding.ActivityDetailMemberBinding
+import com.dicoding.membership.databinding.ActivityMainBinding
 
 class DetailMemberActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityDetailMemberBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -18,4 +21,5 @@ class DetailMemberActivity : AppCompatActivity() {
             insets
         }
     }
+
 }

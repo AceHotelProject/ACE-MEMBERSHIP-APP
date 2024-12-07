@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.member.detailmember.DetailMemberActivity">
+    tools:context=".view.dashboard.member.listeditmember.editmember.EditMemberActivity">
     <ImageView
         android:id="@+id/btn_close"
         android:layout_width="24dp"

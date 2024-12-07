@@ -2,6 +2,7 @@ package com.dicoding.membership.view.dashboard
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
@@ -20,6 +21,9 @@ import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showLongToast
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityMainBinding
+import com.dicoding.membership.view.dashboard.admin.addpromo.AdminAddPromoActivity
+import com.dicoding.membership.view.dashboard.admin.addpromo.reedempromo.RedeemPromoCodeActivity
+import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitinstall.SplitInstallManager
@@ -215,12 +219,18 @@ class MainActivity : AppCompatActivity() {
                 when (fab) {
                     binding.fbCoupon -> {
                         showToast("FAB Coupon clicked!")
+                        val intent = Intent(this, RedeemPromoCodeActivity::class.java)
+                        startActivity(intent)
                     }
                     binding.fbValidMembership -> {
                         showToast("FAB Valid Membership clicked!")
+                        val intent = Intent(this, ValidasiActivity::class.java)
+                        startActivity(intent)
                     }
                     binding.fbAddPromo -> {
                         showToast("FAB Add Promo clicked!")
+                        val intent = Intent(this, AdminAddPromoActivity::class.java)
+                        startActivity(intent)
                     }
                     binding.fbMenu -> {
                         toggleFabMenu() // Keep the existing menu FAB functionality
