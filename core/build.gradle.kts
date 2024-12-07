@@ -17,7 +17,8 @@ android {
     defaultConfig {
         minSdk = 21
 
-        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+//        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+        buildConfigField("String", "BASE_URL", "\"https://ace-membership-backend.vercel.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -81,4 +82,7 @@ dependencies {
     // Glide
     implementation(libs.glide)
     ksp(libs.glide.compiler)
+
+    // Timber
+    implementation(libs.timber)
 }

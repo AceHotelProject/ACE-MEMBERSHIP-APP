@@ -5,8 +5,8 @@ import androidx.paging.PagingState
 import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
 import com.dicoding.membership.core.domain.story.tester.model.StoryDomainTester
-import com.dicoding.membership.core.utils.constants.FilterDate
-import com.dicoding.membership.core.utils.datamapper.StoryDataMapper
+import com.dicoding.core.utils.constants.FilterDate
+import com.dicoding.core.utils.datamapper.tester.StoryDataMapper
 import javax.inject.Inject
 
 class ListStoryPagingSource @Inject constructor(

@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.databinding.ActivitySplashBinding
+import com.dicoding.membership.view.login.LoginActivity
 import com.dicoding.membership.view.welcome.WelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,8 +30,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun checkUserInfo() {
-        splashViewModel.getLoginStatus().observe(this) { isLogin ->
-            if (isLogin) {
+        splashViewModel.getAccessToken().observe(this) { token ->
+            if (token != "") {
                 Handler().postDelayed({
                     val intentToHome = Intent(this, MainActivity::class.java)
                     intentToHome.flags =
@@ -39,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
                 }, DELAY.toLong())
             } else {
                 Handler().postDelayed({
-                    val intentToLogin = Intent(this, WelcomeActivity::class.java)
+                    val intentToLogin = Intent(this, LoginActivity::class.java)
                     intentToLogin.flags =
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intentToLogin)

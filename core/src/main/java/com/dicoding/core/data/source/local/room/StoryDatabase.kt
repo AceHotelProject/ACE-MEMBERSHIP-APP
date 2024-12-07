@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.data.source.local.room
+package com.dicoding.core.data.source.local.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -1,4 +1,4 @@
-package com.dicoding.core.domain.auth.tester.usecase
+package com.dicoding.core.domain.test.auth.usecase
 
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.core.domain.auth.tester.model.LoginResponseDomain

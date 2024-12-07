@@ -11,7 +11,9 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.dicoding.core.data.source.local.datastore.DatastoreManager
 import com.dicoding.core.data.source.local.room.StoryDao
-import com.dicoding.membership.core.data.source.local.room.StoryDatabase
+import com.dicoding.core.data.source.local.room.UserDao
+import com.dicoding.core.data.source.local.room.StoryDatabase
+import com.dicoding.core.data.source.local.room.UserDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,6 +54,23 @@ class DatabaseModule {
     @Provides
     fun provideStoryDao(database: StoryDatabase): StoryDao {
         return database.storyDao()
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideUserDatabase(@ApplicationContext context: Context): UserDatabase {
+        return Room.databaseBuilder(
+            context,
+            UserDatabase::class.java,
+            "UserDatabase.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserDao(database: UserDatabase): UserDao {
+        return database.userDao()
     }
 
 

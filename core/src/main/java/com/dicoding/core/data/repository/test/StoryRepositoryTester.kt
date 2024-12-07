@@ -1,4 +1,4 @@
-package com.dicoding.core.data.repository
+package com.dicoding.core.data.repository.test
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -13,7 +13,7 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.membership.core.domain.story.tester.model.StoryDomainTester
 import com.dicoding.membership.core.domain.story.tester.repository.IStoryRepositoryTester
-import com.dicoding.membership.core.utils.datamapper.StoryDataMapper
+import com.dicoding.core.utils.datamapper.tester.StoryDataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

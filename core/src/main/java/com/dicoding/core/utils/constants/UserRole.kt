@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.utils.constants
+package com.dicoding.core.utils.constants
 
 enum class UserRole(val role: String, val display: String) {
     ADMIN("admin", "Admin"),

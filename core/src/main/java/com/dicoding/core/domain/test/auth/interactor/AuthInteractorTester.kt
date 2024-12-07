@@ -1,8 +1,8 @@
 package com.dicoding.membership.core.domain.auth.tester.interactor
 
-import com.dicoding.core.data.repository.AuthRepositoryTester
+import com.dicoding.core.data.repository.test.AuthRepositoryTester
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.auth.tester.usecase.AuthUseCaseTester
+import com.dicoding.core.domain.test.auth.usecase.AuthUseCaseTester
 import com.dicoding.membership.core.domain.auth.tester.model.LoginResponseDomain
 import com.dicoding.membership.core.domain.auth.tester.model.RegisterResponseDomain
 import kotlinx.coroutines.flow.Flow

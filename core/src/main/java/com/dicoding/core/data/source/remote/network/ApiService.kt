@@ -1,5 +1,6 @@
 package com.dicoding.core.data.source.remote.network
 
+import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
@@ -39,7 +40,15 @@ interface ApiService {
     suspend fun getDetailStories(
         @Path("id")id: String
     ): DetailStoryResponse
+/////////////////////////////////////////////////////////////////////////////////
 
+    // Auth
+    @FormUrlEncoded
+    @POST("v1/auth/login")
+    suspend fun login(
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): LoginResponse
 
     // Non Member
 

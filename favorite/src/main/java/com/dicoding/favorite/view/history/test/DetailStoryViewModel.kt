@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.story.tester.usecase.StoryUseCaseTester
+import com.dicoding.core.domain.test.story.usecase.StoryUseCaseTester
 import com.dicoding.membership.core.domain.story.tester.model.StoryDomainTester
 import kotlinx.coroutines.launch
 

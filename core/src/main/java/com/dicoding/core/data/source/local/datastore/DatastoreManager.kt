@@ -31,18 +31,40 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
         }.flowOn(Dispatchers.IO)
     }
 
+    fun saveRefreshToken(token: String): Flow<Boolean> {
+        return flow {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[REFRESH_TOKEN_KEY] = token
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+                Log.e("DatastoreManager", e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
     fun getAccessToken(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[ACCESS_TOKEN_KEY] ?: ""
         }
     }
 
-    suspend fun deleteToken() {
-        dataStore.edit { preferences ->
-            preferences.remove(ACCESS_TOKEN_KEY)
+    fun getRefreshToken(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[REFRESH_TOKEN_KEY] ?: ""
         }
     }
 
+    suspend fun deleteToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(ACCESS_TOKEN_KEY)
+            preferences.remove(REFRESH_TOKEN_KEY)
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////
     fun saveLoginStatus(isLogin: Boolean): Flow<Boolean> {
         return flow {
             try {
@@ -65,6 +87,8 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
 
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
+        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token_key")
+
         private val LOGIN_STATUS_KEY = booleanPreferencesKey("login_status_key")
     }
 }

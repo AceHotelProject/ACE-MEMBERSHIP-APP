@@ -1,4 +1,4 @@
-package com.dicoding.core.domain.story.tester.usecase
+package com.dicoding.core.domain.test.story.usecase
 
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource

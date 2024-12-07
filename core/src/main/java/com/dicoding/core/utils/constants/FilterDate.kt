@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.utils.constants
+package com.dicoding.core.utils.constants
 
 import com.dicoding.membership.core.utils.DateUtils
 

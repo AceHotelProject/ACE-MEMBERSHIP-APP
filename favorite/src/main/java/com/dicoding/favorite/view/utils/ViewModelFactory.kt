@@ -3,7 +3,7 @@ package com.dicoding.favorite.view.utils
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.core.domain.story.tester.usecase.StoryUseCaseTester
+import com.dicoding.core.domain.test.story.usecase.StoryUseCaseTester
 import com.dicoding.favorite.view.history.test.DetailStoryViewModel
 import com.dicoding.favorite.view.home.HomeViewModel
 import javax.inject.Inject

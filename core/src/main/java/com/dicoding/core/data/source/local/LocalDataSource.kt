@@ -1,13 +1,19 @@
 package com.dicoding.core.data.source.local
 
+import android.util.Log
 import com.dicoding.core.data.source.local.entity.FavoriteStoryEntity
+import com.dicoding.core.data.source.local.entity.auth.UserEntity
 import com.dicoding.core.data.source.local.room.StoryDao
+import com.dicoding.core.data.source.local.room.UserDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalDataSource @Inject constructor(private val storyDao: StoryDao) {
+class LocalDataSource @Inject constructor(
+    private val storyDao: StoryDao,
+    private val userDao: UserDao
+) {
 
     fun getFavoriteStories(): Flow<List<FavoriteStoryEntity>> {
         return storyDao.getFavoriteStories()
@@ -24,4 +30,19 @@ class LocalDataSource @Inject constructor(private val storyDao: StoryDao) {
     suspend fun deleteFavoriteStory(story: FavoriteStoryEntity) {
         storyDao.deleteFavoriteStory(story)
     }
+    ////////////////////////////////////////////////////////////////////
+
+    fun getUser(): Flow<UserEntity?> {
+        Log.d("LocalDataSource", "Getting user data")
+        return userDao.getUser()
+    }
+
+    suspend fun insertUser(user: UserEntity) {
+        Log.d("LocalDataSource", "Inserting user: $user")
+        userDao.insertUser(user)
+    }
+
+    suspend fun updateUser(user: UserEntity) = userDao.updateUser(user)
+
+    suspend fun deleteUser(user: UserEntity) = userDao.deleteUser(user)
 }

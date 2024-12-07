@@ -3,7 +3,7 @@ package com.dicoding.membership.view.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.auth.tester.usecase.AuthUseCaseTester
+import com.dicoding.core.domain.test.auth.usecase.AuthUseCaseTester
 import com.dicoding.membership.core.domain.auth.tester.model.RegisterResponseDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

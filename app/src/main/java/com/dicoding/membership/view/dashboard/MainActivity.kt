@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
 //    private var fabMenuState: FabMenuState = FabMenuState.COLLAPSED
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +60,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        validateLoginStatus()
+        validateToken()
+
+        checkUserRole()
 
         setupBottomNavbar()
 
@@ -70,9 +75,17 @@ class MainActivity : AppCompatActivity() {
         checkNotificationPermission()
     }
 
-    private fun validateLoginStatus() {
-        mainViewModel.getLoginStatus().observe(this) { isLoggedIn ->
-            if (!isLoggedIn) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        mainViewModel.getUser().observe(this) { loginDomain ->
+//            user.user?.role?.let { handleFab(it) }
+            Log.d("MainActivity", "User Data: $loginDomain")
+        }
+    }
+
+    private fun validateToken() {
+        mainViewModel.getRefreshToken().observe(this) { token ->
+            if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
             }
         }

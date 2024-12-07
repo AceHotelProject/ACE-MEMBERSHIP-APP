@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.utils.datamapper
+package com.dicoding.core.utils.datamapper.tester
 
 import com.dicoding.core.data.source.local.entity.FavoriteStoryEntity
 import com.dicoding.core.data.source.remote.response.test.ListStoryItem

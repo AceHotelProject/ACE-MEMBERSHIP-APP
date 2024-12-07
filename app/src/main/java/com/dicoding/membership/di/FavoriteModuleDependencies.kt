@@ -1,6 +1,6 @@
 package com.dicoding.membership.di
 
-import com.dicoding.core.domain.story.tester.usecase.StoryUseCaseTester
+import com.dicoding.core.domain.test.story.usecase.StoryUseCaseTester
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

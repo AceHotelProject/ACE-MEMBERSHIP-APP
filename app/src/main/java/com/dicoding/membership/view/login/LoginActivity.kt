@@ -18,7 +18,6 @@ import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.view.dashboard.MainActivity
-import com.dicoding.membership.view.register.RegisterActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -126,9 +125,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleButtonLogin() {
-        binding.tvRegister.setOnClickListener {
-            navigateToRegisterActivity()
-        }
         binding.btnLogin.setOnClickListener {
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPass.text.toString()
@@ -142,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
                         if (!isInternetAvailable(this)) {
                             showToast(getString(R.string.check_internet))
                         } else {
-                            showToast(getString(R.string.check_data))
+                            showToast("Pastikan email dan password telah benar")
                         }
                     }
 
@@ -159,34 +155,33 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is Resource.Success -> {
-                        val loginData = result.data?.data
-                        if (loginData != null) {
-                            val token = loginData.token
-                            loginViewModel.executeValidateToken(token ?: "").observe(this) { validatedToken ->
-                                if (validatedToken.isNotEmpty()) {
-                                    loginViewModel.saveLoginStatus(true).observe(this) { isLoginSaved ->
-                                        if (isLoginSaved) {
-                                            navigateToMainActivity()
-                                        }
-                                    }
+                        result.data?.let { loginData ->
+                            // Simpan data user
+                            loginViewModel.insertCacheUser(loginData)
+
+                            // Validasi token
+                            loginViewModel.executeValidateToken(
+                                loginData.tokens.refreshToken.token.orEmpty(),
+                                loginData.tokens.accessToken.token.orEmpty()
+                            ).observe(this) { token ->
+                                if (token.isNotEmpty()) {
+                                    validateUser()
                                 }
                             }
                         }
                     }
-
                     else -> {}
                 }
             }
         }
     }
-    private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
-    private fun navigateToRegisterActivity() {
-        val intent = Intent(this, RegisterActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+
+    private fun validateUser() {
+        loginViewModel.getUser().observe(this) {
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+        }
     }
 }
