@@ -1,60 +1,118 @@
 package com.dicoding.membership.view.dashboard.profile
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
+import com.dicoding.membership.databinding.FragmentProfileBinding
+import com.dicoding.membership.databinding.FragmentPromoBinding
+import com.dicoding.membership.view.dashboard.promo.PromoViewModel
+import com.dicoding.membership.view.popup.token.TokenExpiredDialog
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+    ): View {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        validateToken()
+
+        checkUserRole()
+        
+    }
+
+    private fun validateToken() {
+        profileViewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
+            if (token.isEmpty() || token == "") {
+                TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        profileViewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
+
+//            Testing
+            val mockUserRole = UserRole.ADMIN
+            setupUserVisibility(mockUserRole)
+
+//            Use This For Real
+//            setupFabVisibility(userRole)
+
+            Log.d("HomeFragment", "User Role: ${userRole.display}")
+        }
+    }
+
+    private fun setupUserVisibility(userRole: UserRole) {
+        when (userRole) {
+            UserRole.ADMIN -> {
+                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.clGunakanPromo.visibility = View.GONE
+                binding.layoutMembershipku.visibility = View.GONE
+                binding.layoutManajemenMitra.visibility = View.VISIBLE
+            }
+            UserRole.MITRA, UserRole.RECEPTIONIST ->{
+                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.clGunakanPromo.visibility = View.GONE
+                binding.layoutMembershipku.visibility = View.GONE
+                binding.layoutManajemenMitra.visibility = View.GONE
+            }
+            UserRole.MEMBER -> {
+                binding.lnCardMemberCategory.visibility = View.VISIBLE
+                binding.clGunakanPromo.visibility = View.VISIBLE
+                binding.layoutMembershipku.visibility = View.VISIBLE
+                binding.layoutManajemenMitra.visibility = View.GONE
+
+                binding.lnBackgroundMenu.background = null
+            }
+            UserRole.NONMEMBER -> {
+                binding.lnCardMemberCategory.visibility = View.VISIBLE
+                binding.tvCardCategoryMember.visibility = View.GONE
+                binding.tvExpiryDate.visibility = View.GONE
+                binding.clGunakanPromo.visibility = View.VISIBLE
+                binding.layoutMembershipku.visibility = View.VISIBLE
+                binding.layoutManajemenMitra.visibility = View.GONE
+
+                binding.lnCardMemberCategory.setBackgroundResource(R.drawable.background_big_non_member)
+                binding.lnBackgroundMenu.background = null
+            }
+            else -> {
+                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.clGunakanPromo.visibility = View.GONE
+                binding.layoutProfilDiri.visibility = View.GONE
+                binding.layoutMembershipku.visibility = View.GONE
+                binding.layoutPoinku.visibility = View.GONE
+                binding.layoutManajemenMitra.visibility = View.GONE
+                binding.layoutReferralku.visibility = View.GONE
+                binding.layoutCustomerService.visibility = View.GONE
+                binding.layoutKeluar.visibility = View.GONE
+            }
+        }
     }
 }

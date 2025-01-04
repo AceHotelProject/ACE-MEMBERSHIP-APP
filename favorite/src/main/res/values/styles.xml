@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="textStyleMedium_14_selected_green">
         <item name="android:textColor">@color/green</item>
         <item name="fontFamily">@font/poppinsmedium</item>

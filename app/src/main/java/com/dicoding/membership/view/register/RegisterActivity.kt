@@ -15,9 +15,9 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
-import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.databinding.ActivityRegisterBinding
 import com.dicoding.membership.view.login.LoginActivity
+import com.dicoding.membership.view.verification.VerificationActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -180,8 +180,20 @@ class RegisterActivity : AppCompatActivity() {
                         showLoading(false)
                         isButtonEnabled(true)
                         showToast(getString(R.string.register_success))
+//                        If OTP Doesn't Ready
+//                        navigateToLoginActivity()
 
-                        navigateToLoginActivity()
+//                        Change to navigate VerificationActivity
+                        val id = result.data?.user?.id
+                        if (id != null) {
+                            navigateToOtpActivity(id)
+                        } else {
+                            showToast("Error: User ID not found")
+                            Log.e(
+                                "RegisterActivity",
+                                "User ID is null after successful registration"
+                            )
+                        }
                     }
 
                     else -> {}
@@ -193,6 +205,16 @@ class RegisterActivity : AppCompatActivity() {
     private fun navigateToLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    private fun navigateToOtpActivity(id: String) {
+        Log.d("RegisterActivity", "Navigating to Verification Activity with userId: $id")
+        val intent = Intent(this, VerificationActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra(VerificationActivity.EXTRA_USER_ID, id)
+            putExtra(VerificationActivity.EXTRA_AUTO_SEND_OTP, true)
+        }
         startActivity(intent)
     }
 }

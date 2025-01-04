@@ -19,13 +19,16 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.status.StatusTemplateActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity"
             android:exported="false" />
         <activity
-            android:name=".view.dashboard.admin.addpromo.reedempromo.RedeemPromoCodeActivity"
+            android:name=".view.dashboard.floatingcoupon.reedemcoupon.RedeemCouponCodeActivity"
             android:exported="false"
             android:theme="@style/Base.Theme.Membership" />
         <activity
@@ -50,7 +53,7 @@
             android:name=".view.dashboard.admin.addpromo.addpromostatus.AddPromoStatusActivity"
             android:exported="false" />
         <activity
-            android:name=".view.dashboard.admin.addpromo.AdminAddPromoActivity"
+            android:name=".view.dashboard.floatingpromo.StaffAddPromoActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.profile.membershipku.statusupgrademembership.StatusUpgradeMembershipActivity"
@@ -92,16 +95,20 @@
             android:exported="false" />
         <activity
             android:name=".view.welcome.WelcomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Base.Theme.Membership" />
         <activity
             android:name=".view.register.RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Base.Theme.Membership" />
         <activity
             android:name=".view.login.LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Base.Theme.Membership" />
         <activity
             android:name=".view.splash.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Base.Theme.Membership">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

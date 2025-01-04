@@ -7,38 +7,111 @@
     tools:context=".view.dashboard.profile.ProfileFragment"
     android:background="@color/light_grey_100">
 
-<!--    Layout Admin dan Mitra   -->
+
     <LinearLayout
-        android:id="@+id/layout_admin_dan_mitra"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            style="@style/textStyleSemIBold_32"
+            android:id="@+id/title_Profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profil"
+            android:layout_marginTop="32sp"
+            android:layout_marginStart="24sp"
+            android:layout_marginEnd="24sp"
+            android:textColor="@color/black"/>
+
+        <!-- PROMO BANNER hanya untuk role USER MEMBER dan NON MEMBER -->
         <LinearLayout
+            android:id="@+id/ln_card_member_category"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16sp"
+            android:layout_marginStart="24sp"
+            android:layout_marginEnd="24sp"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:background="@drawable/background_mini_ace_silver">
             <TextView
-                style="@style/textStyleSemIBold_32"
-                android:id="@+id/title_profile_admin"
+                android:id="@+id/tv_card_category_member"
+                style="@style/textStyleButton"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginTop="32sp"
-                android:layout_marginEnd="24sp"
-                android:text="Profil"
-                android:textColor="@color/black"/>
+                android:text="Ace Silver"
+                android:textSize="24sp"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/tv_expiry_date"
+                style="@style/textStyleMedium_14"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="Exp 28 Desember 2023"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_gunakan_promo"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="24sp"
+            android:layout_marginEnd="24sp"
+            android:background="@drawable/custom_button_profile_gunakanpromo">
+
+            <TextView
+                android:id="@+id/textView"
+                style="@style/textStyleMedium_custom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Ayo gunakan promo"
+                android:textColor="@color/orange_100"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_coupon_count"
+                style="@style/textStyleButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="16 kupon"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- promo banner END -->
+
         <LinearLayout
+            android:id="@+id/ln_background_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="16sp"
             android:background="@drawable/custom_background_history"
             android:orientation="vertical">
 
+            <!-- Role: ALL -->
             <LinearLayout
-                android:id="@+id/profile_profil_diri_layout_admin"
+                android:id="@+id/layout_profil_diri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -48,14 +121,14 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_profil_diri_icon_admin"
+                    android:id="@+id/iv_profil_diri_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:padding="3dp"
                     android:src="@drawable/icons_profile_profile" />
 
                 <TextView
-                    android:id="@+id/profile_profil_diri_text_admin"
+                    android:id="@+id/tv_profil_diri"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -65,7 +138,46 @@
                     android:textColor="@color/dark_grey" />
 
                 <ImageView
-                    android:id="@+id/profile_profil_diri_arrow_admin"
+                    android:id="@+id/iv_arrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:paddingEnd="6dp"
+                    android:paddingStart="7dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/icons_chevron_right" />
+
+            </LinearLayout>
+
+            <!-- Role: User Member dan Non Member -->
+            <LinearLayout
+                android:id="@+id/layout_membershipku"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24sp"
+                android:layout_marginEnd="24sp"
+                android:layout_marginBottom="28dp">
+
+                <ImageView
+                    android:id="@+id/iv_membershipku_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:padding="2dp"
+                    android:src="@drawable/icons_membershipku" />
+
+                <TextView
+                    android:id="@+id/tv_membershipku"
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="Membershipku"
+                    android:textColor="@color/dark_grey" />
+
+                <ImageView
+                    android:id="@+id/iv_arrow1"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:paddingEnd="6dp"
@@ -76,8 +188,9 @@
                     android:src="@drawable/icons_chevron_right" />
             </LinearLayout>
 
+            <!-- Role: ALL -->
             <LinearLayout
-                android:id="@+id/profile_poinku_layout_admin"
+                android:id="@+id/layout_poinku"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24sp"
@@ -85,14 +198,14 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_poinku_icon_admin"
+                    android:id="@+id/iv_poinku_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:padding="2dp"
                     android:src="@drawable/icons_poinku" />
 
                 <TextView
-                    android:id="@+id/profile_poinku_text_admin"
+                    android:id="@+id/tv_poinku"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -102,7 +215,7 @@
                     android:textColor="@color/dark_grey" />
 
                 <ImageView
-                    android:id="@+id/profile_poinku_arrow_admin"
+                    android:id="@+id/iv_arrow3"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:paddingEnd="6dp"
@@ -114,8 +227,9 @@
 
             </LinearLayout>
 
+            <!-- Role: Admin -->
             <LinearLayout
-                android:id="@+id/profile_manajemen_mitra_layout_admin"
+                android:id="@+id/layout_manajemen_mitra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24sp"
@@ -123,14 +237,14 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_manajemen_mitra_icon_admin"
+                    android:id="@+id/iv_manajemen_mitra_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:padding="2dp"
-                    android:src="@drawable/icon_profiles" />
+                    android:padding="1dp"
+                    android:src="@drawable/icon_manajemen_mitra" />
 
                 <TextView
-                    android:id="@+id/profile_manajemen_mitra_text_admin"
+                    android:id="@+id/tv_manajemen_mitra"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -140,7 +254,7 @@
                     android:textColor="@color/dark_grey" />
 
                 <ImageView
-                    android:id="@+id/profile_manajemen_mitra_arrow_admin"
+                    android:id="@+id/iv_arrow4"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:paddingEnd="6dp"
@@ -152,8 +266,9 @@
 
             </LinearLayout>
 
+            <!-- Role: ALL -->
             <LinearLayout
-                android:id="@+id/profile_poinku2_layout_admin"
+                android:id="@+id/layout_referralku"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24sp"
@@ -161,24 +276,24 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_poinku2_icon_admin"
+                    android:id="@+id/iv_referralku_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:padding="2dp"
-                    android:src="@drawable/icons_poinku" />
+                    android:src="@drawable/icons_referralku" />
 
                 <TextView
-                    android:id="@+id/profile_poinku2_text_admin"
+                    android:id="@+id/tv_referralku"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="Poinku"
-                    android:textColor="@color/dark_grey" />
+                    android:text="Refferalku"
+                    android:textColor="@color/dark_grey"  />
 
                 <ImageView
-                    android:id="@+id/profile_poinku2_arrow_admin"
+                    android:id="@+id/iv_arrow5"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:paddingEnd="6dp"
@@ -190,8 +305,9 @@
 
             </LinearLayout>
 
+            <!-- Role: ALL -->
             <LinearLayout
-                android:id="@+id/profile_customer_service_layout_admin"
+                android:id="@+id/layout_customer_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24sp"
@@ -199,27 +315,24 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_customer_service_icon_admin"
+                    android:id="@+id/iv_customer_service_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:padding="1dp"
+                    android:padding="2dp"
                     android:src="@drawable/icons_customer_service" />
 
                 <TextView
-                    android:id="@+id/profile_customer_service_text_admin"
+                    android:id="@+id/tv_customer_service"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="Customer service"
-                    android:textColor="@color/dark_grey"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textColor="@color/dark_grey" />
 
                 <ImageView
-                    android:id="@+id/profile_customer_service_arrow_admin"
+                    android:id="@+id/iv_arrow6"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:paddingEnd="6dp"
@@ -231,8 +344,9 @@
 
             </LinearLayout>
 
+            <!-- Role: ALL -->
             <LinearLayout
-                android:id="@+id/profile_keluar_layout_admin"
+                android:id="@+id/layout_keluar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24sp"
@@ -240,14 +354,14 @@
                 android:layout_marginBottom="28dp">
 
                 <ImageView
-                    android:id="@+id/profile_keluar_icon_admin"
+                    android:id="@+id/iv_keluar_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:padding="3dp"
+                    android:padding="1dp"
                     android:src="@drawable/icons_keluar" />
 
                 <TextView
-                    android:id="@+id/profile_keluar_text_admin"
+                    android:id="@+id/tv_keluar"
                     style="@style/textStyleMedium_14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -16,10 +16,10 @@
         android:icon="@drawable/icons_promo"
         android:title="@string/promo" />
 
-<!--    <item-->
-<!--        android:id="@+id/memberFragment"-->
-<!--        android:icon="@drawable/icon_membership"-->
-<!--        android:title="Member"/>-->
+    <!--    <item-->
+    <!--        android:id="@+id/memberFragment"-->
+    <!--        android:icon="@drawable/icon_membership"-->
+    <!--        android:title="Member"/>-->
 
     <item
         android:id="@+id/historyFragment"

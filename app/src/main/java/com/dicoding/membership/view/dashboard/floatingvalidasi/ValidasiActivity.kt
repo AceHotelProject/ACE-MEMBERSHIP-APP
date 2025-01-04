@@ -18,6 +18,7 @@ import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityRedeemPromoCodeBinding
 import com.dicoding.membership.databinding.ActivityRegisterBinding
 import com.dicoding.membership.databinding.ActivityValidasiBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 
 class ValidasiActivity : AppCompatActivity() {
     private lateinit var binding: ActivityValidasiBinding
@@ -30,13 +31,13 @@ class ValidasiActivity : AppCompatActivity() {
 
         isButtonEnabled(false)
         handleEditText()
+        handleMenuButton()
         setupImagePicker()
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {
         binding.btnContinue.isEnabled = isEnabled
 
-        // Tampilkan toast jika button diklik tapi gambar belum dipilih
         if (!isEnabled && !isImageSelected) {
             binding.btnContinue.setOnClickListener {
                 Toast.makeText(this, "Bukti pembayaran harus diupload", Toast.LENGTH_SHORT).show()
@@ -56,6 +57,15 @@ class ValidasiActivity : AppCompatActivity() {
                 checkForms()
             }
         })
+    }
+
+    private fun handleMenuButton() {
+        binding.btnClose.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun setupImagePicker() {

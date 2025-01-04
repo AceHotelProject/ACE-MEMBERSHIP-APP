@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_promo"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@drawable/custom_image_upload"
+        android:scaleType="centerInside"
+        android:src="@drawable/icons_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_promo">
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:background="@color/orange_25" />
+        <TextView
+            style="@style/textStyleMedium_14"
+            android:id="@+id/tv_remove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/orange_100"
+            android:text="Remove"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:gravity="center" />
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:background="@color/orange_25"/>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

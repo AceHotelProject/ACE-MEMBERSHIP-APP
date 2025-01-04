@@ -2,6 +2,7 @@ package com.dicoding.core.domain.auth.usecase
 
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
 import kotlinx.coroutines.flow.Flow
 
@@ -24,4 +25,8 @@ interface AuthUseCase {
     fun getRefreshToken(): Flow<String>
 
     suspend fun deleteToken()
+
+    fun sendOtp(id: String): Flow<Resource<OtpDomain>>
+
+    fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>>
 }

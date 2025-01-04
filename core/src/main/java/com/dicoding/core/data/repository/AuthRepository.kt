@@ -9,11 +9,11 @@ import com.dicoding.core.data.source.local.datastore.DatastoreManager
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
-import com.dicoding.core.data.source.remote.response.auth.LoginUser
+import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
-import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.repository.IAuthRepository
 import com.dicoding.core.utils.datamapper.AuthDataMapper
 import com.dicoding.membership.core.utils.AppExecutors
@@ -22,7 +22,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -92,5 +91,29 @@ class AuthRepository @Inject constructor(
 
     override suspend fun deleteToken() {
         return datastoreManager.deleteToken()
+    }
+
+    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
+        return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
+            override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
+                return AuthDataMapper.mapOtpResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
+                return remoteDataSource.sendOtp(id)
+            }
+        }.asFlow()
+    }
+
+    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
+        return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
+            override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
+                return AuthDataMapper.mapOtpResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
+                return remoteDataSource.verifyOtp(id, token)
+            }
+        }.asFlow()
     }
 }

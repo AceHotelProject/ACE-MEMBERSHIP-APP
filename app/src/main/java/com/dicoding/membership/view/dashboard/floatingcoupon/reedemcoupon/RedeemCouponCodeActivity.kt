@@ -1,12 +1,14 @@
-package com.dicoding.membership.view.dashboard.admin.addpromo.reedempromo
+package com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.membership.databinding.ActivityRedeemPromoCodeBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 
-class RedeemPromoCodeActivity : AppCompatActivity() {
+class RedeemCouponCodeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRedeemPromoCodeBinding
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,8 +16,18 @@ class RedeemPromoCodeActivity : AppCompatActivity() {
         binding = ActivityRedeemPromoCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        handleMenuButton()
         isButtonEnabled(false)
         handleEditText()
+    }
+
+    private fun handleMenuButton() {
+        binding.btnClose.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {

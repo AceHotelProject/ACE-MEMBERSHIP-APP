@@ -1,6 +1,7 @@
 package com.dicoding.membership.view.login
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,6 +11,7 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
@@ -18,6 +20,7 @@ import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.view.dashboard.MainActivity
+import com.dicoding.membership.view.verification.VerificationActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -101,19 +104,45 @@ class LoginActivity : AppCompatActivity() {
                 binding.layoutLoginEmail.error = null
             }
 
-            if (pass.length < 8) {
-                binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
-            } else {
-                binding.layoutLoginPass.error = null
+            when {
+                pass.isEmpty() -> {
+                    binding.layoutLoginPass.error = "Password tidak boleh kosong"
+                }
+                pass.length < 8 -> {
+                    binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
+                }
+                !pass.any { it.isDigit() } -> {
+                    binding.layoutLoginPass.error = "Password harus mengandung angka"
+                }
+                !pass.any { it.isUpperCase() } -> {
+                    binding.layoutLoginPass.error = "Password harus mengandung huruf besar"
+                }
+                !pass.any { it.isLowerCase() } -> {
+                    binding.layoutLoginPass.error = "Password harus mengandung huruf kecil"
+                }
+                !pass.any { !it.isLetterOrDigit() } -> {
+                    binding.layoutLoginPass.error = "Password harus mengandung karakter khusus"
+                }
+                else -> {
+                    binding.layoutLoginPass.error = null
+                }
             }
 
             isButtonEnabled(
                 email.isNotEmpty()
                         && pass.isNotEmpty()
-                        && pass.length >= 8
+                        && isPasswordValid(pass)
                         && Patterns.EMAIL_ADDRESS.matcher(email).matches()
             )
         }
+    }
+
+    private fun isPasswordValid(password: String): Boolean {
+        val hasNumber = password.any { it.isDigit() }
+        val hasUppercase = password.any { it.isUpperCase() }
+        val hasLowercase = password.any { it.isLowerCase() }
+        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
+        return hasNumber && hasUppercase && hasLowercase && hasSpecialChar && password.length >= 8
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {
@@ -126,6 +155,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleButtonLogin() {
         binding.btnLogin.setOnClickListener {
+
+            hideKeyboard()
+
             val email = binding.edLoginEmail.text.toString()
             val password = binding.edLoginPass.text.toString()
 
@@ -165,7 +197,11 @@ class LoginActivity : AppCompatActivity() {
                                 loginData.tokens.accessToken.token.orEmpty()
                             ).observe(this) { token ->
                                 if (token.isNotEmpty()) {
-                                    validateUser()
+                                    navigateToMainActivity()
+                                } else {
+                                    showToast("Token tidak valid")
+                                    showLoading(false)
+                                    isButtonEnabled(true)
                                 }
                             }
                         }
@@ -176,12 +212,50 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun validateUser() {
-        loginViewModel.getUser().observe(this) {
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-            finish()
+    private fun navigateToMainActivity() {
+        loginViewModel.getUser().observe(this) { loginData ->
+            val token = loginData.tokens.accessToken.token.orEmpty()
+            val isEmailVerified = loginData.user.isEmailVerified
+            val id = loginData.user.id
+
+            when {
+                token.isEmpty() -> {
+                    showToast("Sesi login tidak valid")
+                    showLoading(false)
+                    isButtonEnabled(true)
+                }
+                //                                    If OTP Ready for Testing
+                !isEmailVerified -> {
+                    Log.d("LoginActivity", "Email belum terverifikasi, mengarahkan ke verifikasi OTP")
+                    showLoading(false)
+                    startActivity(Intent(this, VerificationActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        putExtra(EXTRA_USER_ID, id)
+                        putExtra(EXTRA_AUTO_SEND_OTP, false)
+                    })
+                    finish()
+                }
+                else -> {
+                    Log.d("LoginActivity", "Email terverifikasi, mengarahkan ke halaman utama")
+                    showLoading(false)
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    finish()
+                }
+            }
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
+
+    companion object {
+        const val EXTRA_USER_ID = "USER_ID"
+        const val EXTRA_AUTO_SEND_OTP = "AUTO_SEND_OTP"
     }
 }

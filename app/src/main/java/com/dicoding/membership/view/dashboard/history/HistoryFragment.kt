@@ -1,20 +1,32 @@
 package com.dicoding.membership.view.dashboard.history
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentHistoryBinding
+import com.dicoding.membership.view.dashboard.home.HomeViewModel
+import com.dicoding.membership.view.popup.token.TokenExpiredDialog
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
+    private val historyViewModel: HistoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,10 +36,13 @@ class HistoryFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViewPager()
+        validateToken()
+
+        checkUserRole()
 
         setupButtonListeners()
 
@@ -35,9 +50,73 @@ class HistoryFragment : Fragment() {
 
     }
 
-    private fun setupViewPager() {
+    private fun validateToken() {
+        historyViewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
+            if (token.isEmpty() || token == "") {
+                TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        historyViewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
+
+//            Testing
+            val mockUserRole = UserRole.ADMIN
+            setupFabVisibility(mockUserRole)
+            setupViewPager(mockUserRole)
+
+//            Use This For Real
+//            setupFabVisibility(userRole)
+
+            Log.d("HomeFragment", "User Role: ${userRole.display}")
+        }
+    }
+
+    private fun setupFabVisibility(userRole: UserRole) {
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+
+            }
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
+
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    private fun setupViewPager(userRole: UserRole) {
         val adapter = HistoryPagerAdapter(requireActivity())
         binding.viewPager.adapter = adapter
+
+        // Setup visibility dan akses berdasarkan role
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+                binding.btnPromo.visibility = View.VISIBLE
+                binding.btnTransferPoin.visibility = View.VISIBLE
+                binding.btnMember.visibility = View.VISIBLE
+                // Default ke tab pertama
+                binding.viewPager.currentItem = 0
+            }
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
+                binding.btnPromo.visibility = View.VISIBLE
+                binding.btnTransferPoin.visibility = View.VISIBLE
+                binding.btnMember.visibility = View.GONE
+                // Member hanya bisa lihat promo
+                binding.viewPager.currentItem = 0
+                binding.viewPager.isUserInputEnabled = false // Disable swipe
+            }
+            else -> {
+                binding.btnPromo.visibility = View.GONE
+                binding.btnTransferPoin.visibility = View.GONE
+                binding.btnMember.visibility = View.GONE
+                binding.viewPager.visibility = View.GONE
+            }
+        }
     }
 
     private fun setupButtonListeners() {

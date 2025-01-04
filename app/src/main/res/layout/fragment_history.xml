@@ -56,23 +56,24 @@
         app:layout_constraintTop_toBottomOf="@id/imageBack"
         android:padding="4dp">
 
+        <!--        Text Change on Member and Non Member-->
         <Button
             android:id="@+id/btnPromo"
             style="@style/textStyleButton4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
+            android:background="@drawable/custom_button"
             android:text="Promo"
-            android:textColor="@color/white"
-            android:background="@drawable/custom_button"/>
-        <!--        Text Change on Member and Non Member-->
+            android:textColor="@color/white" />
+
         <Button
             android:id="@+id/btnTransferPoin"
             style="@style/textStyleButton4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:text="Poin"
             android:textColor="@color/black"
@@ -83,7 +84,7 @@
             style="@style/textStyleButton4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:text="Member"
             android:textColor="@color/black"
@@ -94,12 +95,8 @@
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonContainer"
+        app:layout_constraintTop_toTopOf="@id/Scroll"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

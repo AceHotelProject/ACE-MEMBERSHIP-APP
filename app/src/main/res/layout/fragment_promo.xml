@@ -42,14 +42,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/promo_category_recyclerview"
+        android:id="@+id/rv_promo_category"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_promo"
@@ -62,7 +62,7 @@
         android:layout_marginTop="16dp"
         android:src="@drawable/custom_background_history"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/promo_category_recyclerview" />
+        app:layout_constraintTop_toBottomOf="@+id/rv_promo_category" />
 
 
     <ScrollView
@@ -71,7 +71,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/promo_category_recyclerview">
+        app:layout_constraintTop_toBottomOf="@id/rv_promo_category">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,33 +87,37 @@
                 android:layout_margin="24dp"
                 android:visibility="gone"/>
             <TextView
+                android:id="@+id/tv_ajuan_promo"
                 style="@style/textStyleMedium_16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:text="Ajuan Promo"
                 android:layout_marginBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:visibility="gone"
                 android:id="@+id/rv_ajuan_promo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:itemCount="1"
                 tools:listitem="@layout/item_dashboard_promo"/>
+            
             <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_promo_mitra"
                 style="@style/textStyleMedium_16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Promo Mitra"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="8dp"/>
+            
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_promo_mitra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:itemCount="1"
+                tools:itemCount="5"
                 tools:listitem="@layout/item_dashboard_promo"/>
         </LinearLayout>
     </ScrollView>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

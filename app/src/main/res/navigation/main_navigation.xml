@@ -3,16 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/homeFragment">
+    tools:ignore="InvalidNavigation">
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.dicoding.favorite.view.home.HomeFragment"
+        android:name="com.dicoding.membership.view.dashboard.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
-        <deepLink
-            app:uri="favoriteapp://story" />
     </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/homeFragment"-->
+<!--        android:name="com.dicoding.favorite.view.home.HomeFragment"-->
+<!--        android:label="fragment_home"-->
+<!--        tools:layout="@layout/fragment_home">-->
+<!--        <deepLink-->
+<!--            app:uri="favoriteapp://story" />-->
+<!--    </fragment>-->
 
     <fragment
         android:id="@+id/mitraFragment"
@@ -26,11 +33,11 @@
         android:label="fragment_booking"
         tools:layout="@layout/fragment_promo" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/memberFragment"-->
-<!--        android:name="com.dicoding.membership.view.dashboard.member.MemberFragment"-->
-<!--        android:label="fragment_member"-->
-<!--        tools:layout="@layout/fragment_member" />-->
+    <fragment
+        android:id="@+id/memberFragment"
+        android:name="com.dicoding.membership.view.dashboard.member.MemberFragment"
+        android:label="fragment_member"
+        tools:layout="@layout/fragment_member" />
 
     <fragment
         android:id="@+id/historyFragment"

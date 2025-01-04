@@ -10,14 +10,14 @@ import com.dicoding.membership.view.dashboard.history.promo.HistoryPromoFragment
 class HistoryPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
-        return 2
+        return 3
     }
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> HistoryPromoFragment()
             1 -> HistoryTransferPointFragment()
-            3 -> HistoryMemberFragment()
+            2 -> HistoryMemberFragment()
             else -> throw IllegalStateException("Invalid position $position")
         }
     }

@@ -3,8 +3,10 @@ package com.dicoding.core.utils.datamapper
 import com.dicoding.core.data.source.local.entity.auth.TokenEntity
 import com.dicoding.core.data.source.local.entity.auth.UserEntity
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
+import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
 import com.dicoding.core.domain.auth.model.TokensDomain
 import com.dicoding.core.domain.auth.model.TokensFormat
@@ -72,7 +74,7 @@ object AuthDataMapper {
         )
     }
 
-    fun mapUserEntityToDomain(entity: UserEntity?): LoginDomain {  // Terima parameter nullable
+    fun mapUserEntityToDomain(entity: UserEntity?): LoginDomain {
         return entity?.let {
             LoginDomain(
                 user = UserDomain(
@@ -105,6 +107,12 @@ object AuthDataMapper {
                 accessToken = TokensFormat(token = null, expires = null),
                 refreshToken = TokensFormat(token = null, expires = null)
             )
+        )
+    }
+
+    fun mapOtpResponseToDomain(response: OtpResponse): OtpDomain {
+        return OtpDomain(
+            message = response.message ?: ""
         )
     }
 }

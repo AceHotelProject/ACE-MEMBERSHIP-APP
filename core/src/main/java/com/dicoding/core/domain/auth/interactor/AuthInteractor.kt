@@ -3,6 +3,7 @@ package com.dicoding.core.domain.auth.interactor
 import com.dicoding.core.data.repository.AuthRepository
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
 import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
@@ -34,4 +35,12 @@ class AuthInteractor @Inject constructor(
     override fun getRefreshToken(): Flow<String> = authRepository.getRefreshToken()
 
     override suspend fun deleteToken() = authRepository.deleteToken()
+
+    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
+        return authRepository.sendOtp(id)
+    }
+
+    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
+        return authRepository.verifyOtp(id, token)
+    }
 }

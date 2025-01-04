@@ -16,15 +16,17 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showLongToast
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityMainBinding
-import com.dicoding.membership.view.dashboard.admin.addpromo.AdminAddPromoActivity
-import com.dicoding.membership.view.dashboard.admin.addpromo.reedempromo.RedeemPromoCodeActivity
+import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
+import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.RedeemCouponCodeActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -62,9 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         validateToken()
 
-        checkUserRole()
-
-        setupBottomNavbar()
+        setupInitialNavigation()
 
         setupFabMenu()
 
@@ -76,10 +76,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkUserRole() {
+    private fun setupInitialNavigation() {
         mainViewModel.getUser().observe(this) { loginDomain ->
-//            user.user?.role?.let { handleFab(it) }
-            Log.d("MainActivity", "User Data: $loginDomain")
+            val userRole = mapToUserRole(loginDomain.user.role)
+
+            //            Testing
+            val mockUserRole = UserRole.ADMIN
+
+            // Setup navigation graph
+            val navHostFragment = supportFragmentManager
+                .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
+
+
+            // Set start destination berdasarkan role
+            navGraph.setStartDestination(
+                when (mockUserRole) { // Ganti dengan userRole untuk production
+                    UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> R.id.mitraFragment
+                    UserRole.MEMBER, UserRole.NONMEMBER -> R.id.homeFragment
+                    else -> R.id.homeFragment
+                }
+            )
+
+            setupBottomNavbar(mockUserRole)
+            setupFabVisibility(mockUserRole)
+
+//            Use This For Real
+//            setupBottomNavbar(userRole)
+//
+//            // Setup FAB visibility berdasarkan role
+//            setupFabVisibility(userRole)
+
+            // Set graph ke nav controller
+            navController.graph = navGraph
+
+            Log.d("MainActivity", "Navigation setup complete for role: ${mockUserRole.display}")
+        }
+    }
+
+    private fun setupFabVisibility(userRole: UserRole) {
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+                binding.fbMenu.visibility = View.VISIBLE
+                binding.promoBanner.visibility = View.GONE
+            }
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
+                binding.fbMenu.visibility = View.GONE
+                binding.promoBanner.visibility = View.VISIBLE
+            }
+            else -> {
+                binding.fbMenu.visibility = View.GONE
+                binding.fbValidMembership.visibility = View.GONE
+            }
         }
     }
 
@@ -91,53 +140,105 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupBottomNavbar() {
+    private fun setupBottomNavbar(userRole: UserRole) {
         val navView: BottomNavigationView = binding.bottomNavbar
         val navViewController = findNavController(R.id.nav_host_fragment)
 
-//        Bottom Navbar LIMIT ONLY 5 MENU
-        val appBarConfiguration = AppBarConfiguration.Builder(
-            setOf(
-                R.id.homeFragment,
-                R.id.mitraFragment,
-                R.id.promoFragment,
-//                R.id.memberFragment,
-                R.id.historyFragment,
-                R.id.profileFragment,
-            )
-        ).build()
+        Log.d("BottomNav", "Setting up bottom nav for role: ${userRole.display}")
 
-//        setupActionBarWithNavController(navViewController, appBarConfiguration)
-        navView.setupWithNavController(navViewController)
+        binding.bottomNavbar.menu.clear()
 
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+                navView.visibility = View.VISIBLE  // Pastikan visibility diset
+                navView.inflateMenu(R.menu.staff_bottom_nav_menu)
+                setupStaffNavigation(navView, navViewController)
+                Log.d("BottomNav", "Inflated staff menu")
+            }
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
+                navView.visibility = View.VISIBLE  // Pastikan visibility diset
+                navView.inflateMenu(R.menu.customer_bottom_nav_menu)
+                setupCustomerNavigation(navView, navViewController)
+                Log.d("BottomNav", "Inflated customer menu")
+            }
+            else -> {
+                navView.visibility = View.VISIBLE  // Pastikan visibility diset
+                navView.inflateMenu(R.menu.customer_bottom_nav_menu)
+                setupCustomerNavigation(navView, navViewController)
+                Log.d("BottomNav", "Inflated default menu")
+            }
+        }
+    }
+
+    private fun setupNavigationListener(navView: BottomNavigationView, navController: NavController) {
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
+//                Dicoding Test
+//                R.id.homeFragment -> {
+//                    checkAndNavigateToFeature("favorite", R.id.homeFragment, navController)
+//                }
                 R.id.homeFragment -> {
-                    checkAndNavigateToFeature("favorite", R.id.homeFragment, navViewController)
+                    navController.navigate(R.id.homeFragment)
                 }
                 R.id.mitraFragment -> {
-                    navViewController.navigate(R.id.mitraFragment)
+                    navController.navigate(R.id.mitraFragment)
                 }
                 R.id.promoFragment -> {
-                    navViewController.navigate(R.id.promoFragment)
+                    navController.navigate(R.id.promoFragment)
                 }
-//                R.id.memberFragment -> {
-//                    navViewController.navigate(R.id.memberFragment)
-//                }
+                R.id.memberFragment -> {
+                    navController.navigate(R.id.memberFragment)
+                }
                 R.id.historyFragment -> {
-                    navViewController.navigate(R.id.historyFragment)
+                    navController.navigate(R.id.historyFragment)
                 }
                 R.id.profileFragment -> {
-                    navViewController.navigate(R.id.profileFragment)
+                    navController.navigate(R.id.profileFragment)
                 }
             }
             true
         }
     }
 
+    private fun setupStaffNavigation(navView: BottomNavigationView, navController: NavController) {
+        val appBarConfiguration = AppBarConfiguration.Builder(
+            setOf(
+                R.id.mitraFragment,
+                R.id.promoFragment,
+                R.id.memberFragment,
+                R.id.historyFragment,
+                R.id.profileFragment,
+            )
+        ).build()
+
+        navView.setupWithNavController(navController)
+        setupNavigationListener(navView, navController)
+    }
+
+    private fun setupCustomerNavigation(navView: BottomNavigationView, navController: NavController) {
+        val appBarConfiguration = AppBarConfiguration.Builder(
+            setOf(
+                R.id.homeFragment,
+                R.id.promoFragment,
+                R.id.historyFragment,
+                R.id.profileFragment,
+            )
+        ).build()
+
+        navView.setupWithNavController(navController)
+        setupNavigationListener(navView, navController)
+    }
+
     private fun setupFabMenu() {
         binding.fbMenu.setOnClickListener {
             toggleFabMenu()
+        }
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navbar)
+
+        // Menunggu hingga tampilan diukur
+        bottomNavigationView.viewTreeObserver.addOnGlobalLayoutListener {
+            val height = bottomNavigationView.measuredHeight
+            Log.d("BottomNavHeight", "Tinggi BottomNavigationView: $height dp")
         }
     }
 
@@ -182,6 +283,7 @@ class MainActivity : AppCompatActivity() {
         isFabMenuOpen = !isFabMenuOpen
     }
 
+//    Dicoding Tester Feature Module
     private fun checkAndNavigateToFeature(moduleName: String, destinationId: Int, navController: NavController) {
         if (splitInstallManager.installedModules.contains(moduleName)) {
             navController.navigate(destinationId)
@@ -194,7 +296,7 @@ class MainActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     navController.navigate(destinationId)
                 }
-                .addOnFailureListener { exception ->
+                .addOnFailureListener {
                     showLongToast("Error installing module: $moduleName")
                 }
         }
@@ -202,24 +304,21 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setFabClickListener() {
-        // Pair FABs with their corresponding TextViews
         val fabTextViewPairs = listOf(
             Pair(binding.fbCoupon, binding.tvCoupon),
             Pair(binding.fbValidMembership, binding.tvValidMembership),
             Pair(binding.fbAddPromo, binding.tvAddPromo),
-            Pair(binding.fbMenu, null) // No associated TextView for menu FAB
+            Pair(binding.fbMenu, null)
         )
 
         fabTextViewPairs.forEach { (fab, textView) ->
             fab.setOnTouchListener { view, motionEvent ->
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        // Shrink FAB and TextView
                         view.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100).start()
                         textView?.animate()?.scaleX(0.8f)?.scaleY(0.8f)?.setDuration(100)?.start()
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        // Restore FAB and TextView to original size
                         view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
                         textView?.animate()?.scaleX(1.0f)?.scaleY(1.0f)?.setDuration(100)?.start()
                     }
@@ -227,12 +326,11 @@ class MainActivity : AppCompatActivity() {
                 false
             }
 
-            // Optional: Add onClickListener for FAB
             fab.setOnClickListener {
                 when (fab) {
                     binding.fbCoupon -> {
                         showToast("FAB Coupon clicked!")
-                        val intent = Intent(this, RedeemPromoCodeActivity::class.java)
+                        val intent = Intent(this, RedeemCouponCodeActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbValidMembership -> {
@@ -242,11 +340,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     binding.fbAddPromo -> {
                         showToast("FAB Add Promo clicked!")
-                        val intent = Intent(this, AdminAddPromoActivity::class.java)
+                        val intent = Intent(this, StaffAddPromoActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbMenu -> {
-                        toggleFabMenu() // Keep the existing menu FAB functionality
+                        toggleFabMenu()
                     }
                 }
             }
