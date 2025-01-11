@@ -149,8 +149,18 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.isEnabled = isEnabled
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    private fun showLoading() {
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+            loadingOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoading() {
+        binding.apply {
+            progressBar.visibility = View.GONE
+            loadingOverlay.visibility = View.GONE
+        }
     }
 
     private fun handleButtonLogin() {
@@ -164,7 +174,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.login(email, password).observe(this) { result ->
                 when (result) {
                     is Resource.Error -> {
-                        showLoading(false)
+                        hideLoading()
                         isButtonEnabled(true)
 
                         if (!isInternetAvailable(this)) {
@@ -175,12 +185,12 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is Resource.Loading -> {
-                        showLoading(true)
+                        showLoading()
                         isButtonEnabled(false)
                     }
 
                     is Resource.Message -> {
-                        showLoading(false)
+                        hideLoading()
                         isButtonEnabled(true)
 
                         Log.d("LoginActivity", result.message.toString())
@@ -200,7 +210,7 @@ class LoginActivity : AppCompatActivity() {
                                     navigateToMainActivity()
                                 } else {
                                     showToast("Token tidak valid")
-                                    showLoading(false)
+                                    hideLoading()
                                     isButtonEnabled(true)
                                 }
                             }
@@ -221,13 +231,13 @@ class LoginActivity : AppCompatActivity() {
             when {
                 token.isEmpty() -> {
                     showToast("Sesi login tidak valid")
-                    showLoading(false)
+                    hideLoading()
                     isButtonEnabled(true)
                 }
                 //                                    If OTP Ready for Testing
                 !isEmailVerified -> {
                     Log.d("LoginActivity", "Email belum terverifikasi, mengarahkan ke verifikasi OTP")
-                    showLoading(false)
+                    hideLoading()
                     startActivity(Intent(this, VerificationActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         putExtra(EXTRA_USER_ID, id)
@@ -237,7 +247,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else -> {
                     Log.d("LoginActivity", "Email terverifikasi, mengarahkan ke halaman utama")
-                    showLoading(false)
+                    hideLoading()
                     startActivity(Intent(this, MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     })

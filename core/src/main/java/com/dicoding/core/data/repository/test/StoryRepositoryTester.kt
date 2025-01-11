@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.dicoding.core.data.source.NetworkBoundResource
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.local.LocalDataSource
-import com.dicoding.core.data.source.paging.ListStoryPagingSource
+import com.dicoding.core.data.source.paging.test.ListStoryPagingSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.network.ApiService
@@ -20,7 +20,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class StoryRepositoryTester @Inject constructor(
+class
+StoryRepositoryTester @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
     private val apiService: ApiService

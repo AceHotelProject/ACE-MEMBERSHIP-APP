@@ -9,11 +9,13 @@ import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
@@ -202,7 +204,13 @@ interface ApiService {
     ): CreatePromoResponse
 
     @GET("v1/promos")
-    suspend fun getPromos(): GetPromoResponse
+    suspend fun getPromos(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10
+    ): GetPromoResponse
+
+    @GET("v1/promos")
+    suspend fun getProposalPromos(): GetPromoResponse
 
     @FormUrlEncoded
     @PATCH("v1/promos/manage/{id}")
@@ -224,25 +232,20 @@ interface ApiService {
     @DELETE("v1/promos/manage/{id}")
     suspend fun deletePromo(
         @Path("id") id: String
-    ): DeletePromoResponse
+    ): Response<Unit>
 
     @POST("v1/promos/activate/{id}")
     suspend fun activatePromo(
-        @Path("id") id: String,
-        @Header("Authorization") token: String
+        @Path("id") id: String
     ): ActivatePromoResponse
 
     @POST("v1/promos/redeem/{token}")
     suspend fun redeemPromo(
         @Path("token") token: String,
-        @Header("Authorization") bearerToken: String
-    ): RedeemPromoResponse
+    ): Response<Unit>
 
     @GET("v1/promos/history")
-    suspend fun getPromoHistory(
-        @Header("Authorization") token: String
-    ): GetPromoHistoryResponse
-
+    suspend fun getPromoHistory(): List<PromoHistoryItem>
     ////////////////////////////////////////////// Merchant
 
 }

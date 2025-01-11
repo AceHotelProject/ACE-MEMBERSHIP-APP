@@ -34,4 +34,22 @@ class StaffAddPromoViewModel @Inject constructor(
         startDate, endDate, memberType, merchantId,
         maximalUse, used, isActive
     ).asLiveData()
+
+    fun editPromo(
+        id: String,
+        token: String,
+        name: String? = null,
+        category: String? = null,
+        detail: String? = null,
+        pictures: List<String>? = null,
+        tnc: List<String>? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        memberType: String? = null,
+        maximalUse: Int? = null,
+        isActive: Boolean? = null
+    ) = promoUseCase.editPromo(
+        id, token, name, category, detail, pictures, tnc,
+        startDate, endDate, memberType, maximalUse, isActive
+    ).asLiveData()
 }

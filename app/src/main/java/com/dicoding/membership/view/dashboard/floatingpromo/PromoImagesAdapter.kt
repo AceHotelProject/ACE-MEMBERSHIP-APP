@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.membership.databinding.ItemMultipleImageUploadBinding
 
+@Suppress("DEPRECATION")
 class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHolder>() {
     private val images = mutableListOf<Uri>()
 

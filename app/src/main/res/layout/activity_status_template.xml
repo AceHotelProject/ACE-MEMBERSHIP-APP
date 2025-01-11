@@ -24,7 +24,7 @@
             style="@style/textStyleSemIBold_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:text="Promo Digunakan"
             android:textSize="28sp"
@@ -33,7 +33,7 @@
         <TextView
             android:id="@+id/tv_status_description"
             style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/dark_grey"

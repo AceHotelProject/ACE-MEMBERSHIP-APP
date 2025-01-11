@@ -75,6 +75,9 @@
             android:name=".view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity"
             android:exported="false" />
         <activity
+            android:name="com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.verification.VerificationActivity"
             android:exported="false" />
         <activity

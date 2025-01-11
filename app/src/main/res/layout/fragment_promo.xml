@@ -49,7 +49,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_promo"
@@ -57,6 +57,7 @@
         tools:itemCount="5"/>
 
     <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -91,19 +92,22 @@
                 style="@style/textStyleMedium_16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:text="Ajuan Promo"
                 android:layout_marginBottom="8dp"/>
+
             <androidx.recyclerview.widget.RecyclerView
-                android:visibility="gone"
                 android:id="@+id/rv_ajuan_promo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:itemCount="1"
-                tools:listitem="@layout/item_dashboard_promo"/>
-            
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_dashboard_promo" />
+
             <TextView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/tv_promo_mitra"
                 style="@style/textStyleMedium_16"
                 android:layout_width="match_parent"
@@ -118,6 +122,18 @@
                 android:layout_height="wrap_content"
                 tools:itemCount="5"
                 tools:listitem="@layout/item_dashboard_promo"/>
+
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/orange_100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
 </androidx.constraintlayout.widget.ConstraintLayout>

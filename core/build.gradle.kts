@@ -56,6 +56,7 @@ dependencies {
 
     // Local
     implementation(libs.room.runtime)
+    implementation(libs.room.paging)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.fragment.ktx)

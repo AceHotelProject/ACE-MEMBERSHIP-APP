@@ -1,11 +1,11 @@
 package com.dicoding.core.domain.promo.repository
 
+import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.interactor.ActivatePromoDomain
-import com.dicoding.core.domain.promo.model.DeletePromoDomain
-import com.dicoding.core.domain.promo.model.GetPromoHistoryDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.core.domain.promo.model.RedeemPromoDomain
 import kotlinx.coroutines.flow.Flow
 
@@ -26,7 +26,9 @@ interface IPromoRepository {
         isActive: Boolean
     ): Flow<Resource<PromoDomain>>
 
-    fun getPromos(): Flow<Resource<GetPromosDomain>>
+    fun getPromos(): Flow<PagingData<PromoDomain>>
+
+    fun getProposalPromos(): Flow<Resource<GetPromosDomain>>
 
     fun editPromo(
         id: String,
@@ -43,11 +45,11 @@ interface IPromoRepository {
         isActive: Boolean? = null
     ): Flow<Resource<PromoDomain>>
 
-    fun deletePromo(id: String): Flow<Resource<DeletePromoDomain>>
+    fun deletePromo(id: String): Flow<Resource<Unit>>
 
-    fun activatePromo(id: String, token: String): Flow<Resource<ActivatePromoDomain>>
+    fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>>
 
-    fun redeemPromo(token: String, bearerToken: String): Flow<Resource<RedeemPromoDomain>>
+    fun redeemPromo(token: String): Flow<Resource<Unit>>
 
-    fun getPromoHistory(token: String): Flow<Resource<GetPromoHistoryDomain>>
+    fun getPromoHistory(): Flow<Resource<List<PromoHistoryDomain>>>
 }

@@ -21,7 +21,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+//        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+
+        buildConfigField("String", "BASE_URL", "\"https://ace-membership-backend.vercel.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -96,6 +98,9 @@ dependencies {
     // Glide
     implementation(libs.glide)
     ksp(libs.glide.compiler)
+
+    // Swipe
+    implementation(libs.androidx.swiperefreshlayout)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

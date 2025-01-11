@@ -118,16 +118,19 @@ class MainActivity : AppCompatActivity() {
     private fun setupFabVisibility(userRole: UserRole) {
         when (userRole) {
             UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
-                binding.fbMenu.visibility = View.VISIBLE
+                binding.lnFab1.visibility = View.VISIBLE
                 binding.promoBanner.visibility = View.GONE
+                binding.bottomNavbar.visibility = View.VISIBLE
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
-                binding.fbMenu.visibility = View.GONE
+                binding.lnFab1.visibility = View.GONE
                 binding.promoBanner.visibility = View.VISIBLE
+                binding.bottomNavbar.visibility = View.VISIBLE
             }
             else -> {
-                binding.fbMenu.visibility = View.GONE
+                binding.lnFab1.visibility = View.GONE
                 binding.fbValidMembership.visibility = View.GONE
+                binding.bottomNavbar.visibility = View.GONE
             }
         }
     }

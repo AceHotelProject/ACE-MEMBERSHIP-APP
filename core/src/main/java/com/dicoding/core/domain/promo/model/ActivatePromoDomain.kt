@@ -1,4 +1,4 @@
-package com.dicoding.core.domain.promo.interactor
+package com.dicoding.core.domain.promo.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

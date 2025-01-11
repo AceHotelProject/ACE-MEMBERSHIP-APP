@@ -4,12 +4,11 @@ import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
-import com.dicoding.core.domain.promo.interactor.ActivatePromoDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.DeletePromoDomain
-import com.dicoding.core.domain.promo.model.GetPromoHistoryDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
@@ -105,22 +104,23 @@ object PromoDataMapper {
         )
     }
 
-    fun mapGetPromoHistoryResponseToDomain(input: GetPromoHistoryResponse): GetPromoHistoryDomain {
-        return GetPromoHistoryDomain(
-            totalResults = input.totalResults ?: 0,
-            limit = input.limit ?: 0,
-            totalPages = input.totalPages ?: 0,
-            page = input.page ?: 0,
-            results = input.results?.filterNotNull()?.map {
-                PromoHistoryDomain(
-                    promoId = it.promoId ?: "",
-                    redeemDate = it.redeemDate ?: "",
-                    userId = it.userId ?: "",
-                    promoName = it.promoName ?: "",
-                    status = it.status ?: ""
-                )
-            } ?: emptyList()
-        )
+    fun mapGetPromoHistoryResponseToDomain(input: List<PromoHistoryItem>): List<PromoHistoryDomain> {
+        return input.map { item ->
+            PromoHistoryDomain(
+                promoName = item.promoName ?: "",
+                promoCategory = item.promoCategory ?: "",
+                promoDetail = item.promoDetail ?: "",
+                promoPictures = item.promoPictures ?: emptyList(),
+                promoTnc = item.promoTnc ?: emptyList(),
+                promoMemberType = item.promoMemberType ?: "",
+                userName = item.userName ?: "Anonymous",
+                tokenCode = item.tokenCode ?: "",
+                merchantName = item.merchantName ?: "Unknown Merchant",
+                activationDate = item.activationDate ?: "",
+                status = item.status ?: "",
+                id = item.id ?: ""
+            )
+        }
     }
 
     fun mapActivatePromoResponseToDomain(input: ActivatePromoResponse): ActivatePromoDomain {

@@ -9,6 +9,7 @@
         android:src="@drawable/icons_dot2" />
     <TextView
         style="@style/textStyleMedium_14"
+        android:id="@+id/tv_tnc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"

@@ -1,4 +1,4 @@
-package com.dicoding.core.data.source.local.room
+package com.dicoding.core.data.source.local.room.user
 
 import androidx.room.*
 import com.dicoding.core.data.source.local.entity.auth.UserEntity

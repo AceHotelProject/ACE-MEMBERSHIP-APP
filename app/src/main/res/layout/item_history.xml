@@ -13,7 +13,7 @@
         android:orientation="horizontal">
         <TextView
             style="@style/textStyleMedium_14"
-            android:id="@+id/tv_member_category"
+            android:id="@+id/tv_red_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="silver"
@@ -30,7 +30,7 @@
             android:gravity="center" />
         <TextView
             style="@style/textStyleMedium_14"
-            android:id="@+id/tv_member_status"
+            android:id="@+id/tv_colour_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hotel"

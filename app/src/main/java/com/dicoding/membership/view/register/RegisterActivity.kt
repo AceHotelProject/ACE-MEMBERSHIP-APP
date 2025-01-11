@@ -139,9 +139,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.btnRegister.isEnabled = isEnabled
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
 
     private fun handleButtonRegister() {
         binding.tvLogin.setOnClickListener{
@@ -154,7 +151,7 @@ class RegisterActivity : AppCompatActivity() {
             registerViewModel.register(email, password).observe(this) { result ->
                 when (result) {
                     is Resource.Error -> {
-                        showLoading(false)
+                        hideLoading()
                         isButtonEnabled(true)
 
                         if (!isInternetAvailable(this)) {
@@ -165,19 +162,19 @@ class RegisterActivity : AppCompatActivity() {
                     }
 
                     is Resource.Loading -> {
-                        showLoading(true)
+                        showLoading()
                         isButtonEnabled(false)
                     }
 
                     is Resource.Message -> {
-                        showLoading(false)
+                        hideLoading()
                         isButtonEnabled(true)
 
                         Log.d("RegisterActivity", result.message.toString())
                     }
 
                     is Resource.Success -> {
-                        showLoading(false)
+                        hideLoading()
                         isButtonEnabled(true)
                         showToast(getString(R.string.register_success))
 //                        If OTP Doesn't Ready
@@ -216,5 +213,19 @@ class RegisterActivity : AppCompatActivity() {
             putExtra(VerificationActivity.EXTRA_AUTO_SEND_OTP, true)
         }
         startActivity(intent)
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+            loadingOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoading() {
+        binding.apply {
+            progressBar.visibility = View.GONE
+            loadingOverlay.visibility = View.GONE
+        }
     }
 }

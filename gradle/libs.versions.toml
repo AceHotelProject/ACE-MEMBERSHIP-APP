@@ -29,6 +29,7 @@ glide = "4.15.1"
 dagger = "2.30.1"
 featureDeliveryKtx = "2.1.0"
 timber = "5.0.1"
+swiperefreshlayout = "1.1.0"
 
 
 [libraries]
@@ -48,6 +49,7 @@ logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-intercep
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
@@ -70,6 +72,7 @@ dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", versi
 feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "featureDeliveryKtx" }
 floating-action-button = { group = "com.github.clans", name = "fab", version = "1.6.4" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

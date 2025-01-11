@@ -10,10 +10,12 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.dicoding.core.data.source.local.datastore.DatastoreManager
-import com.dicoding.core.data.source.local.room.StoryDao
-import com.dicoding.core.data.source.local.room.UserDao
-import com.dicoding.core.data.source.local.room.StoryDatabase
-import com.dicoding.core.data.source.local.room.UserDatabase
+import com.dicoding.core.data.source.local.room.promo.PromoDao
+import com.dicoding.core.data.source.local.room.promo.PromoDatabase
+import com.dicoding.core.data.source.local.room.test.StoryDao
+import com.dicoding.core.data.source.local.room.user.UserDao
+import com.dicoding.core.data.source.local.room.test.StoryDatabase
+import com.dicoding.core.data.source.local.room.user.UserDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,6 +73,21 @@ class DatabaseModule {
     @Provides
     fun provideUserDao(database: UserDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providePromoDatabase(@ApplicationContext context: Context): PromoDatabase {
+        return Room.databaseBuilder(
+            context,
+            PromoDatabase::class.java,
+            "promo_database.db"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    fun providePromoDao(database: PromoDatabase): PromoDao {
+        return database.promoDao()
     }
 
 

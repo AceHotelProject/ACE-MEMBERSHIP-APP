@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityAdminAddPromoBinding
 import com.dicoding.membership.view.dashboard.MainActivity
@@ -46,6 +48,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
     private val selectedImages = mutableListOf<Uri>()
 
+    private var isEditMode = false
+
+    private var promoId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdminAddPromoBinding.inflate(layoutInflater)
@@ -65,9 +71,16 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
         setupImagePicker()
 
-//        setupSubmitButton()
+        setupSubmitButton()
 
         setupRecyclerView()
+
+        ////////////////////////////////// Edit Promo
+
+        setupEditMode()
+
+        setupViews()
+
     }
 
     private fun validateToken() {
@@ -110,10 +123,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
-
+                checkForms()
             }
         })
 
@@ -122,10 +135,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
-
+                checkForms()
             }
         })
 
@@ -134,10 +147,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
-
+                checkForms()
             }
         })
         binding.edDeskripsiPromo.addTextChangedListener(object : TextWatcher {
@@ -145,10 +158,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
-
+                checkForms()
             }
         })
         binding.edSyaratKetentuan.addTextChangedListener(object : TextWatcher {
@@ -159,14 +172,15 @@ class StaffAddPromoActivity : AppCompatActivity() {
                 checkForms()
             }
             override fun afterTextChanged(p0: Editable?) {
+                checkForms()
             }
         })
         binding.edStartDate.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
                 checkForms()
@@ -175,10 +189,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
         binding.edEndDate.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
                 checkForms()
@@ -235,9 +249,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             }
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                checkForms()
+
             }
             override fun afterTextChanged(p0: Editable?) {
+                checkForms()
             }
         })
     }
@@ -311,6 +326,23 @@ class StaffAddPromoActivity : AppCompatActivity() {
             val maxuse = edMaxUse.text.toString()
             val startDate = edStartDate.text.toString()
             val endDate = edEndDate.text.toString()
+            val tncInput = edSyaratKetentuan.text.toString().trim()
+
+            val tncCount = if (tncInput.contains(";")) {
+                tncInput.split(";").filter { it.trim().isNotEmpty() }.size
+            } else {
+                if (tncInput.isNotEmpty()) 1 else 0
+            }
+
+            if (syaratketentuan.isEmpty()) {
+                edSyaratKetentuan.error = "Syarat ketentuan tidak boleh kosong"
+            } else if (tncCount < 2) { // Pindahkan pengecekan ini ke urutan kedua
+                edSyaratKetentuan.error = "Minimal 2 syarat ketentuan (pisahkan dengan ;)"
+            } else if (syaratketentuan.length > 200) {
+                edSyaratKetentuan.error = "Syarat ketentuan maksimal 200 karakter"
+            } else {
+                edSyaratKetentuan.error = null
+            }
 
 //            // Validasi Tipe Mitra
 //            if (tipemember.isEmpty()) {
@@ -379,19 +411,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
                 edDeskripsiPromo.error = null
             }
 
-            // Validasi Syarat Ketentuan
-            if (syaratketentuan.isEmpty()) {
-                edSyaratKetentuan.error = "Syarat ketentuan tidak boleh kosong"
-            } else if (syaratketentuan.length > 200) {
-                edSyaratKetentuan.error = "Syarat ketentuan maksimal 200 karakter"
-            } else {
-                edSyaratKetentuan.error = null
-            }
-
             // Enable button jika semua validasi terpenuhi
             isButtonEnabled(
-                        tipemember.isNotEmpty() &&
-                                categorypromo.isNotEmpty() &&
+                tipemember.isNotEmpty() &&
+                        categorypromo.isNotEmpty() &&
                         namapromo.isNotEmpty() &&
                         namapromo.length <= 50 &&
                         namapromo.matches(Regex("^[a-zA-Z0-9 ]+$")) &&
@@ -399,10 +422,11 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         deskripsipromo.length <= 200 &&
                         syaratketentuan.isNotEmpty() &&
                         syaratketentuan.length <= 200 &&
-                                maxuse.isNotEmpty() &&
-                                startDate.isNotEmpty() &&
-                                endDate.isNotEmpty() &&
-                                edEndDate.error == null &&
+                        tncCount >= 2 && // Tambahkan ini
+                        maxuse.isNotEmpty() &&
+                        startDate.isNotEmpty() &&
+                        endDate.isNotEmpty() &&
+                        edEndDate.error == null &&
                         isImageSelected
             )
         }
@@ -468,10 +492,24 @@ class StaffAddPromoActivity : AppCompatActivity() {
         val description = binding.edDeskripsiPromo.text.toString()
 
         // Convert TnC string to list
-        val tncList = binding.edSyaratKetentuan.text.toString()
-            .split(";")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+        val tncInput = binding.edSyaratKetentuan.text.toString().trim()
+        Log.d("PromoSubmit", "TnC Input Original: $tncInput")
+        val tncList = if (tncInput.isEmpty()) {
+            listOf()
+        } else {
+            if (tncInput.contains(";")) {
+                val splitResult = tncInput.split(";")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                Log.d("PromoSubmit", "TnC Split Result: $splitResult")
+                splitResult
+            } else {
+                val singleItem = listOf(tncInput)
+                Log.d("PromoSubmit", "TnC Single Item: $singleItem")
+                singleItem
+            }
+        }
+        Log.d("PromoSubmit", "Final TnC List: $tncList")
 
         val maxUse = binding.edMaxUse.text.toString().toIntOrNull() ?: 0
 
@@ -538,95 +576,112 @@ class StaffAddPromoActivity : AppCompatActivity() {
         }
     }
 
-//    private fun setupSubmitButton() {
-//        binding.btnSimpan.setOnClickListener {
-//            if (binding.btnSimpan.isEnabled) {
-//                // Proses submit form
-//                val dialog = GlobalTwoButtonDialog().apply {
-//                    setDialogTitle("Konfirmasi Promo")
-//                    setDialogMessage("Apakah Anda yakin ingin membuat promo ini?")
-//                    setOnYesClickListener {
-//                        // Proses submit form ketika user menekan Ya
-//                        submitForm()
-//                    }
-//                    setOnNoClickListener {
-//                        // Optional: tambahkan aksi ketika user menekan Tidak
-//                    }
-//                }
-//                dialog.show(supportFragmentManager, "ConfirmationDialog")
-//            } else {
-//                binding.apply {
-//                    val namapromo = edAddPromo.text.toString()
-//                    val tipemember = acTipeMember.text.toString()
-//                    val categorypromo = acCategoryPromo.text.toString()
-//                    val deskripsipromo = edDeskripsiPromo.text.toString()
-//                    val syaratketentuan = edSyaratKetentuan.text.toString()
-//                    val maxuse = edMaxUse.text.toString()
-//                    val startDate = edStartDate.text.toString()
-//                    val endDate = edEndDate.text.toString()
-//
-//                    var message = "Mohon lengkapi:"
-//
-//                    if (tipemember.isEmpty()) message += "\n- Tipe Member"
-//                    if (categorypromo.isEmpty()) message += "\n- Kategori Promo"
-//                    if (namapromo.isEmpty()) message += "\n- Nama Promo"
-//                    if (deskripsipromo.isEmpty()) message += "\n- Deskripsi Promo"
-//                    if (syaratketentuan.isEmpty()) message += "\n- Syarat dan Ketentuan"
-//                    if (maxuse.isEmpty()) message += "\n- Maksimal Penggunaan"
-//                    if (startDate.isEmpty()) message += "\n- Tanggal Mulai"
-//                    if (endDate.isEmpty()) message += "\n- Tanggal Berakhir"
-//                    if (!isImageSelected || selectedImages.isEmpty()) message += "\n- Gambar Promo"
-//
-//                    // Tambahan validasi khusus
-//                    if (namapromo.isNotEmpty() && !namapromo.matches(Regex("^[a-zA-Z0-9 ]+$"))) {
-//                        message += "\n- Nama promo hanya boleh huruf dan angka"
-//                    }
-//                    if (namapromo.length > 50) {
-//                        message += "\n- Nama promo maksimal 50 karakter"
-//                    }
-//                    if (deskripsipromo.length > 200) {
-//                        message += "\n- Deskripsi promo maksimal 200 karakter"
-//                    }
-//                    if (syaratketentuan.length > 200) {
-//                        message += "\n- Syarat ketentuan maksimal 200 karakter"
-//                    }
-//
-//                    // Validasi tanggal
-//                    if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
-//                        try {
-//                            val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
-//                            val parsedStartDate = dateFormat.parse(startDate)
-//                            val parsedEndDate = dateFormat.parse(endDate)
-//
-//                            if (parsedStartDate != null && parsedEndDate != null &&
-//                                parsedEndDate.before(parsedStartDate)) {
-//                                message += "\n- Tanggal berakhir tidak boleh kurang dari tanggal mulai"
-//                            }
-//                        } catch (e: Exception) {
-//                            message += "\n- Format tanggal tidak valid"
-//                        }
-//                    }
-//
-//                    if (message != "Mohon lengkapi:") {
-//                        // Gunakan AlertDialog untuk menampilkan pesan
-//                        AlertDialog.Builder(this@StaffAddPromoActivity)
-//                            .setTitle("Peringatan")
-//                            .setMessage(message)
-//                            .setPositiveButton("OK") { dialog, _ ->
-//                                dialog.dismiss()
-//                            }
-//                            .show()
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private fun setupSubmitButton() {
+        binding.btnSimpan.setOnClickListener {
+            if (binding.btnSimpan.isEnabled) {
+                val dialog = GlobalTwoButtonDialog().apply {
+                    setDialogTitle(if (isEditMode) "Konfirmasi Edit" else "Konfirmasi Promo")
+                    setDialogMessage(
+                        if (isEditMode)
+                            "Apakah Anda yakin ingin mengubah promo ini?"
+                        else
+                            "Apakah Anda yakin ingin membuat promo ini?"
+                    )
+                    setOnYesClickListener {
+                        if (isEditMode) {
+                            submitEditForm()
+                        } else {
+                            submitForm()
+                        }
+                    }
+                }
+                dialog.show(supportFragmentManager, "ConfirmationDialog")
+            } else {
+                binding.apply {
+                    val namapromo = edAddPromo.text.toString()
+                    val tipemember = acTipeMember.text.toString()
+                    val categorypromo = acCategoryPromo.text.toString()
+                    val deskripsipromo = edDeskripsiPromo.text.toString()
+                    val syaratketentuan = edSyaratKetentuan.text.toString()
+                    val maxuse = edMaxUse.text.toString()
+                    val startDate = edStartDate.text.toString()
+                    val endDate = edEndDate.text.toString()
+
+                    var message = "Mohon lengkapi:"
+
+                    if (tipemember.isEmpty()) message += "\n- Tipe Member"
+                    if (categorypromo.isEmpty()) message += "\n- Kategori Promo"
+                    if (namapromo.isEmpty()) message += "\n- Nama Promo"
+                    if (deskripsipromo.isEmpty()) message += "\n- Deskripsi Promo"
+                    if (syaratketentuan.isEmpty()) message += "\n- Syarat dan Ketentuan"
+                    if (maxuse.isEmpty()) message += "\n- Maksimal Penggunaan"
+                    if (startDate.isEmpty()) message += "\n- Tanggal Mulai"
+                    if (endDate.isEmpty()) message += "\n- Tanggal Berakhir"
+                    if (!isImageSelected || selectedImages.isEmpty()) message += "\n- Gambar Promo"
+
+                    // Tambahan validasi khusus
+                    if (namapromo.isNotEmpty() && !namapromo.matches(Regex("^[a-zA-Z0-9 ]+$"))) {
+                        message += "\n- Nama promo hanya boleh huruf dan angka"
+                    }
+                    if (namapromo.length > 50) {
+                        message += "\n- Nama promo maksimal 50 karakter"
+                    }
+                    if (deskripsipromo.length > 200) {
+                        message += "\n- Deskripsi promo maksimal 200 karakter"
+                    }
+                    if (syaratketentuan.length > 200) {
+                        message += "\n- Syarat ketentuan maksimal 200 karakter"
+                    }
+
+                    // Validasi tanggal
+                    if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
+                        try {
+                            val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+                            val parsedStartDate = dateFormat.parse(startDate)
+                            val parsedEndDate = dateFormat.parse(endDate)
+
+                            if (parsedStartDate != null && parsedEndDate != null &&
+                                parsedEndDate.before(parsedStartDate)) {
+                                message += "\n- Tanggal berakhir tidak boleh kurang dari tanggal mulai"
+                            }
+                        } catch (e: Exception) {
+                            message += "\n- Format tanggal tidak valid"
+                        }
+                    }
+
+                    if (message != "Mohon lengkapi:") {
+                        val tncInput = binding.edSyaratKetentuan.text.toString().trim()
+                        val tncCount = if (tncInput.contains(";")) {
+                            tncInput.split(";").filter { it.trim().isNotEmpty() }.size
+                        } else {
+                            if (tncInput.isNotEmpty()) 1 else 0
+                        }
+
+                        if (tncCount < 2) {
+                            message += "\n- Minimal harus ada 2 syarat dan ketentuan (pisahkan dengan ;)"
+                        }
+
+                        AlertDialog.Builder(this@StaffAddPromoActivity)
+                            .setTitle("Peringatan")
+                            .setMessage(message)
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
+        }
+    }
 
 
-    private fun navigateToStatus() {
+    private fun navigateToStatus(
+        title: String = "Promo Berhasil Dibuat",
+        description: String = "Promo telah berhasil dibuat dan akan segera aktif sesuai dengan tanggal yang telah ditentukan"
+    ) {
         val statusTemplate = StatusTemplate(
-            title = "Promo Berhasil Dibuat",
-            description = "Promo telah berhasil dibuat dan akan segera aktif sesuai dengan tanggal yang telah ditentukan",
+            title = title,
+            description = description,
             showCoupon = false,
             buttonText = "Selesai"
         )
@@ -663,5 +718,191 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
     companion object {
         private const val IMAGE_PICK_CODE = 1000
+        const val EXTRA_IS_EDIT = "extra_is_edit"
+        const val EXTRA_PROMO_ID = "extra_promo_id"
+        const val EXTRA_PROMO_DATA = "extra_promo_data" // Jika Anda mengirim data promo
     }
+
+    private fun setupViews() {
+        setupTipeMemberDropdown()
+        setupCategoryPromoDropdown()
+        isButtonEnabled(false)
+        validateToken()
+        handleEditText()
+        handleMenuButton()
+        setupImagePicker()
+        setupSubmitButton()
+        setupRecyclerView()
+    }
+
+    private fun setupEditMode() {
+        isEditMode = intent.getBooleanExtra(EXTRA_IS_EDIT, false)
+        promoId = intent.getStringExtra(EXTRA_PROMO_ID)
+
+        if (isEditMode) {
+            setupEditModeUI()
+            loadExistingPromoData()
+        }
+    }
+
+    private fun loadExistingPromoData() {
+        intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO_DATA)?.let { promo ->
+            binding.apply {
+                // Text input
+                edAddPromo.setText(promo.name)
+                acTipeMember.setText(promo.memberType)
+                acCategoryPromo.setText(promo.category)
+                edDeskripsiPromo.setText(promo.detail)
+                edMaxUse.setText(promo.maximalUse.toString())
+
+                // Syarat dan Ketentuan
+                val tncString = promo.tnc.joinToString(";")
+                edSyaratKetentuan.setText(tncString)
+
+                // Format dan set tanggal
+                setupDateBinding(promo.startDate, edStartDate)
+                setupDateBinding(promo.endDate, edEndDate)
+
+                promo.endDate.let { endDateStr ->
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                    val displayFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+                    try {
+                        val date = dateFormat.parse(endDateStr)
+                        date?.let {
+                            edEndDate.setText(displayFormat.format(it))
+                        }
+                    } catch (e: Exception) {
+                        Log.e("PromoEdit", "Error parsing end date: $e")
+                    }
+                }
+
+                // Handle images
+                if (promo.pictures.isNotEmpty()) {
+                    loadExistingImages(promo.pictures)
+                }
+                // Trigger form validation
+                checkForms()
+            }
+        }
+    }
+
+    private fun setupDateBinding(dateStr: String, editText: EditText) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val displayFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+        try {
+            val date = dateFormat.parse(dateStr)
+            date?.let {
+                editText.setText(displayFormat.format(it))
+            }
+        } catch (e: Exception) {
+            Log.e("PromoEdit", "Error parsing date: $e")
+        }
+    }
+
+    private fun loadExistingImages(imageUrls: List<String>) {
+        selectedImages.clear()
+
+        imageUrls.forEach { imageUrl ->
+            try {
+                val uri = Uri.parse(imageUrl)
+                selectedImages.add(uri)
+            } catch (e: Exception) {
+                Log.e("PromoEdit", "Error parsing image URL: $e")
+            }
+        }
+
+        if (selectedImages.isNotEmpty()) {
+            isImageSelected = true
+            binding.apply {
+                ivPromo.visibility = View.GONE
+                rvPromoSelected.visibility = View.VISIBLE
+                layoutDots.visibility = View.VISIBLE
+            }
+
+            selectedImages.forEach { uri ->
+                promoImagesAdapter.addImage(uri)
+            }
+            setupDotIndicators()
+        }
+    }
+
+    private fun setupEditModeUI() {
+        binding.detailTitle.text = "Edit Promo"
+        // Tambahkan perubahan UI lainnya untuk mode edit jika diperlukan
+    }
+
+    private fun submitEditForm() {
+        val name = binding.edAddPromo.text.toString()
+        val memberType = binding.acTipeMember.text.toString()
+        val category = binding.acCategoryPromo.text.toString()
+        val description = binding.edDeskripsiPromo.text.toString()
+
+        // Convert TnC string to list
+        val tncList = binding.edSyaratKetentuan.text.toString()
+            .split(";")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+
+        val maxUse = binding.edMaxUse.text.toString().toIntOrNull() ?: 0
+
+        // Format dates
+        try {
+            val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+            val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+
+            val startDate = dateFormat.parse(binding.edStartDate.text.toString())?.let {
+                isoFormat.format(it)
+            } ?: throw Exception("Invalid start date")
+
+            val endDate = dateFormat.parse(binding.edEndDate.text.toString())?.let {
+                isoFormat.format(it)
+            } ?: throw Exception("Invalid end date")
+
+            staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
+                if (token.isNotEmpty() && promoId != null) {
+                    staffAddPromoViewModel.editPromo(
+                        id = promoId!!,
+                        token = token,
+                        name = name,
+                        category = category,
+                        detail = description,
+                        pictures = selectedImages.map { it.toString() },
+                        tnc = tncList,
+                        startDate = startDate,
+                        endDate = endDate,
+                        memberType = memberType,
+                        maximalUse = maxUse,
+                        isActive = true
+                    ).observe(this) { result ->
+                        when(result) {
+                            is Resource.Success -> {
+                                hideLoading()
+                                navigateToStatus(
+                                    "Promo Berhasil Diubah",
+                                    "Perubahan promo telah berhasil disimpan"
+                                )
+                            }
+                            is Resource.Loading -> {
+                                showLoading()
+                            }
+                            is Resource.Message -> {
+                                hideLoading()
+                                showToast(result.message ?: "Unknown message")
+                            }
+                            is Resource.Error -> {
+                                hideLoading()
+                                showToast(result.message ?: "Terjadi kesalahan")
+                            }
+                        }
+                    }
+                } else {
+                    showToast("Token tidak valid atau ID promo tidak ditemukan")
+                }
+            }
+        } catch (e: Exception) {
+            showToast("Format tanggal tidak valid: ${e.message}")
+        }
+    }
+
+
 }

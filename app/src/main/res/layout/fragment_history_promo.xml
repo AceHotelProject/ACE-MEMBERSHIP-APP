@@ -6,76 +6,105 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.dashboard.history.promo.HistoryPromoFragment">
 
-    <ScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:visibility="gone"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPromo"
+        android:layout_height="match_parent">
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_promo" />
-    </ScrollView>
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:visibility="visible"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPromo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_promo" />
+        </ScrollView>
 
-    <!--    Tidak Memiliki riwayat-->
-    <TextView
-        android:id="@+id/tv_tidak_ada_riwayat"
-        style="@style/textStyleMedium_14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:layout_gravity="center"
-        android:text="Tidak Memiliki Riwayat"
-        android:textColor="@color/black" />
-
-    <!--    Non Member History -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:visibility="gone">
-
+        <!--    Tidak Memiliki riwayat-->
         <TextView
-            android:id="@+id/tv_daftar_membership"
-            style="@style/textStyleSemIBold_32"
+            android:id="@+id/tv_tidak_ada_riwayat"
+            style="@style/textStyleMedium_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             android:layout_gravity="center"
-            android:text="Daftar Membership"
+            android:text="Tidak Memiliki Riwayat"
             android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/tv_description"
-            style="@style/textStyleRegular_12"
+        <!--    Non Member History -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:textColor="@color/dark_grey"
-            android:textAlignment="center"
-            android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"/>
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:visibility="gone">
 
-        <Button
-            android:id="@+id/btn_daftar_sekarang"
-            style="@style/textStyleButton"
+            <TextView
+                android:id="@+id/tv_daftar_membership"
+                style="@style/textStyleSemIBold_32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Daftar Membership"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tv_description"
+                style="@style/textStyleRegular_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                android:textColor="@color/dark_grey"
+                android:textAlignment="center"
+                android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"/>
+
+            <Button
+                android:id="@+id/btn_daftar_sekarang"
+                style="@style/textStyleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/custom_button"
+                android:elevation="0dp"
+                android:padding="10dp"
+                android:text="Daftar Sekarang"/>
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/loadingOverlay"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:background="@drawable/custom_button"
-            android:elevation="0dp"
-            android:padding="10dp"
-            android:text="Daftar Sekarang"/>
-    </LinearLayout>
+            android:visibility="gone"
+            android:indeterminateTint="@color/orange_100"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -13,6 +13,7 @@ import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
@@ -154,14 +155,30 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPromos(): Flow<ApiResponse<GetPromoResponse>> {
+    suspend fun getPromos(page: Int, limit: Int): Flow<ApiResponse<GetPromoResponse>> {
         return flow {
             try {
-                val response = apiService.getPromos()
-                emit(ApiResponse.Success(response))
+                val response = apiService.getPromos(page, limit)
+                if (response.results?.isNotEmpty() == true) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Log.e(TAG, "Get promos error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getProposalPromos(): Flow<ApiResponse<GetPromoResponse>> {
+        return flow {
+            try {
+                val response = apiService.getProposalPromos()
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Get proposal promos error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
     }
@@ -194,22 +211,39 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun deletePromo(id: String): Flow<ApiResponse<DeletePromoResponse>> {
+    suspend fun deletePromo(id: String): Flow<ApiResponse<Unit>> {
         return flow {
             try {
                 val response = apiService.deletePromo(id)
-                emit(ApiResponse.Success(response))
+                when (response.code()) {
+                    204, 200 -> {  // Success codes for DELETE
+                        Log.d(TAG, "Delete promo success with code: ${response.code()}")
+                        emit(ApiResponse.Success(Unit))
+                    }
+                    400 -> {
+                        Log.e(TAG, "Delete promo failed: Bad Request")
+                        emit(ApiResponse.Error("Invalid request"))
+                    }
+                    404 -> {
+                        Log.e(TAG, "Delete promo failed: Promo not found")
+                        emit(ApiResponse.Error("Promo tidak ditemukan"))
+                    }
+                    else -> {
+                        Log.e(TAG, "Delete promo failed with code: ${response.code()}")
+                        emit(ApiResponse.Error("Gagal menghapus promo (${response.code()})"))
+                    }
+                }
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
                 Log.e(TAG, "Delete promo error: ${e.message}", e)
+                emit(ApiResponse.Error(e.toString()))
             }
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun activatePromo(id: String, token: String): Flow<ApiResponse<ActivatePromoResponse>> {
+    suspend fun activatePromo(id: String): Flow<ApiResponse<ActivatePromoResponse>> {
         return flow {
             try {
-                val response = apiService.activatePromo(id, "Bearer $token")
+                val response = apiService.activatePromo(id)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
@@ -218,22 +252,39 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun redeemPromo(token: String, bearerToken: String): Flow<ApiResponse<RedeemPromoResponse>> {
+    suspend fun redeemPromo(token: String): Flow<ApiResponse<Unit>> {
         return flow {
             try {
-                val response = apiService.redeemPromo(token, "Bearer $bearerToken")
-                emit(ApiResponse.Success(response))
+                val response = apiService.redeemPromo(token)
+                when (response.code()) {
+                    201, 200 -> {
+                        Log.d(TAG, "Redeem promo success with code: ${response.code()}")
+                        emit(ApiResponse.Success(Unit))
+                    }
+                    400 -> {
+                        Log.e(TAG, "Redeem promo failed: Invalid code")
+                        emit(ApiResponse.Error("Kode promo tidak valid"))
+                    }
+                    404 -> {
+                        Log.e(TAG, "Redeem promo failed: Code not found")
+                        emit(ApiResponse.Error("Kode promo tidak ditemukan"))
+                    }
+                    else -> {
+                        Log.e(TAG, "Redeem promo failed with code: ${response.code()}")
+                        emit(ApiResponse.Error("Gagal menggunakan kode promo (${response.code()})"))
+                    }
+                }
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
                 Log.e(TAG, "Redeem promo error: ${e.message}", e)
+                emit(ApiResponse.Error("Gagal menggunakan kode promo"))
             }
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPromoHistory(token: String): Flow<ApiResponse<GetPromoHistoryResponse>> {
+    suspend fun getPromoHistory(): Flow<ApiResponse<List<PromoHistoryItem>>> {
         return flow {
             try {
-                val response = apiService.getPromoHistory("Bearer $token")
+                val response = apiService.getPromoHistory()
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))

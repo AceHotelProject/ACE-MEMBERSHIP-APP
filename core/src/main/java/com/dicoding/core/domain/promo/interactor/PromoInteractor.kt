@@ -1,10 +1,11 @@
 package com.dicoding.core.domain.promo.interactor
 
+import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.model.DeletePromoDomain
-import com.dicoding.core.domain.promo.model.GetPromoHistoryDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.core.domain.promo.model.RedeemPromoDomain
 import com.dicoding.core.domain.promo.repository.IPromoRepository
 import com.dicoding.core.domain.promo.usecase.PromoUseCase
@@ -36,8 +37,11 @@ class PromoInteractor @Inject constructor(
             maximalUse, used, isActive
         )
 
-    override fun getPromos(): Flow<Resource<GetPromosDomain>> =
+    override fun getPromos(): Flow<PagingData<PromoDomain>> =
         promoRepository.getPromos()
+
+    override fun getProposalPromos(): Flow<Resource<GetPromosDomain>> =
+        promoRepository.getProposalPromos()
 
     override fun editPromo(
         id: String,
@@ -58,15 +62,15 @@ class PromoInteractor @Inject constructor(
             startDate, endDate, memberType, maximalUse, isActive
         )
 
-    override fun deletePromo(id: String): Flow<Resource<DeletePromoDomain>> =
+    override fun deletePromo(id: String): Flow<Resource<Unit>> =
         promoRepository.deletePromo(id)
 
-    override fun activatePromo(id: String, token: String): Flow<Resource<ActivatePromoDomain>> =
-        promoRepository.activatePromo(id, token)
+    override fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>> =
+        promoRepository.activatePromo(id)
 
-    override fun redeemPromo(token: String, bearerToken: String): Flow<Resource<RedeemPromoDomain>> =
-        promoRepository.redeemPromo(token, bearerToken)
+    override fun redeemPromo(token: String): Flow<Resource<Unit>> =
+        promoRepository.redeemPromo(token)
 
-    override fun getPromoHistory(token: String): Flow<Resource<GetPromoHistoryDomain>> =
-        promoRepository.getPromoHistory(token)
+    override fun getPromoHistory(): Flow<Resource<List<PromoHistoryDomain>>> =
+        promoRepository.getPromoHistory()
 }
