@@ -30,7 +30,7 @@
                     android:layout_height="150dp"
                     android:backgroundTint="@color/green"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/item_dashboard_promo_default"
+                    android:src="@drawable/image_empty"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

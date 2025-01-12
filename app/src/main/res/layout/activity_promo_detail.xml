@@ -59,7 +59,7 @@
                     android:layout_height="200dp"
                     android:backgroundTint="@color/green"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/item_dashboard_promo_default" />
+                    android:src="@drawable/image_empty" />
 
             </androidx.cardview.widget.CardView>
 

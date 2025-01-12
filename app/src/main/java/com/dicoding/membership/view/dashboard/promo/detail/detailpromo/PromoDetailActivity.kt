@@ -118,7 +118,7 @@ class PromoDetailActivity : AppCompatActivity() {
                     .load(promo.pictures[0]) // Ambil gambar pertama
                     .into(ivImage)
             } else {
-                ivImage.setImageResource(R.drawable.item_dashboard_promo_default) // Gambar default jika tidak ada
+                ivImage.setImageResource(R.drawable.image_empty) // Gambar default jika tidak ada
             }
 
             // Menampilkan kategori promo
