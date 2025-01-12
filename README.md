@@ -1,3 +1,3 @@
 # ACE MEMBERSHIP APP
 
-![CircleCI](https://img.shields.io/circleci/build/github/AceHotelProject/ACE-MEMBERSHIP-APP/Dafis-dev)
+[![CircleCI](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP/tree/Dafis-dev.svg?style=svg)](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP/tree/Dafis-dev)
