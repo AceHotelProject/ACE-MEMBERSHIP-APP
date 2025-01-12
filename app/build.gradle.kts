@@ -26,43 +26,15 @@ android {
         buildConfigField("String", "BASE_URL", "\"https://ace-membership-backend.vercel.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        vectorDrawables.useSupportLibrary = true
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            isShrinkResources = false  // Ini sudah benar untuk mencegah shrinking resources
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        debug {
-            // Tambahkan konfigurasi debug untuk development
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-        }
-    }
-
-    androidResources {
-        noCompress.add("png")
-        noCompress.add("webp")
-    }
-
-    packaging {
-        resources {
-            excludes.addAll(listOf(
-                "META-INF/DEPENDENCIES",
-                "META-INF/LICENSE",
-                "META-INF/LICENSE.txt",
-                "META-INF/license.txt",
-                "META-INF/NOTICE",
-                "META-INF/NOTICE.txt",
-                "META-INF/notice.txt",
-                "META-INF/ASL2.0",
-                "META-INF/*.kotlin_module"
-            ))
         }
     }
     compileOptions {
