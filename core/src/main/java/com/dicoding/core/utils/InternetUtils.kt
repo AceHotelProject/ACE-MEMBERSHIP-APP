@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.utils
+package com.dicoding.core.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

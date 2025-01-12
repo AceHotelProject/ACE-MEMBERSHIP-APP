@@ -16,7 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.isInternetAvailable
+import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.view.dashboard.MainActivity
