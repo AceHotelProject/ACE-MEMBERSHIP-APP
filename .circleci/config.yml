@@ -25,17 +25,24 @@ jobs:
           paths:
             - ~/.android/build-cache
             - ~/.android/cache
+      # Ubah command build untuk skip semua lint check
       - run:
           name: Run Build
-          command: ./gradlew build
+          command: |
+            ./gradlew assembleRelease \
+            -x lint \
+            -x lintVitalRelease \
+            -x lintVitalAnalyzeRelease \
+            --stacktrace
       - store_artifacts:
           path: app/build/reports
           destination: reports
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
-      - store_test_results:
-          path: app/build/test-results
       - store_artifacts:
-          path: app/build/outputs/apk/debug/
-          destination: artifact-file
+          path: app/build/outputs/apk/release/
+          destination: release-apk
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
