@@ -1,1 +1,1 @@
-[![<AceHotelProject>](https://circleci.com/<VCS>/<AceHotelProject>/<ACE-MEMBERSHIP-APP>.svg?style=svg)](<LINK>)
+[![AceHotelProject](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP.svg?style=svg)](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP)
