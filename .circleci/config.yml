@@ -15,16 +15,16 @@ jobs:
       - android/change-java-version:
           java-version: 17
           
-      # Konfigurasi memory dan AAPT
+      # Konfigurasi memory yang optimal
       - run:
           name: Configure Build Settings
           command: |
             mkdir -p ~/.gradle
-            echo "org.gradle.jvmargs=-Xmx6g -XX:+HeapDumpOnOutOfMemoryError" >> ~/.gradle/gradle.properties
+            echo "org.gradle.jvmargs=-Xmx8g" >> ~/.gradle/gradle.properties
             echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
             echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
-            echo "android.enableAapt2=true" >> ~/.gradle/gradle.properties
-            echo "android.aapt2FromMavenOverride=com.android.tools.build:aapt2:7.3.0-8691043" >> ~/.gradle/gradle.properties
+            echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
+            echo "android.builder.sdkDownload=true" >> ~/.gradle/gradle.properties
       
       - run:
           name: Chmod permissions
@@ -32,7 +32,7 @@ jobs:
           
       - run:
           name: Clean Project
-          command: ./gradlew clean
+          command: ./gradlew clean --info
           
       - run:
           name: Download Dependencies
@@ -45,15 +45,15 @@ jobs:
             - ~/.android/cache
             - ~/.gradle
             
-      # Build dengan parameter AAPT
+      # Build dengan debugging info
       - run:
-          name: Build Release
+          name: Build Release with Debug Info
           command: |
             ./gradlew assembleRelease \
             -x lint \
+            --info \
             --stacktrace \
-            -Pandroid.aapt2FromMavenOverride=com.android.tools.build:aapt2:7.3.0-8691043 \
-            -Pandroid.enableAapt2=true
+            --scan
           
       - store_artifacts:
           path: app/build/reports
