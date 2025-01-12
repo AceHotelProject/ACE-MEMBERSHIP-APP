@@ -1,1 +1,5 @@
-[![AceHotelProject](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP.svg?style=svg)](https://circleci.com/gh/AceHotelProject/ACE-MEMBERSHIP-APP)
+# ACE MEMBERSHIP APP
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/AceHotelProject
+/ACE-MEMBERSHIP-APP/tree/Dafis-dev.svg?style=shield)](https://dl.circleci.com/status-badge/img/gh/AceHotelProject
+/ACE-MEMBERSHIP-APP/tree/Dafis-dev)
