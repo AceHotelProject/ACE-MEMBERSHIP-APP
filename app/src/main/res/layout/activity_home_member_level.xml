@@ -67,8 +67,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Membership Packages -->
+            <!-- Membership Packages Silver -->
             <LinearLayout
+                android:id="@+id/layout_package_silver"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
@@ -190,6 +191,7 @@
                     android:background="@color/light_grey_100" />
 
                 <LinearLayout
+                    android:id="@+id/price_container_silver"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_background_light_grey"
@@ -216,14 +218,15 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Membership Packages - Selected -->
+            <!-- Membership Packages Gold - Selected -->
             <LinearLayout
+                android:id="@+id/layout_package_gold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="24dp"
-                android:background="@drawable/custom_background_level_member_selected"
+                android:background="@drawable/custom_background_level_member_non_selected"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -337,16 +340,17 @@
                     android:background="@color/light_grey_100" />
 
                 <LinearLayout
+                    android:id="@+id/price_container_gold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/custom_background_level_member_price_selected"
+                    android:background="@drawable/custom_background_light_grey"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="10dp">
 
                     <TextView
                         android:id="@+id/tv_package_price_label_2"
-                        style="@style/textStyleMedium_14_selected"
+                        style="@style/textStyleMedium_14"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -355,7 +359,7 @@
 
                     <TextView
                         android:id="@+id/tv_package_price_2"
-                        style="@style/textStyleSemIBold_20_selected"
+                        style="@style/textStyleSemIBold_20"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Rp 600.000"
@@ -363,8 +367,9 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Membership Packages -->
+            <!-- Membership Packages Platinum -->
             <LinearLayout
+                android:id="@+id/layout_package_platinum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
@@ -486,6 +491,7 @@
                     android:background="@color/light_grey_100" />
 
                 <LinearLayout
+                    android:id="@+id/price_container_platinum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_background_light_grey"
@@ -512,6 +518,7 @@
                 </LinearLayout>
             </LinearLayout>
             <Button
+                android:id="@+id/btn_continue"
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

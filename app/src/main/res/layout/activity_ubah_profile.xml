@@ -30,193 +30,205 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/constraintLayout2"
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detail_title">
 
-        <TextView
-            android:id="@+id/tv_ktp"
-            style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Foto KTP/SIM" />
-
-        <ImageView
-            android:id="@+id/add_mitra_foto_mitra_image"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/custom_edit_text"
-            android:scaleType="fitXY"
-            android:layout_marginBottom="24dp"
-            android:src="@drawable/image_empty" />
-
-        <TextView
-            android:id="@+id/tv_nama"
-            style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Lengkap" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ti_layout_nama"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <LinearLayout
+            android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:endIconTint="@color/dark_grey"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null"
-            app:errorIconTint="@color/red"
-            app:errorTextColor="@color/red"
-            app:hintEnabled="false">
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_title">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ti_nama"
+            <TextView
+                android:id="@+id/tv_ktp"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Foto KTP/SIM" />
+
+            <ImageView
+                android:id="@+id/add_mitra_foto_mitra_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/custom_edit_text"
+                android:scaleType="fitXY"
+                android:src="@drawable/image_empty" />
+
+            <TextView
+                android:id="@+id/tv_nama"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Lengkap" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_layout_nama"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
-                android:drawablePadding="12sp"
-                android:ems="10"
-                android:hint="Masukkan nama Anda"
-                android:inputType="text"
-                android:padding="16dp"
-                android:textColorHint="@color/dark_grey"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
 
-        <TextView
-            android:id="@+id/tv_nik"
-            style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NIK" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_nama"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nama Anda"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ti_layout_nik"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:endIconTint="@color/dark_grey"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null"
-            app:errorIconTint="@color/red"
-            app:errorTextColor="@color/red"
-            app:hintEnabled="false">
+            <TextView
+                android:id="@+id/tv_nik"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NIK" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ti_nik"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_layout_nik"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
-                android:drawablePadding="12sp"
-                android:ems="10"
-                android:hint="Masukkan NIK Anda"
-                android:inputType="text"
-                android:padding="16dp"
-                android:textColorHint="@color/dark_grey"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
 
-        <TextView
-            android:id="@+id/tv_telepon"
-            style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No Telepon" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_nik"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan NIK Anda"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ti_layout_telepon"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:endIconTint="@color/dark_grey"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null"
-            app:errorIconTint="@color/red"
-            app:errorTextColor="@color/red"
-            app:hintEnabled="false">
+            <TextView
+                android:id="@+id/tv_telepon"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Telepon" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ti_telepon"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_layout_telepon"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
-                android:drawablePadding="12sp"
-                android:ems="10"
-                android:hint="Masukkan nomor Anda"
-                android:inputType="text"
-                android:padding="16dp"
-                android:textColorHint="@color/dark_grey"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
 
-        <TextView
-            android:id="@+id/tv_alamat"
-            style="@style/textStyleMedium_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alamat" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_telepon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nomor Anda"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/ti_layout_alamat"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            app:endIconTint="@color/dark_grey"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null"
-            app:errorIconTint="@color/red"
-            app:errorTextColor="@color/red"
-            app:hintEnabled="false">
+            <TextView
+                android:id="@+id/tv_alamat"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alamat" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ti_tipe_alamat"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ti_layout_alamat"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/custom_edit_text"
-                android:drawablePadding="12sp"
-                android:ems="10"
-                android:hint="Masukkan alamat tinggal Anda"
-                android:inputType="text"
-                android:padding="16dp"
-                android:textColorHint="@color/dark_grey"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
 
-    <Button
-        android:id="@+id/btn_save"
-        style="@style/textStyleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_button"
-        android:elevation="0dp"
-        android:padding="10dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
-        android:text="Simpan"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ti_tipe_alamat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan alamat tinggal Anda"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- weird margin bottom after Button needs fixing-->
+            <Button
+                android:id="@+id/btn_save"
+                style="@style/textStyleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="64dp"
+                android:background="@drawable/custom_button"
+                android:elevation="0dp"
+                android:padding="10dp"
+                android:text="Simpan"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

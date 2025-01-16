@@ -19,6 +19,21 @@
         android:theme="@style/Base.Theme.Membership"
         tools:targetApi="31">
         <activity
+            android:name=".view.dashboard.profile.detail.poinku.transfer.TransferPoinActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.poinku.ProfileDetailPoinkuActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.template.StatusTemplateActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.referralku.ProfileDetailReferralkuActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.detail.ProfileDetailActivity"
+            android:exported="false"/>
+        <activity
             android:name=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity"
             android:exported="false" />
         <activity
