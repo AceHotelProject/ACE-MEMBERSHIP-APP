@@ -3,7 +3,7 @@ package com.dicoding.core.di
 import com.dicoding.core.BuildConfig
 import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.membership.core.di.interceptor.AuthAuthenticator
-import com.dicoding.membership.core.di.interceptor.AuthInterceptor
+import com.dicoding.core.di.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +17,13 @@ import java.util.concurrent.TimeUnit
 @Module(includes = [DatabaseModule::class])
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
+    @Provides
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.HEADERS
+        }
+    }
 
     @Provides
     fun provideOkHttpClient(

@@ -13,12 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentPromoBinding
+import com.dicoding.membership.view.dashboard.history.historysearch.HistorySearchActivity
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -101,6 +103,11 @@ class PromoFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = promoMitraAdapter
         }
+
+        binding.buttonDashboardPromoSearch.setOnClickListener {
+            val intent = Intent(requireActivity(), HistorySearchActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun navigateToDetail(data: PromoDomain, source: String) {
@@ -119,12 +126,21 @@ class PromoFragment : Fragment() {
                     when (result) {
                         is Resource.Success -> {
                             hideLoading()
-                            binding.tvAjuanPromo.visibility = View.VISIBLE
-                            binding.tvPromoMitra.visibility = View.VISIBLE
                             result.data?.results?.let { promos ->
-                                Log.d("PromoFragment", "Proposal Promos size: ${promos.size}")
-                                ajuanPromoAdapter.submitList(promos)
-                                Log.d("PromoFragment", "List submitted to adapter")
+                                Log.d("PromoFragment", "Original Proposal Promos size: ${promos.size}")
+                                promos.forEach { promo ->
+                                    Log.d("PromoFragment", "Promo: ${promo.name}, isActive: ${promo.isActive}")
+                                }
+
+                                // Filter hanya yang non-active
+                                val filteredPromos = promos.filter { !it.isActive }
+                                Log.d("PromoFragment", "Filtered Proposal Promos (non-active) size: ${filteredPromos.size}")
+                                filteredPromos.forEach { promo ->
+                                    Log.d("PromoFragment", "Filtered Promo: ${promo.name}, isActive: ${promo.isActive}")
+                                }
+
+                                ajuanPromoAdapter.submitList(filteredPromos)
+                                Log.d("PromoFragment", "Filtered list submitted to ajuan adapter")
                             } ?: Log.d("PromoFragment", "Proposal Promos is null")
                         }
                         is Resource.Loading -> {
@@ -147,9 +163,14 @@ class PromoFragment : Fragment() {
 
             val promosDeferred = async {
                 viewModel.getPromos().collectLatest { pagingData ->
-                    Log.d("PromoFragment", "Testing Paging")
-                    // Handle states here (like loading, success, etc.)
-                    promoMitraAdapter.submitData(pagingData)
+                    Log.d("PromoFragment", "Received paging data")
+                    // Filter paging data
+                    val filteredPagingData = pagingData.filter {
+                        Log.d("PromoFragment", "Checking promo: ${it.name}, isActive: ${it.isActive}")
+                        it.isActive
+                    }
+                    Log.d("PromoFragment", "Submitting filtered paging data to mitra adapter")
+                    promoMitraAdapter.submitData(filteredPagingData)
                     // You can also observe the paging state here
                     promoMitraAdapter.addLoadStateListener { loadState ->
                         when (loadState.refresh) {
@@ -211,9 +232,9 @@ class PromoFragment : Fragment() {
         when (userRole) {
             UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
                 binding.rvPromoCategory.visibility = View.GONE
-                binding.tvAjuanPromo.visibility = View.GONE
+                binding.tvAjuanPromo.visibility = View.VISIBLE
                 binding.rvAjuanPromo.visibility = View.VISIBLE
-                binding.tvPromoMitra.visibility = View.GONE
+                binding.tvPromoMitra.visibility = View.VISIBLE
                 binding.rvPromoMitra.visibility = View.VISIBLE
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
@@ -231,6 +252,31 @@ class PromoFragment : Fragment() {
                 binding.rvPromoMitra.visibility = View.GONE
             }
         }
+        setTextVisibilityBasedOnLoading(binding.progressBar.visibility == View.VISIBLE, userRole)
+    }
+
+    private fun setTextVisibilityBasedOnLoading(isLoading: Boolean, userRole: UserRole) {
+        binding.apply {
+            if (isLoading) {
+                tvPromoMitra.visibility = View.GONE
+                tvAjuanPromo.visibility = View.GONE
+            } else {
+                when (userRole) {
+                    UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+                        tvPromoMitra.visibility = View.VISIBLE
+                        tvAjuanPromo.visibility = View.VISIBLE
+                    }
+                    UserRole.MEMBER, UserRole.NONMEMBER -> {
+                        tvPromoMitra.visibility = View.GONE
+                        tvAjuanPromo.visibility = View.GONE
+                    }
+                    else -> {
+                        tvPromoMitra.visibility = View.GONE
+                        tvAjuanPromo.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
 //    private fun setupRecyclerView() {
@@ -246,13 +292,23 @@ class PromoFragment : Fragment() {
     private fun showLoading() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
+            // Sembunyikan text saat loading
+            setTextVisibilityBasedOnLoading(true, getCurrentUserRole())
         }
     }
 
     private fun hideLoading() {
         binding.apply {
             progressBar.visibility = View.GONE
+            // Tampilkan text sesuai role setelah loading selesai
+            setTextVisibilityBasedOnLoading(false, getCurrentUserRole())
         }
+    }
+
+    // Helper function untuk mendapatkan current user role
+    private fun getCurrentUserRole(): UserRole {
+        // Gunakan mockUserRole untuk testing
+        return UserRole.ADMIN // Sesuaikan dengan kebutuhan
     }
 
     private fun showError(message: String?) {

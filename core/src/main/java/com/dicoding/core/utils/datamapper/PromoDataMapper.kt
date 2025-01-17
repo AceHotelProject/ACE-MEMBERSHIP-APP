@@ -4,11 +4,12 @@ import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
 import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.DeletePromoDomain
+import com.dicoding.core.domain.promo.model.GetPromoHistoryDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
@@ -76,13 +77,13 @@ object PromoDataMapper {
             startDate = input.startDate ?: "",
             endDate = input.endDate ?: "",
             memberType = input.memberType ?: "",
-            merchantId = input.merchantId ?: "",
+            merchantId = input.merchant ?: "",  // perhatikan perubahan dari merchantId ke merchant
             maximalUse = input.maximalUse ?: 0,
             used = input.used ?: 0,
             isActive = input.isActive ?: false,
-            createdBy = input.createdBy,
-            updatedBy = input.updatedBy,
-            token = input.token
+            createdBy = input.createdBy,        // tetap nullable
+            updatedBy = input.updatedBy,        // tetap nullable
+            token = null                        // tidak ada di response
         )
     }
 
@@ -104,33 +105,51 @@ object PromoDataMapper {
         )
     }
 
-    fun mapGetPromoHistoryResponseToDomain(input: List<PromoHistoryItem>): List<PromoHistoryDomain> {
-        return input.map { item ->
-            PromoHistoryDomain(
-                promoName = item.promoName ?: "",
-                promoCategory = item.promoCategory ?: "",
-                promoDetail = item.promoDetail ?: "",
-                promoPictures = item.promoPictures ?: emptyList(),
-                promoTnc = item.promoTnc ?: emptyList(),
-                promoMemberType = item.promoMemberType ?: "",
-                userName = item.userName ?: "Anonymous",
-                tokenCode = item.tokenCode ?: "",
-                merchantName = item.merchantName ?: "Unknown Merchant",
-                activationDate = item.activationDate ?: "",
-                status = item.status ?: "",
-                id = item.id ?: ""
-            )
-        }
+    fun mapGetPromoHistoryResponseToDomain(response: GetPromoHistoryResponse): GetPromoHistoryDomain {
+        return GetPromoHistoryDomain(
+            totalResults = response.totalResults ?: 0,
+            limit = response.limit ?: 10,
+            totalPages = response.totalPages ?: 0,
+            page = response.page ?: 1,
+            results = response.results?.mapNotNull { item ->
+                item?.let {
+                    PromoHistoryDomain(
+                        promoName = item.promoName ?: "",
+                        promoCategory = item.promoCategory ?: "",
+                        promoDetail = item.promoDetail ?: "",
+                        promoPictures = item.promoPictures ?: emptyList(),
+                        promoTnc = item.promoTnc ?: emptyList(),
+                        promoMemberType = item.promoMemberType ?: "",
+                        userName = item.userName ?: "Anonymous",
+                        tokenCode = item.tokenCode ?: "",
+                        merchantName = item.merchantName ?: "Unknown Merchant",
+                        activationDate = item.activationDate ?: "",
+                        status = item.status ?: "",
+                        id = item.id ?: ""
+                    )
+                }
+            } ?: emptyList()
+        )
     }
 
     fun mapActivatePromoResponseToDomain(input: ActivatePromoResponse): ActivatePromoDomain {
         return ActivatePromoDomain(
-            expires = input.expires ?: "",
-            blacklisted = input.blacklisted ?: false,
+            promoPictures = input.promoPictures?.filterNotNull() ?: emptyList(),
+            activationDate = input.activationDate ?: "",
+            promoDetail = input.promoDetail ?: "",
+            userName = input.userName ?: "",
+            promoName = input.promoName ?: "",
+            promoCategory = input.promoCategory ?: "",
+            merchantName = input.merchantName ?: "",
+            merchant = input.merchant ?: "",
+            promoTnc = input.promoTnc?.filterNotNull() ?: emptyList(),
+            token = input.token ?: "",
+            promo = input.promo ?: "",
+            tokenCode = input.tokenCode ?: "",
             id = input.id ?: "",
-            type = input.type ?: "",
+            promoMemberType = input.promoMemberType ?: "",
             user = input.user ?: "",
-            token = input.token ?: ""
+            status = input.status ?: ""
         )
     }
 }

@@ -5,22 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemHistoryBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.TimeZone
 
-class PromoHistoryAdapter : RecyclerView.Adapter<PromoHistoryAdapter.HistoryViewHolder>() {
-    private val histories = mutableListOf<PromoHistoryDomain>()
-
-    fun submitList(newHistories: List<PromoHistoryDomain>) {
-        Log.d("PromoHistoryAdapter", "Submitting ${newHistories.size} items to adapter")
-        histories.clear()
-        histories.addAll(newHistories)
-        notifyDataSetChanged()
-    }
+class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAdapter.HistoryViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val binding = ItemHistoryBinding.inflate(
@@ -29,11 +24,10 @@ class PromoHistoryAdapter : RecyclerView.Adapter<PromoHistoryAdapter.HistoryView
         return HistoryViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = histories.size
-
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
+        val item = getItem(position)
         Log.d("PromoHistoryAdapter", "Binding item at position $position")
-        holder.bind(histories[position])
+        item?.let { holder.bind(it) }
     }
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) :
@@ -67,11 +61,27 @@ class PromoHistoryAdapter : RecyclerView.Adapter<PromoHistoryAdapter.HistoryView
         private fun formatDate(isoDate: String): String {
             return try {
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                val outputFormat = SimpleDateFormat("HH:mm, dd MMMM yy", Locale("id"))
+                inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+                val outputFormat = SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale("id")) // Mengubah 'yy' menjadi 'yyyy'
+                outputFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
+
                 val date = inputFormat.parse(isoDate)
                 outputFormat.format(date!!)
             } catch (e: Exception) {
                 isoDate
+            }
+        }
+    }
+
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PromoHistoryDomain>() {
+            override fun areItemsTheSame(oldItem: PromoHistoryDomain, newItem: PromoHistoryDomain): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: PromoHistoryDomain, newItem: PromoHistoryDomain): Boolean {
+                return oldItem == newItem
             }
         }
     }

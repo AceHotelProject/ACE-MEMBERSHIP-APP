@@ -1,15 +1,21 @@
 package com.dicoding.membership.view.dashboard.floatingpromo
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
@@ -17,10 +23,13 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.utils.ImageUtils
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityAdminAddPromoBinding
 import com.dicoding.membership.view.dashboard.MainActivity
@@ -57,6 +66,8 @@ class StaffAddPromoActivity : AppCompatActivity() {
         binding = ActivityAdminAddPromoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkAndRequestPermissions()
+
         setupTipeMemberDropdown()
 
         setupCategoryPromoDropdown()
@@ -77,10 +88,129 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
         ////////////////////////////////// Edit Promo
 
-        setupEditMode()
-
         setupViews()
 
+    }
+
+    private fun checkAndRequestPermissions() {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                // Android 14 and above
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                // Android 13
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+            else -> {
+                // Android 12 and below
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        PERMISSION_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }
+
+    private fun checkAndRequestStoragePermission() {
+        when {
+            // Check if permission is already granted
+            ContextCompat.checkSelfPermission(
+                this,
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    else -> Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted, proceed with image selection
+                openImagePicker()
+            }
+            // Should we show explanation?
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    else -> Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            ) -> {
+                // Show explanation to user
+                AlertDialog.Builder(this)
+                    .setTitle("Izin Diperlukan")
+                    .setMessage("Aplikasi memerlukan izin untuk mengakses foto")
+                    .setPositiveButton("OK") { _, _ ->
+                        // Request permission
+                        requestPermission()
+                    }
+                    .setNegativeButton("Batal") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+            }
+            else -> {
+                // No explanation needed, request the permission
+                requestPermission()
+            }
+        }
+    }
+
+    private fun requestPermission() {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+            else -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+        }
     }
 
     private fun validateToken() {
@@ -99,7 +229,6 @@ class StaffAddPromoActivity : AppCompatActivity() {
             finish()
         }
     }
-
 
     private fun setupTipeMemberDropdown() {
         val tipeMitraOptions = arrayOf("Platinum", "Gold", "Silver")
@@ -259,11 +388,15 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
     private fun setupImagePicker() {
         binding.ivPromo.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "image/*"
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            startActivityForResult(Intent.createChooser(intent, "Select Pictures"), IMAGE_PICK_CODE)
+            checkAndRequestStoragePermission()
         }
+    }
+
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        startActivityForResult(Intent.createChooser(intent, "Select Pictures"), IMAGE_PICK_CODE)
     }
 
     private fun setupDotIndicators() {
@@ -411,6 +544,35 @@ class StaffAddPromoActivity : AppCompatActivity() {
                 edDeskripsiPromo.error = null
             }
 
+            // Validasi Tanggal - Skip for edit mode
+            if (!isEditMode) {
+                if (startDate.isEmpty()) {
+                    edStartDate.error = "Tanggal mulai tidak boleh kosong"
+                } else {
+                    edStartDate.error = null
+                }
+
+                if (endDate.isEmpty()) {
+                    edEndDate.error = "Tanggal berakhir tidak boleh kosong"
+                } else {
+                    // Check if endDate is before startDate
+                    try {
+                        val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+                        val parsedStartDate = dateFormat.parse(startDate)
+                        val parsedEndDate = dateFormat.parse(endDate)
+
+                        if (parsedStartDate != null && parsedEndDate != null &&
+                            parsedEndDate.before(parsedStartDate)) {
+                            edEndDate.error = "Tanggal berakhir tidak boleh kurang dari tanggal mulai"
+                        } else {
+                            edEndDate.error = null
+                        }
+                    } catch (e: Exception) {
+                        edEndDate.error = "Format tanggal tidak valid"
+                    }
+                }
+            }
+
             // Enable button jika semua validasi terpenuhi
             isButtonEnabled(
                 tipemember.isNotEmpty() &&
@@ -426,45 +588,54 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         maxuse.isNotEmpty() &&
                         startDate.isNotEmpty() &&
                         endDate.isNotEmpty() &&
+                        (!isEditMode || (isEditMode && edEndDate.error == null)) && // Modified condition
+                        (isEditMode || (startDate.isNotEmpty() && endDate.isNotEmpty())) && // Modified condition
                         edEndDate.error == null &&
                         isImageSelected
             )
         }
     }
 
-    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-            if (data?.clipData != null) {
-                // Handle multiple images
-                val count = data.clipData!!.itemCount
-                for (i in 0 until count) {
-                    val imageUri = data.clipData!!.getItemAt(i).uri
-                    selectedImages.add(imageUri)
+//    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
+        if (data?.clipData != null) {
+            // Handle multiple images
+            val count = data.clipData!!.itemCount
+            for (i in 0 until count) {
+                val sourceUri = data.clipData!!.getItemAt(i).uri
+                val destinationUri = ImageUtils.copyImageToUri(this, sourceUri)
+                if (destinationUri != null) {
+                    selectedImages.add(destinationUri)
+                    promoImagesAdapter.addImage(destinationUri)
                 }
+            }
+            isImageSelected = selectedImages.isNotEmpty()
+            updateImageViews()
+        } else if (data?.data != null) {
+            // Handle single image
+            val sourceUri = data.data!!
+            val destinationUri = ImageUtils.copyImageToUri(this, sourceUri)
+            if (destinationUri != null) {
+                selectedImages.add(destinationUri)
+                promoImagesAdapter.addImage(destinationUri)
                 isImageSelected = true
-                binding.ivPromo.visibility = View.GONE
-                binding.rvPromoSelected.visibility = View.VISIBLE
-                binding.layoutDots.visibility = View.VISIBLE
+                updateImageViews()
+            }
+        }
+        checkForms()
+    }
+}
 
-                // Update RecyclerView
-                selectedImages.forEach { uri ->
-                    promoImagesAdapter.addImage(uri)
-                }
-                setupDotIndicators()
-            } else if (data?.data != null) {
-                // Handle single image
-                val imageUri = data.data!!
-                selectedImages.add(imageUri)
-                isImageSelected = true
-                binding.ivPromo.visibility = View.GONE
-                binding.rvPromoSelected.visibility = View.VISIBLE
-                binding.layoutDots.visibility = View.VISIBLE
-                promoImagesAdapter.addImage(imageUri)
+    private fun updateImageViews() {
+        binding.apply {
+            ivPromo.visibility = if (selectedImages.isEmpty()) View.VISIBLE else View.GONE
+            rvPromoSelected.visibility = if (selectedImages.isEmpty()) View.GONE else View.VISIBLE
+            layoutDots.visibility = if (selectedImages.isEmpty()) View.GONE else View.VISIBLE
+            if (selectedImages.isNotEmpty()) {
                 setupDotIndicators()
             }
-            checkForms()
         }
     }
 
@@ -526,6 +697,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
                 isoFormat.format(it)
             } ?: throw Exception("Invalid end date")
 
+            val imageUris = selectedImages.mapNotNull { sourceUri ->
+                ImageUtils.copyImageToUri(this, sourceUri)?.toString()
+            }
+
             // Get token and create promo
             staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
                 if (token.isNotEmpty()) {
@@ -534,7 +709,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         token = "647f4a1e8a5c3f9b9fef5678", // Will be set by backend
                         category = category,
                         detail = description,
-                        pictures = listOf(), // Will be handled separately
+                        pictures = imageUris, // Will be handled separately
                         tnc = tncList,
                         startDate = startDate,
                         endDate = endDate,
@@ -579,6 +754,12 @@ class StaffAddPromoActivity : AppCompatActivity() {
     private fun setupSubmitButton() {
         binding.btnSimpan.setOnClickListener {
             if (binding.btnSimpan.isEnabled) {
+                // Sembunyikan keyboard setelah button ditekan
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                currentFocus?.let { view ->
+                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+
                 val dialog = GlobalTwoButtonDialog().apply {
                     setDialogTitle(if (isEditMode) "Konfirmasi Edit" else "Konfirmasi Promo")
                     setDialogMessage(
@@ -715,73 +896,139 @@ class StaffAddPromoActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-
-    companion object {
-        private const val IMAGE_PICK_CODE = 1000
-        const val EXTRA_IS_EDIT = "extra_is_edit"
-        const val EXTRA_PROMO_ID = "extra_promo_id"
-        const val EXTRA_PROMO_DATA = "extra_promo_data" // Jika Anda mengirim data promo
-    }
-
     private fun setupViews() {
+        isEditMode = intent.getBooleanExtra(EXTRA_IS_EDIT, false)
+
+        // Setup UI components
         setupTipeMemberDropdown()
         setupCategoryPromoDropdown()
-        isButtonEnabled(false)
-        validateToken()
-        handleEditText()
-        handleMenuButton()
         setupImagePicker()
-        setupSubmitButton()
         setupRecyclerView()
-    }
+        setupSubmitButton()
+        handleEditText()
+        validateToken()
 
-    private fun setupEditMode() {
-        isEditMode = intent.getBooleanExtra(EXTRA_IS_EDIT, false)
-        promoId = intent.getStringExtra(EXTRA_PROMO_ID)
+        with(binding) {
+            if (isEditMode) {
+                // Mode Edit (dari PromoDetailActivity)
+                detailTitle.text = "Edit Promo"
+                btnSimpan.text = "Simpan Perubahan"
 
-        if (isEditMode) {
-            setupEditModeUI()
-            loadExistingPromoData()
+                // Load existing data
+                intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO_DATA)?.let { promo ->
+                    loadExistingPromoData(promo)
+                }
+
+                // Back to PromoDetailActivity
+                btnBack.setOnClickListener {
+                    onBackPressed()
+                }
+            } else {
+                // Mode Tambah (dari MainActivity)
+                // Tidak perlu set text karena sudah default di layout
+
+                // Back to MainActivity
+                btnBack.setOnClickListener {
+                    val intent = Intent(this@StaffAddPromoActivity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+            // Initial button state
+            isButtonEnabled(false)
         }
     }
 
-    private fun loadExistingPromoData() {
-        intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO_DATA)?.let { promo ->
-            binding.apply {
-                // Text input
-                edAddPromo.setText(promo.name)
-                acTipeMember.setText(promo.memberType)
-                acCategoryPromo.setText(promo.category)
-                edDeskripsiPromo.setText(promo.detail)
-                edMaxUse.setText(promo.maximalUse.toString())
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission granted, proceed with image selection
+                    openImagePicker()
+                } else {
+                    // Permission denied
+                    Toast.makeText(
+                        this,
+                        "Izin diperlukan untuk mengakses foto",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                // Syarat dan Ketentuan
-                val tncString = promo.tnc.joinToString(";")
-                edSyaratKetentuan.setText(tncString)
-
-                // Format dan set tanggal
-                setupDateBinding(promo.startDate, edStartDate)
-                setupDateBinding(promo.endDate, edEndDate)
-
-                promo.endDate.let { endDateStr ->
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                    val displayFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
-                    try {
-                        val date = dateFormat.parse(endDateStr)
-                        date?.let {
-                            edEndDate.setText(displayFormat.format(it))
-                        }
-                    } catch (e: Exception) {
-                        Log.e("PromoEdit", "Error parsing end date: $e")
+                    // Optionally, show settings dialog if permission permanently denied
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            permissions[0]
+                        )) {
+                        AlertDialog.Builder(this)
+                            .setTitle("Izin Diperlukan")
+                            .setMessage("Fitur ini membutuhkan izin untuk mengakses foto. Silakan aktifkan di pengaturan aplikasi.")
+                            .setPositiveButton("Pengaturan") { _, _ ->
+                                // Open app settings
+                                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", packageName, null)
+                                })
+                            }
+                            .setNegativeButton("Batal") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .create()
+                            .show()
                     }
                 }
+                return
+            }
+        }
+    }
 
-                // Handle images
-                if (promo.pictures.isNotEmpty()) {
-                    loadExistingImages(promo.pictures)
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 123
+        private const val IMAGE_PICK_CODE = 1000
+        const val EXTRA_IS_EDIT = "extra_is_edit"
+        const val EXTRA_PROMO_ID = "extra_promo_id"
+        const val EXTRA_PROMO_DATA = "extra_promo_data"
+    }
+
+    private fun loadExistingPromoData(promo: PromoDomain) {
+        binding.apply {
+            // Text inputs
+            edAddPromo.setText(promo.name)
+            acTipeMember.setText(promo.memberType)
+            acCategoryPromo.setText(promo.category)
+            edDeskripsiPromo.setText(promo.detail)
+            edMaxUse.setText(promo.maximalUse.toString())
+
+            // Syarat & Ketentuan
+            val tncString = promo.tnc.joinToString(";")
+            edSyaratKetentuan.setText(tncString)
+
+//            // Dates
+//            setupDateBinding(promo.startDate, edStartDate)
+//            setupDateBinding(promo.endDate, edEndDate)
+
+            // Images
+            if (promo.pictures.isNotEmpty()) {
+                isImageSelected = true
+                ivPromo.visibility = View.GONE
+                rvPromoSelected.visibility = View.VISIBLE
+                layoutDots.visibility = View.VISIBLE
+
+                selectedImages.clear()
+                promo.pictures.forEach { imageUrl ->
+                    try {
+                        val uri = Uri.parse(imageUrl)
+                        selectedImages.add(uri)
+                        promoImagesAdapter.addImage(uri)
+                    } catch (e: Exception) {
+                        Log.e("PromoEdit", "Error parsing image URL: $e")
+                    }
                 }
-                // Trigger form validation
-                checkForms()
+                setupDotIndicators()
             }
         }
     }
@@ -799,57 +1046,43 @@ class StaffAddPromoActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadExistingImages(imageUrls: List<String>) {
-        selectedImages.clear()
-
-        imageUrls.forEach { imageUrl ->
-            try {
-                val uri = Uri.parse(imageUrl)
-                selectedImages.add(uri)
-            } catch (e: Exception) {
-                Log.e("PromoEdit", "Error parsing image URL: $e")
-            }
-        }
-
-        if (selectedImages.isNotEmpty()) {
-            isImageSelected = true
-            binding.apply {
-                ivPromo.visibility = View.GONE
-                rvPromoSelected.visibility = View.VISIBLE
-                layoutDots.visibility = View.VISIBLE
-            }
-
-            selectedImages.forEach { uri ->
-                promoImagesAdapter.addImage(uri)
-            }
-            setupDotIndicators()
-        }
-    }
-
-    private fun setupEditModeUI() {
-        binding.detailTitle.text = "Edit Promo"
-        // Tambahkan perubahan UI lainnya untuk mode edit jika diperlukan
-    }
-
     private fun submitEditForm() {
+        // Ambil data promo dari intent
+        val promo = intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO_DATA)
+        val promoId = promo?.id
+
+        if (promoId == null) {
+            showToast("ID Promo tidak ditemukan")
+            return
+        }
+
+        // Ambil data yang sama persis seperti di submitForm()
         val name = binding.edAddPromo.text.toString()
         val memberType = binding.acTipeMember.text.toString()
         val category = binding.acCategoryPromo.text.toString()
         val description = binding.edDeskripsiPromo.text.toString()
 
-        // Convert TnC string to list
-        val tncList = binding.edSyaratKetentuan.text.toString()
-            .split(";")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+        // Convert TnC string to list - sama seperti di submitForm()
+        val tncInput = binding.edSyaratKetentuan.text.toString().trim()
+        val tncList = if (tncInput.isEmpty()) {
+            listOf()
+        } else {
+            if (tncInput.contains(";")) {
+                tncInput.split(";")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+            } else {
+                listOf(tncInput)
+            }
+        }
 
         val maxUse = binding.edMaxUse.text.toString().toIntOrNull() ?: 0
 
-        // Format dates
-        try {
-            val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
-            val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        // Format dates - sama seperti di submitForm()
+        val dateFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
 
+        try {
             val startDate = dateFormat.parse(binding.edStartDate.text.toString())?.let {
                 isoFormat.format(it)
             } ?: throw Exception("Invalid start date")
@@ -858,11 +1091,12 @@ class StaffAddPromoActivity : AppCompatActivity() {
                 isoFormat.format(it)
             } ?: throw Exception("Invalid end date")
 
+            // Get token and edit promo
             staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
-                if (token.isNotEmpty() && promoId != null) {
+                if (token.isNotEmpty()) {
+                    // Gunakan format yang sama persis dengan createPromo
                     staffAddPromoViewModel.editPromo(
-                        id = promoId!!,
-                        token = token,
+                        id = promoId,
                         name = name,
                         category = category,
                         detail = description,
@@ -882,9 +1116,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
                                     "Perubahan promo telah berhasil disimpan"
                                 )
                             }
-                            is Resource.Loading -> {
-                                showLoading()
-                            }
+                            is Resource.Loading -> showLoading()
                             is Resource.Message -> {
                                 hideLoading()
                                 showToast(result.message ?: "Unknown message")
@@ -892,17 +1124,18 @@ class StaffAddPromoActivity : AppCompatActivity() {
                             is Resource.Error -> {
                                 hideLoading()
                                 showToast(result.message ?: "Terjadi kesalahan")
+                                Log.e("EditPromo", "Error: ${result.message}")
                             }
                         }
                     }
                 } else {
-                    showToast("Token tidak valid atau ID promo tidak ditemukan")
+                    showToast("Token tidak valid")
                 }
             }
+
         } catch (e: Exception) {
             showToast("Format tanggal tidak valid: ${e.message}")
+            Log.e("EditPromo", "Date format error: ${e.message}")
         }
     }
-
-
 }

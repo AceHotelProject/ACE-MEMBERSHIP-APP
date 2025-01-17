@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.ADMIN
+            val mockUserRole = UserRole.MEMBER
             setupLinearVisibility(mockUserRole)
 
 //            Use This For Real

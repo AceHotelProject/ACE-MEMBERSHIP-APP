@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HistoryPromoFragment : Fragment() {
@@ -86,7 +88,7 @@ class HistoryPromoFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            loadPromoHistory()
+            historyAdapter.refresh() // Ini akan memicu reload data dari awal
         }
     }
 
@@ -102,44 +104,48 @@ class HistoryPromoFragment : Fragment() {
     private fun loadPromoHistory() {
         viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
             if (token.isNotEmpty()) {
-                showLoading()
-                viewModel.getPromoHistory().observe(viewLifecycleOwner) { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            hideLoading()
-                            Log.d("PromoHistoryFragment", "Data loaded successfully")
-                            handleSuccess(result.data ?: emptyList())
+                lifecycleScope.launch {
+                    viewModel.getPromoHistory()
+                        .collectLatest { pagingData ->
+                            historyAdapter.submitData(pagingData)
                         }
-                        is Resource.Loading -> {
-                            showLoading()
-                        }
-                        is Resource.Error -> {
-                            hideLoading()
-                            showError(result.message)
-                            showEmptyState()
-                        }
-                        else -> {
-                            hideLoading()
-                            showError("Terjadi kesalahan")
-                            showEmptyState()
+                }
+
+                // Handle loading state
+                lifecycleScope.launch {
+                    historyAdapter.loadStateFlow.collectLatest { loadState ->
+                        // Update SwipeRefreshLayout state
+                        binding.swipeRefresh.isRefreshing = loadState.refresh is LoadState.Loading
+
+                        when (loadState.refresh) {
+                            is LoadState.Loading -> {
+                                if (!binding.swipeRefresh.isRefreshing) {
+                                    showLoading()
+                                }
+                                hideEmptyState()
+                            }
+                            is LoadState.Error -> {
+                                hideLoading()
+                                binding.swipeRefresh.isRefreshing = false
+                                val error = (loadState.refresh as LoadState.Error).error
+                                showError(error.message ?: "Terjadi kesalahan")
+                                showEmptyState()
+                            }
+                            is LoadState.NotLoading -> {
+                                hideLoading()
+                                binding.swipeRefresh.isRefreshing = false
+                                if (historyAdapter.itemCount == 0) {
+                                    showEmptyState()
+                                } else {
+                                    hideEmptyState()
+                                }
+                            }
                         }
                     }
                 }
             } else {
+                binding.swipeRefresh.isRefreshing = false
                 showError("Token kosong, silakan login ulang.")
-            }
-        }
-    }
-
-
-    private fun handleSuccess(data: List<PromoHistoryDomain>) {
-        Log.d("PromoHistoryFragment", "Data received: ${data.size} items")
-        binding.apply {
-            if (data.isEmpty()) {
-                showEmptyState()
-            } else {
-                hideEmptyState()
-                historyAdapter.submitList(data)
             }
         }
     }

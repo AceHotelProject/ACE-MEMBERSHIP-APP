@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
             //            Testing
             val mockUserRole = UserRole.ADMIN
+            //            3C8F61
 
             // Setup navigation graph
             val navHostFragment = supportFragmentManager
@@ -343,7 +344,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     binding.fbAddPromo -> {
                         showToast("FAB Add Promo clicked!")
-                        val intent = Intent(this, StaffAddPromoActivity::class.java)
+                        val intent = Intent(this, StaffAddPromoActivity::class.java).apply {
+                            putExtra(StaffAddPromoActivity.EXTRA_IS_EDIT, false)
+                        }
                         startActivity(intent)
                     }
                     binding.fbMenu -> {

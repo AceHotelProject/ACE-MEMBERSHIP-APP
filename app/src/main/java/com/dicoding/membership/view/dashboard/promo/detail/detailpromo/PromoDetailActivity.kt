@@ -1,10 +1,12 @@
 package com.dicoding.membership.view.dashboard.promo.detail.detailpromo
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -13,11 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.utils.ImageUtils.reduceFileImage
+import com.dicoding.core.utils.ImageUtils.uriToFile
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityPromoDetailBinding
-import com.dicoding.membership.view.dashboard.MainActivity
+import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -80,14 +84,37 @@ class PromoDetailActivity : AppCompatActivity() {
 
     private fun setupUserVisibility(userRole: UserRole) {
         when (userRole) {
-            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+            UserRole.ADMIN, UserRole.MITRA -> {
                 binding.layoutItemDetailPromo.visibility = View.GONE
+                binding.btnPakai.visibility = View.GONE
+            }
+            UserRole.RECEPTIONIST -> {
+                binding.layoutItemDetailPromo.visibility = View.GONE
+                binding.btnPakai.visibility = View.GONE
+                binding.btnMenu.visibility = View.GONE
+                binding.btnSetuju.visibility = View.GONE
+                binding.btnTolak.visibility = View.GONE
             }
             UserRole.MEMBER -> {
                 binding.layoutItemDetailPromo.visibility = View.VISIBLE
+                binding.btnPakai.visibility = View.VISIBLE
+                binding.btnMenu.visibility = View.GONE
+                binding.btnSetuju.visibility = View.GONE
+                binding.btnTolak.visibility = View.GONE
+            }
+            UserRole.NONMEMBER -> {
+                binding.layoutItemDetailPromo.visibility = View.GONE
+                binding.btnPakai.visibility = View.GONE
+                binding.btnMenu.visibility = View.GONE
+                binding.btnSetuju.visibility = View.GONE
+                binding.btnTolak.visibility = View.GONE
             }
             else -> {
                 binding.layoutItemDetailPromo.visibility = View.GONE
+                binding.btnPakai.visibility = View.GONE
+                binding.btnSetuju.visibility = View.GONE
+                binding.btnTolak.visibility = View.GONE
+                binding.btnMenu.visibility = View.GONE
             }
         }
     }
@@ -113,10 +140,33 @@ class PromoDetailActivity : AppCompatActivity() {
     private fun bindDataToLayout(promo: PromoDomain?, source: String?) {
         binding.apply {
             // Menampilkan gambar promo jika ada
+            // Menampilkan gambar promo jika ada
             if (promo?.pictures?.isNotEmpty() == true) {
-                Glide.with(this@PromoDetailActivity)
-                    .load(promo.pictures[0]) // Ambil gambar pertama
-                    .into(ivImage)
+                try {
+                    val imageUrl = promo.pictures[0] // Ambil gambar pertama
+
+                    if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://")) {
+                        // Jika masih dalam bentuk content URI atau file URI
+                        val file = uriToFile(Uri.parse(imageUrl), this@PromoDetailActivity)
+                        val compressedFile = reduceFileImage(file)
+
+                        Glide.with(this@PromoDetailActivity)
+                            .load(compressedFile)
+                            .placeholder(R.drawable.image_empty)
+                            .error(R.drawable.image_empty)
+                            .into(ivImage)
+                    } else {
+                        // Jika sudah dalam bentuk URL remote
+                        Glide.with(this@PromoDetailActivity)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.image_empty)
+                            .error(R.drawable.image_empty)
+                            .into(ivImage)
+                    }
+                } catch (e: Exception) {
+                    Log.e("PromoDetail", "Error loading image: ${e.message}")
+                    ivImage.setImageResource(R.drawable.image_empty)
+                }
             } else {
                 ivImage.setImageResource(R.drawable.image_empty) // Gambar default jika tidak ada
             }
@@ -153,15 +203,16 @@ class PromoDetailActivity : AppCompatActivity() {
 
     private fun setupAjuanPromoView(promo: PromoDomain?) {
         with(binding) {
-            // Visibility settings for Ajuan Promo
+//            // Visibility settings for Ajuan Promo
             btnSetuju.visibility = View.VISIBLE
             btnTolak.visibility = View.VISIBLE
             btnPakai.visibility = View.GONE
+            btnMenu.visibility = View.GONE
 
             // Setup UI elements
             tvPromoTitle.text = "Ajuan Promo"
 
-            // Click listeners
+            // PLEASE CHANGE IF THE ENDPOINT AJUKAN PROMO READY
             btnSetuju.setOnClickListener {
                 promo?.id?.let { promoId ->
                     showConfirmationDialog(
@@ -172,6 +223,7 @@ class PromoDetailActivity : AppCompatActivity() {
                 }
             }
 
+            // PLEASE CHANGE IF THE ENDPOINT TOLAK PROMO READY
             btnTolak.setOnClickListener {
                 promo?.id?.let { promoId ->
                     showConfirmationDialog(
@@ -185,9 +237,6 @@ class PromoDetailActivity : AppCompatActivity() {
     }
 
     private fun handleBackNavigation() {
-        val intent = Intent(this@PromoDetailActivity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
         finish()
     }
 
@@ -221,7 +270,10 @@ class PromoDetailActivity : AppCompatActivity() {
                             showToast("Promo berhasil disetujui")
                             navigateToStatus(
                                 title = "Promo Dibuat",
-                                description = "Promo telah berhasil disetujui dan akan segera aktif sesuai dengan tanggal yang telah ditentukan"
+                                description = "Promo telah berhasil disetujui dan akan segera aktif sesuai dengan tanggal yang telah ditentukan",
+                                tokenCode = result.data?.tokenCode ?: "",
+                                activationDate = result.data?.activationDate ?: "",
+                                showCoupon = true
                             )
                         }
                         is Resource.Error -> {
@@ -250,7 +302,8 @@ class PromoDetailActivity : AppCompatActivity() {
                     showToast("Promo berhasil ditolak")
                     navigateToStatus(
                         title = "Hapus Berhasil",
-                        description = "Promo telah berhasil ditolak dan tidak akan ditampilkan"
+                        description = "Promo telah berhasil ditolak dan tidak akan ditampilkan",
+                        showCoupon = false
                     )
                 }
                 is Resource.Error -> {
@@ -270,13 +323,18 @@ class PromoDetailActivity : AppCompatActivity() {
 
     private fun navigateToStatus(
         title: String,
-        description: String
+        description: String,
+        tokenCode: String = "",
+        activationDate: String = "",
+        showCoupon : Boolean
     ) {
         val statusTemplate = StatusTemplate(
             title = title,
             description = description,
-            showCoupon = false,
-            buttonText = "Selesai"
+            showCoupon = showCoupon,
+            buttonText = "Selesai",
+            promoCode = tokenCode,
+            expiryTime = activationDate
         )
 
         val intent = Intent(this, StatusTemplateActivity::class.java).apply {
@@ -293,6 +351,7 @@ class PromoDetailActivity : AppCompatActivity() {
             btnSetuju.visibility = View.GONE
             btnTolak.visibility = View.GONE
             btnPakai.visibility = View.VISIBLE
+            btnMenu.visibility = View.VISIBLE
 
             // Setup UI elements
             tvPromoTitle.text = "Detail Promo"
@@ -302,9 +361,39 @@ class PromoDetailActivity : AppCompatActivity() {
                     showConfirmationDialog(
                         "Gunakan Promo",
                         "Apakah Anda yakin ingin menggunakan promo ini",
-                        onConfirm = { handleDeletePromo(promoId) }
+                        onConfirm = { handleActivatePromo(promoId) }
                     )
                 }
+            }
+
+            btnMenu.setOnClickListener { view ->
+                val popup = PopupMenu(this@PromoDetailActivity, view)
+                popup.menuInflater.inflate(R.menu.menu_promo_detail, popup.menu)
+
+                popup.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.menu_edit_promo -> {
+                            val intent = Intent(this@PromoDetailActivity, StaffAddPromoActivity::class.java).apply {
+                                putExtra(StaffAddPromoActivity.EXTRA_IS_EDIT, true)  // Mode edit
+                                putExtra(StaffAddPromoActivity.EXTRA_PROMO_DATA, promo)
+                            }
+                            startActivity(intent)
+                            true
+                        }
+                        R.id.menu_delete_promo -> {
+                            promo?.id?.let { promoId ->
+                                showConfirmationDialog(
+                                    "Hapus Promo",
+                                    "Apakah Anda yakin ingin menghapus promo ini?",
+                                    onConfirm = { handleDeletePromo(promoId) }
+                                )
+                            }
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popup.show()
             }
         }
     }

@@ -5,10 +5,20 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ActivatePromoDomain(
-    val expires: String,
-    val blacklisted: Boolean,
+    val promoPictures: List<String>,
+    val activationDate: String,
+    val promoDetail: String,
+    val userName: String,
+    val promoName: String,
+    val promoCategory: String,
+    val merchantName: String,
+    val merchant: String,
+    val promoTnc: List<String>,
+    val token: String,
+    val promo: String,
+    val tokenCode: String,
     val id: String,
-    val type: String,
+    val promoMemberType: String,
     val user: String,
-    val token: String
+    val status: String
 ) : Parcelable

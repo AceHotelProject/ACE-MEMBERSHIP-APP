@@ -6,7 +6,6 @@ import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
-import com.dicoding.core.domain.promo.model.RedeemPromoDomain
 import com.dicoding.core.domain.promo.repository.IPromoRepository
 import com.dicoding.core.domain.promo.usecase.PromoUseCase
 import kotlinx.coroutines.flow.Flow
@@ -45,20 +44,19 @@ class PromoInteractor @Inject constructor(
 
     override fun editPromo(
         id: String,
-        token: String,
-        name: String?,
-        category: String?,
-        detail: String?,
-        pictures: List<String>?,
-        tnc: List<String>?,
-        startDate: String?,
-        endDate: String?,
-        memberType: String?,
-        maximalUse: Int?,
-        isActive: Boolean?
+        name: String,
+        category: String,
+        detail: String,
+        pictures: List<String>,
+        tnc: List<String>,
+        startDate: String,
+        endDate: String,
+        memberType: String,
+        maximalUse: Int,
+        isActive: Boolean
     ): Flow<Resource<PromoDomain>> =
         promoRepository.editPromo(
-            id, token, name, category, detail, pictures, tnc,
+            id, name, category, detail, pictures, tnc,
             startDate, endDate, memberType, maximalUse, isActive
         )
 
@@ -71,6 +69,6 @@ class PromoInteractor @Inject constructor(
     override fun redeemPromo(token: String): Flow<Resource<Unit>> =
         promoRepository.redeemPromo(token)
 
-    override fun getPromoHistory(): Flow<Resource<List<PromoHistoryDomain>>> =
+    override fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>> =
         promoRepository.getPromoHistory()
 }

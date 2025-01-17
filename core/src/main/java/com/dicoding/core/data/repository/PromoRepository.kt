@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.NetworkBoundResource
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.paging.PromoHistoryPagingSource
 import com.dicoding.core.data.source.paging.PromosPagingSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
@@ -12,7 +13,6 @@ import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.domain.promo.model.ActivatePromoDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
@@ -83,17 +83,16 @@ class PromoRepository @Inject constructor(
 
     override fun editPromo(
         id: String,
-        token: String,
-        name: String?,
-        category: String?,
-        detail: String?,
-        pictures: List<String>?,
-        tnc: List<String>?,
-        startDate: String?,
-        endDate: String?,
-        memberType: String?,
-        maximalUse: Int?,
-        isActive: Boolean?
+        name: String,
+        category: String,
+        detail: String,
+        pictures: List<String>,
+        tnc: List<String>,
+        startDate: String,
+        endDate: String,
+        memberType: String,
+        maximalUse: Int,
+        isActive: Boolean
     ): Flow<Resource<PromoDomain>> {
         return object : NetworkBoundResource<PromoDomain, EditPromoResponse>() {
             override suspend fun fetchFromApi(response: EditPromoResponse): PromoDomain {
@@ -102,7 +101,7 @@ class PromoRepository @Inject constructor(
 
             override suspend fun createCall(): Flow<ApiResponse<EditPromoResponse>> {
                 return remoteDataSource.editPromo(
-                    id, token, name, category, detail, pictures, tnc,
+                    id, name, category, detail, pictures, tnc,
                     startDate, endDate, memberType, maximalUse, isActive
                 )
             }
@@ -145,15 +144,16 @@ class PromoRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getPromoHistory(): Flow<Resource<List<PromoHistoryDomain>>> {
-        return object : NetworkBoundResource<List<PromoHistoryDomain>, List<PromoHistoryItem>>() {
-            override suspend fun fetchFromApi(response: List<PromoHistoryItem>): List<PromoHistoryDomain> {
-                return PromoDataMapper.mapGetPromoHistoryResponseToDomain(response)
+    override fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = false,
+                initialLoadSize = 10
+            ),
+            pagingSourceFactory = {
+                PromoHistoryPagingSource(remoteDataSource)
             }
-
-            override suspend fun createCall(): Flow<ApiResponse<List<PromoHistoryItem>>> {
-                return remoteDataSource.getPromoHistory()
-            }
-        }.asFlow()
+        ).flow
     }
 }

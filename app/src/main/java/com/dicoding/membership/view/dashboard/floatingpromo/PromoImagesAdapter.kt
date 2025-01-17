@@ -4,6 +4,8 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemMultipleImageUploadBinding
 
 @Suppress("DEPRECATION")
@@ -32,7 +34,32 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(uri: Uri) {
-            binding.ivPromo.setImageURI(uri)
+            when {
+                // Handle content:// atau file:// URI
+                uri.scheme == "content" || uri.scheme == "file" -> {
+                    Glide.with(itemView.context)
+                        .load(uri)
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(binding.ivPromo)
+                }
+                // Handle remote URL (http:// atau https://)
+                uri.toString().startsWith("http") -> {
+                    Glide.with(itemView.context)
+                        .load(uri.toString())
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(binding.ivPromo)
+                }
+                // Fallback untuk kasus lainnya
+                else -> {
+                    Glide.with(itemView.context)
+                        .load(uri)
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(binding.ivPromo)
+                }
+            }
 
             binding.tvRemove.setOnClickListener {
                 val pos = adapterPosition

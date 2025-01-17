@@ -11,13 +11,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentHistoryBinding
-import com.dicoding.membership.view.dashboard.home.HomeViewModel
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.di.interceptor
+package com.dicoding.core.di.interceptor
 
 import android.util.Log
 import com.dicoding.core.data.source.local.datastore.DatastoreManager

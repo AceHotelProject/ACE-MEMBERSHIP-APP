@@ -35,10 +35,15 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
     }
 
     fun submitList(promos: List<PromoDomain>) {
+        Log.d("PromoAdapter", "Submitting new list with size: ${promos.size}")
+        promos.forEach { promo ->
+            Log.d("PromoAdapter", "List item - Name: ${promo.name}, isActive: ${promo.isActive}")
+        }
         isPaging = false
         listPromos.clear()
         listPromos.addAll(promos)
         notifyDataSetChanged()
+        Log.d("PromoAdapter", "List updated, new size: ${listPromos.size}")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PromoViewHolder {
@@ -54,12 +59,13 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
         Log.d("PromoAdapter", "onBindViewHolder called. Position: $position, isPaging: $isPaging")
         if (isPaging) {
             val data = getItem(position)
-            Log.d("PromoAdapter PAGING", "Binding item at position: $position, data: ${data?.name}")
+            Log.d("PromoAdapter", "Paging item at position $position - Name: ${data?.name}, isActive: ${data?.isActive}")
             data?.let { holder.bind(it) }
         } else {
             if (position < listPromos.size) {
-                Log.d("PromoAdapter NONPAGING", "Binding item from listPromos at position: $position, data: ${listPromos[position].name}")
-                holder.bind(listPromos[position])
+                val item = listPromos[position]
+                Log.d("PromoAdapter", "Non-paging item at position $position - Name: ${item.name}, isActive: ${item.isActive}")
+                holder.bind(item)
             }
         }
     }

@@ -10,6 +10,7 @@ import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
@@ -185,24 +186,32 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     suspend fun editPromo(
         id: String,
-        token: String,
-        name: String? = null,
-        category: String? = null,
-        detail: String? = null,
-        pictures: List<String>? = null,
-        tnc: List<String>? = null,
-        startDate: String? = null,
-        endDate: String? = null,
-        memberType: String? = null,
-        maximalUse: Int? = null,
-        isActive: Boolean? = null
+        name: String,
+        category: String,
+        detail: String,
+        pictures: List<String>,
+        tnc: List<String>,
+        startDate: String,
+        endDate: String,
+        memberType: String,
+        maximalUse: Int,
+        isActive: Boolean
     ): Flow<ApiResponse<EditPromoResponse>> {
         return flow {
             try {
-                val response = apiService.editPromo(
-                    id, token, name, category, detail, pictures, tnc,
-                    startDate, endDate, memberType, maximalUse, isActive
+                val request = EditPromoRequest(
+                    name = name,
+                    category = category,
+                    detail = detail,
+                    pictures = pictures,
+                    tnc = tnc,
+                    start_date = startDate,
+                    end_date = endDate,
+                    member_type = memberType,
+                    maximal_use = maximalUse,
+                    is_active = isActive
                 )
+                val response = apiService.editPromo(id, request)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
@@ -281,10 +290,10 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPromoHistory(): Flow<ApiResponse<List<PromoHistoryItem>>> {
+    suspend fun getPromoHistory(page: Int, limit: Int): Flow<ApiResponse<GetPromoHistoryResponse>> {
         return flow {
             try {
-                val response = apiService.getPromoHistory()
+                val response = apiService.getPromoHistory(page, limit)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
@@ -292,6 +301,5 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             }
         }.flowOn(Dispatchers.IO)
     }
-
     /////////////////////////////////////////////////////////////////////////////// MERCHANT
 }

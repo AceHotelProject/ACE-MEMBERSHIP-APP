@@ -20,8 +20,8 @@ data class EditPromoResponse(
 	@field:SerializedName("tnc")
 	val tnc: List<String?>? = null,
 
-	@field:SerializedName("merchant_id")
-	val merchantId: String? = null,
+	@field:SerializedName("merchant")
+	val merchant: String? = null,
 
 	@field:SerializedName("used")
 	val used: Int? = null,
@@ -31,9 +31,6 @@ data class EditPromoResponse(
 
 	@field:SerializedName("pictures")
 	val pictures: List<String?>? = null,
-
-	@field:SerializedName("token")
-	val token: String? = null,
 
 	@field:SerializedName("maximal_use")
 	val maximalUse: Int? = null,
@@ -56,3 +53,16 @@ data class EditPromoResponse(
 	@field:SerializedName("start_date")
 	val startDate: String? = null
 ) : Parcelable
+
+data class EditPromoRequest(
+	val name: String?,
+	val category: String?,
+	val detail: String?,
+	val pictures: List<String>?,
+	val tnc: List<String>?,
+	val start_date: String?,
+	val end_date: String?,
+	val member_type: String?,
+	val maximal_use: Int?,
+	val is_active: Boolean?
+)

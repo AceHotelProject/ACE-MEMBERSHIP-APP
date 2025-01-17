@@ -32,17 +32,16 @@ interface PromoUseCase {
 
     fun editPromo(
         id: String,
-        token: String,
-        name: String? = null,
-        category: String? = null,
-        detail: String? = null,
-        pictures: List<String>? = null,
-        tnc: List<String>? = null,
-        startDate: String? = null,
-        endDate: String? = null,
-        memberType: String? = null,
-        maximalUse: Int? = null,
-        isActive: Boolean? = null
+        name: String,
+        category: String,
+        detail: String,
+        pictures: List<String>,
+        tnc: List<String>,
+        startDate: String,
+        endDate: String,
+        memberType: String,
+        maximalUse: Int,
+        isActive: Boolean
     ): Flow<Resource<PromoDomain>>
 
     fun deletePromo(id: String): Flow<Resource<Unit>>
@@ -51,5 +50,5 @@ interface PromoUseCase {
 
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 
-    fun getPromoHistory(): Flow<Resource<List<PromoHistoryDomain>>>
+    fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>>
 }

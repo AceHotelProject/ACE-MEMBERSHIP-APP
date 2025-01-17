@@ -14,13 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val storyUseCase: StoryUseCaseTester,
+//    private val storyUseCase: StoryUseCaseTester,
     private val authUseCase: AuthUseCase,
 ) : ViewModel() {
 
-    fun getStories(filterDate: String, isFinished: Boolean): Flow<PagingData<StoryDomainTester>> {
-        return storyUseCase.getStories(filterDate, isFinished).cachedIn(viewModelScope)
-    }
+//    fun getStories(filterDate: String, isFinished: Boolean): Flow<PagingData<StoryDomainTester>> {
+//        return storyUseCase.getStories(filterDate, isFinished).cachedIn(viewModelScope)
+//    }
 
     fun getUser() = authUseCase.getUser().asLiveData()
 

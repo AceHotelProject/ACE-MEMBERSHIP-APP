@@ -6,6 +6,7 @@ import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
@@ -22,6 +23,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -212,21 +214,10 @@ interface ApiService {
     @GET("v1/promos")
     suspend fun getProposalPromos(): GetPromoResponse
 
-    @FormUrlEncoded
     @PATCH("v1/promos/manage/{id}")
     suspend fun editPromo(
         @Path("id") id: String,
-        @Header("Authorization") token: String,
-        @Field("name") name: String? = null,
-        @Field("category") category: String? = null,
-        @Field("detail") detail: String? = null,
-        @Field("pictures") pictures: List<String>? = null,
-        @Field("tnc") tnc: List<String>? = null,
-        @Field("start_date") startDate: String? = null,
-        @Field("end_date") endDate: String? = null,
-        @Field("member_type") memberType: String? = null,
-        @Field("maximal_use") maximalUse: Int? = null,
-        @Field("is_active") isActive: Boolean? = null
+        @Body request: EditPromoRequest
     ): EditPromoResponse
 
     @DELETE("v1/promos/manage/{id}")
@@ -245,7 +236,10 @@ interface ApiService {
     ): Response<Unit>
 
     @GET("v1/promos/history")
-    suspend fun getPromoHistory(): List<PromoHistoryItem>
+    suspend fun getPromoHistory(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): GetPromoHistoryResponse
     ////////////////////////////////////////////// Merchant
 
 }
