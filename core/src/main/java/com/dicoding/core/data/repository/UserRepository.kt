@@ -99,6 +99,30 @@ class UserRepository @Inject constructor(
         }.asFlow()
     }
 
+    override fun completeUserData(
+        id: String,
+        pathKTP: String?,
+        citizenNumber: String?,
+        phone: String?,
+        address: String?
+    ): Flow<Resource<User>> {
+        return object : NetworkBoundResource<User, UserResponse>() {
+            override suspend fun fetchFromApi(response: UserResponse): User {
+                return UserDataMapper.mapUserResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
+                return remoteDataSource.completeUserData(
+                    id = id,
+                    pathKTP = pathKTP,
+                    citizenNumber = citizenNumber,
+                    phone = phone,
+                    address = address
+                )
+            }
+        }.asFlow()
+    }
+
     override fun getUserByPhone(phone: String): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {

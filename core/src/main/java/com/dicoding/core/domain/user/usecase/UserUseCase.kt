@@ -30,6 +30,14 @@ interface UserUseCase {
         address: String? = null
     ): Flow<Resource<User>>
 
+    fun completeUserData(
+        id: String,
+        pathKTP: String? = null,
+        citizenNumber: String? = null,
+        phone: String? = null,
+        address: String? = null
+    ): Flow<Resource<User>>
+
     fun getUserByPhone(phone: String): Flow<Resource<User>>
 
     fun deleteUser(id: String): Flow<Resource<Unit>>

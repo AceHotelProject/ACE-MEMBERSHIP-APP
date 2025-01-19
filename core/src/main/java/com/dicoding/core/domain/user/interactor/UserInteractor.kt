@@ -56,6 +56,22 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         )
     }
 
+    override fun completeUserData(
+        id: String,
+        pathKTP: String?,
+        citizenNumber: String?,
+        phone: String?,
+        address: String?
+    ): Flow<Resource<User>> {
+        return userRepository.completeUserData(
+            id = id,
+            pathKTP = pathKTP,
+            citizenNumber = citizenNumber,
+            phone = phone,
+            address = address
+        )
+    }
+
     override fun getUserByPhone(phone: String): Flow<Resource<User>> {
         return userRepository.getUserByPhone(phone)
     }

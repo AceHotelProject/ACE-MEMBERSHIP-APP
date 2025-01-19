@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.member.detailmember.ubahprofile.UbahProfileActivity">
+    tools:context=".view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity">
 
     <ImageView
         android:id="@+id/btn_close"
@@ -56,15 +56,22 @@
                 android:layout_height="wrap_content"
                 android:text="Foto KTP/SIM" />
 
-            <ImageView
-                android:id="@+id/add_mitra_foto_mitra_image"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/add_mitra_foto_mitra_card"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
-                android:background="@drawable/custom_edit_text"
-                android:scaleType="fitXY"
-                android:src="@drawable/image_empty" />
+                app:cardCornerRadius="12dp">
+
+                <ImageView
+                    android:id="@+id/add_mitra_foto_mitra_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/image_empty" />
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/tv_nama"

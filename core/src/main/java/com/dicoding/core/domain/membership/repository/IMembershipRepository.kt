@@ -1,18 +1,16 @@
 package com.dicoding.core.domain.membership.repository
 
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.data.source.remote.response.membership.ValidatedMembership
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface IMembershipRepository {
     fun createMembership(
-        name: String,
-        periode: Int,
+        type: String,
+        duration: Int,
         price: Int,
-        tnc: List<String>,
-        discount: Int
+        tnc: List<String>
     ): Flow<Resource<Membership>>
 
     fun getAllMemberships(): Flow<Resource<List<Membership>>>
@@ -21,23 +19,12 @@ interface IMembershipRepository {
 
     fun updateMembership(
         id: String,
-        name: String? = null,
-        periode: Int? = null,
+        type: String? = null,
+        duration: Int? = null,
         price: Int? = null,
-        tnc: List<String>? = null,
-        discount: Int? = null
+        tnc: List<String>? = null
     ): Flow<Resource<Membership>>
 
     fun deleteMembership(id: String): Flow<Resource<Unit>>
 
-    fun validateMembership(
-        userId: String,
-        type: String,
-        price: Int,
-        startDate: String,
-        endDate: String,
-        status: String,
-        proofImagePath: String,
-        verifiedBy: String
-    ): Flow<Resource<ValidatedMembership>>
 }

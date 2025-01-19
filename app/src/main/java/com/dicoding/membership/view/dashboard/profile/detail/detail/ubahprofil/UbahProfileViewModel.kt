@@ -17,6 +17,14 @@ import javax.inject.Inject
 class UbahProfileViewModel @Inject constructor (
     private val userUseCase: UserUseCase
 ): ViewModel() {
+    private var imagePath: String? = null
+
+    fun setImageString(path: String) {
+        imagePath = path
+    }
+
+    fun getImageString(): String? = imagePath
+
     fun updateUserData(
         id: String,
         idPicturePath: String? = "dummy_image_path.jpg",

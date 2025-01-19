@@ -21,19 +21,20 @@ data class UserResponse(
     @field:SerializedName("address")
     val address: String? = null,
 
-    @field:SerializedName("citizen_number")
+    @field:SerializedName("citizenNumber")
     val citizenNumber: String? = null,
 
-    @field:SerializedName("id_picture_path")
+    @field:SerializedName("pathKTP")
     val idPicturePath: String? = null,
 
     @field:SerializedName("role")
     val role: String = "nonMember",
 
+    //need to be fixed the underscore
     @field:SerializedName("merchant_id")
     val merchantId: String? = null,
 
-    @field:SerializedName("android_id")
+    @field:SerializedName("androidId")
     val androidId: String? = null,
 
     @field:SerializedName("member_type")

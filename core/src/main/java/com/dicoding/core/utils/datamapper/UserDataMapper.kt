@@ -20,8 +20,8 @@ object UserDataMapper {
         email = input.email ?: "Empty",
         phone = input.phone ?: "Empty",
         address = input.address ?: "Empty",
-        citizen_number = input.citizenNumber ?: "Empty",
-        id_picture_path = input.idPicturePath ?: "Empty",
+        citizenNumber = input.citizenNumber ?: "Empty",
+        idPicturePath = input.idPicturePath ?: "Empty",
         role = input.role ?: "nonMember",  // Added role with default
         merchant_id = input.merchantId ?: "Empty",
         android_id = input.androidId ?: "Empty",

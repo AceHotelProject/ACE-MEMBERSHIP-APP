@@ -11,8 +11,8 @@ data class User(
     //val is validated
     val phone: String,
     val address: String,
-    val citizen_number: String,
-    val id_picture_path: String,
+    val citizenNumber: String,
+    val idPicturePath: String,
     val role: String,
     val merchant_id: String,
     val android_id: String,

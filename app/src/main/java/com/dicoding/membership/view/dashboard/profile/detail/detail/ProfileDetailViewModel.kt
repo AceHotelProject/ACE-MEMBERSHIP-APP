@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.profile.detail.detail
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

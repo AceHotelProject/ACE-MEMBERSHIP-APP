@@ -2,21 +2,19 @@ package com.dicoding.membership.view.dashboard.profile.detail.detail
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
+import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.databinding.ActivityProfileDetailBinding
-import com.dicoding.membership.view.dashboard.member.detailmember.ubahprofile.UbahProfileActivity
+import com.dicoding.membership.view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -71,6 +69,8 @@ class ProfileDetailActivity : AppCompatActivity(){
                 }
                 is Resource.Success -> {
                     showLoading(false)
+
+                    Log.d("Activity debug", "Data gathered: ${resource.data}")
                     resource.data?.let { user ->
                         updateUserUI(user)
                     }
@@ -106,18 +106,30 @@ class ProfileDetailActivity : AppCompatActivity(){
                     profileDetailLayoutUser.visibility = View.VISIBLE
 
                     detailProfilNamaLengkap.text = user.name
-                    detailProfilNik.text = user.citizen_number
+                    detailProfilNik.text = user.citizenNumber
                     detailProfilNomorTelepon.text = user.phone
                     detailProfilEmail.text = user.email
+                    detailProfilAlamat.text = user.address
 
-                    Glide.with(this@ProfileDetailActivity)
-                        .load(user.id_picture_path)
-                        .placeholder(R.drawable.ktp_example)
-                        .error(R.drawable.ktp_example)
-                        .into(detailProfileKtpImageView)
+                    displayUserImage(user.idPicturePath)
                 }
             }
         }
+    }
+
+    private fun displayUserImage(imagePath: String?) {
+        if (imagePath.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(R.drawable.ktp_example)
+                .into(binding.detailProfileKtpImageView)
+            return
+        }
+
+        Glide.with(this)
+            .load(imagePath)  // Glide can handle both URIs and file paths
+            .placeholder(R.drawable.ktp_example)
+            .error(R.drawable.ktp_example)
+            .into(binding.detailProfileKtpImageView)
     }
 
     private fun showLoading(isLoading: Boolean) {

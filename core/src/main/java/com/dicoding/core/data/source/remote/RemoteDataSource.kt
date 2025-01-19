@@ -7,7 +7,6 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
-import com.dicoding.core.data.source.remote.response.membership.ValidateMembershipResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
@@ -203,7 +202,34 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                     phone = phone,
                     address = address
                 )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
+    suspend fun completeUserData(
+        id: String,
+        pathKTP: String? = null,
+        citizenNumber: String? = null,
+        phone: String? = null,
+        address: String? = null
+    ): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.completeUserData(
+                    id = id,
+                    pathKTP = pathKTP,
+                    citizenNumber = citizenNumber,
+                    phone = phone,
+                    address = address
+                )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
                 } else {
@@ -231,20 +257,18 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     /////////////////////////////////////////////////////////////////////////////// MEMBERSHIP
 
     suspend fun createMembership(
-        name: String,
-        periode: Int,
+        type: String,
+        duration: Int,
         price: Int,
-        tnc: List<String>,
-        discount: Int
+        tnc: List<String>
     ): Flow<ApiResponse<MembershipResponse>> {
         return flow {
             try {
                 val response = apiService.createMembership(
-                    name = name,
-                    periode = periode,
+                    type = type,
+                    duration = duration,
                     price = price,
-                    tnc = tnc,
-                    discount = discount
+                    tnc = tnc
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
@@ -292,21 +316,19 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     suspend fun updateMembership(
         id: String,
-        name: String? = null,
-        periode: Int? = null,
+        type: String? = null,
+        duration: Int? = null,
         price: Int? = null,
-        tnc: List<String>? = null,
-        discount: Int? = null
+        tnc: List<String>? = null
     ): Flow<ApiResponse<MembershipResponse>> {
         return flow {
             try {
                 val response = apiService.updateMembership(
                     id = id,
-                    name = name,
-                    periode = periode,
+                    type = type,
+                    duration = duration,
                     price = price,
-                    tnc = tnc,
-                    discount = discount
+                    tnc = tnc
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
@@ -331,41 +353,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             }
         }.flowOn(Dispatchers.IO)
     }
-
-    suspend fun validateMembership(
-        userId: String,
-        type: String,
-        price: Int,
-        startDate: String,
-        endDate: String,
-        status: String,
-        proofImagePath: String,
-        verifiedBy: String
-    ): Flow<ApiResponse<ValidateMembershipResponse>> {
-        return flow {
-            try {
-                val response = apiService.validateMembership(
-                    userId = userId,
-                    type = type,
-                    price = price,
-                    startDate = startDate,
-                    endDate = endDate,
-                    status = status,
-                    proofImagePath = proofImagePath,
-                    verifiedBy = verifiedBy
-                )
-                if (response.id != null) {
-                    emit(ApiResponse.Success(response))
-                } else {
-                    emit(ApiResponse.Empty)
-                }
-            } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
-                Timber.tag("RemoteDataSource").e(e.toString())
-            }
-        }.flowOn(Dispatchers.IO)
-    }
-
 
     /////////////////////////////////////////////////////////////////////////////// POINT
 

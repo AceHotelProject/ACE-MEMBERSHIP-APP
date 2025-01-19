@@ -1,10 +1,10 @@
 package com.dicoding.core.data.source.remote.network
 
+import android.util.Log
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
-import com.dicoding.core.data.source.remote.response.membership.ValidateMembershipResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryListResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
@@ -99,9 +99,19 @@ interface ApiService {
     @FormUrlEncoded
     suspend fun updateUserData(
         @Path("id") id: String,
-        @Field("id_picture_path") idPicturePath: String? = null,
+        @Field("pathKTP") idPicturePath: String? = null,
         @Field("name") name: String? = null,
-        @Field("citizen_number") citizenNumber: String? = null,
+        @Field("citizenNumber") citizenNumber: String? = null,
+        @Field("phone") phone: String? = null,
+        @Field("address") address: String? = null
+    ): UserResponse
+
+    @PATCH("v1/users/{id}/complete-data")
+    @FormUrlEncoded
+    suspend fun completeUserData(
+        @Path("id") id: String,
+        @Field("pathKTP") pathKTP: String? = null,
+        @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
         @Field("address") address: String? = null
     ): UserResponse
@@ -115,52 +125,37 @@ interface ApiService {
 
     // Membership
 
-    @POST("v1/memberships")
+    @POST("v1/subscriptions")
     @FormUrlEncoded
     suspend fun createMembership(
-        @Field("name") name: String,
-        @Field("periode") periode: Int,
+        @Field("type") type: String,
+        @Field("duration") duration: Int,
         @Field("price") price: Int,
-        @Field("tnc") tnc: List<String>,
-        @Field("discount") discount: Int
+        @Field("tnc") tnc: List<String>
     ): MembershipResponse
 
-    @GET("v1/memberships")
+    @GET("v1/subscriptions")
     suspend fun getAllMemberships(): MembershipListResponse
 
-    @GET("v1/memberships/{id}")
+    @GET("v1/subscriptions/{id}")
     suspend fun getMembershipById(
         @Path("id") id: String
     ): MembershipResponse
 
-    @PATCH("v1/memberships/{id}")
+    @PATCH("v1/subscriptions/{id}")
     @FormUrlEncoded
     suspend fun updateMembership(
         @Path("id") id: String,
-        @Field("name") name: String? = null,
-        @Field("periode") periode: Int? = null,
+        @Field("type") type: String? = null,
+        @Field("duration") duration: Int? = null,
         @Field("price") price: Int? = null,
-        @Field("tnc") tnc: List<String>? = null,
-        @Field("discount") discount: Int? = null
+        @Field("tnc") tnc: List<String>? = null
     ): MembershipResponse
 
-    @DELETE("v1/memberships/{id}")
+    @DELETE("v1/subscriptions/{id}")
     suspend fun deleteMembership(
         @Path("id") id: String
     ): Unit
-
-    @POST("v1/memberships/validate/{userId}")
-    @FormUrlEncoded
-    suspend fun validateMembership(
-        @Path("userId") userId: String,
-        @Field("type") type: String,
-        @Field("price") price: Int,
-        @Field("start_date") startDate: String,
-        @Field("end_date") endDate: String,
-        @Field("status") status: String,
-        @Field("proof_image_path") proofImagePath: String,
-        @Field("verified_by") verifiedBy: String
-    ): ValidateMembershipResponse
 
     // Referral Code
 
