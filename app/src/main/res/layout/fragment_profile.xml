@@ -7,11 +7,19 @@
     tools:context=".view.dashboard.profile.ProfileFragment"
     android:background="@color/light_grey_100">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="162dp"
+        android:src="@drawable/custom_background_history"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="32sp"
+        android:layout_marginTop="32sp"
+        android:layout_marginEnd="32sp">
 
         <TextView
             style="@style/textStyleSemIBold_32"
@@ -19,24 +27,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profil"
-            android:layout_marginTop="32sp"
-            android:layout_marginStart="24sp"
-            android:layout_marginEnd="24sp"
             android:textColor="@color/black"/>
 
         <!-- PROMO BANNER hanya untuk role USER MEMBER dan NON MEMBER -->
         <LinearLayout
-            android:id="@+id/ln_card_member_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16sp"
-            android:layout_marginStart="24sp"
-            android:layout_marginEnd="24sp"
             android:orientation="vertical"
-            android:visibility="visible"
             android:background="@drawable/background_mini_ace_silver">
             <TextView
-                android:id="@+id/tv_card_category_member"
                 style="@style/textStyleButton"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="20dp"
@@ -59,19 +59,16 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_gunakan_promo"
-            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="24sp"
-            android:layout_marginEnd="24sp"
             android:background="@drawable/custom_button_profile_gunakanpromo">
 
             <TextView
                 android:id="@+id/textView"
                 style="@style/textStyleMedium_custom"
                 android:layout_width="wrap_content"
+
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
@@ -101,275 +98,281 @@
 
         <!-- promo banner END -->
 
-        <LinearLayout
-            android:id="@+id/ln_background_menu"
+        <!-- Role: ALL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_profil_diri"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16sp"
-            android:background="@drawable/custom_background_history"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="16dp">
 
-            <!-- Role: ALL -->
-            <LinearLayout
-                android:id="@+id/layout_profil_diri"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/iv_profil_diri_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons_profile_profile"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_profil_diri"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="24sp"
-                android:layout_marginTop="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Profil Diri"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_profil_diri_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="3dp"
-                    android:src="@drawable/icons_profile_profile" />
+            <ImageView
+                android:id="@+id/iv_arrow"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_profil_diri"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Profil Diri"
-                    android:textColor="@color/dark_grey" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
+        <!-- Role: User MEMBER dan NON-MEMBER -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_membershipku"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_membershipku_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons_membershipku"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Role: User Member dan Non Member -->
-            <LinearLayout
-                android:id="@+id/layout_membershipku"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_membershipku"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Membershipku"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_membershipku_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="2dp"
-                    android:src="@drawable/icons_membershipku" />
+            <ImageView
+                android:id="@+id/iv_arrow1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_membershipku"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Membershipku"
-                    android:textColor="@color/dark_grey" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow1"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
-            </LinearLayout>
+        <!-- Role: ALL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_poinku"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            <!-- Role: ALL -->
-            <LinearLayout
-                android:id="@+id/layout_poinku"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/iv_poinku_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icons_poinku"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_poinku"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Poinku"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_poinku_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="2dp"
-                    android:src="@drawable/icons_poinku" />
+            <ImageView
+                android:id="@+id/iv_arrow2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_poinku"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Poinku"
-                    android:textColor="@color/dark_grey" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow3"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
+        <!-- Role: Admin -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_manajemen_mitra"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_manajemen_mitra_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/icon_manajemen_mitra"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Role: Admin -->
-            <LinearLayout
-                android:id="@+id/layout_manajemen_mitra"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_manajemen_mitra"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Manajemen Mitra"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_manajemen_mitra_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="1dp"
-                    android:src="@drawable/icon_manajemen_mitra" />
+            <ImageView
+                android:id="@+id/iv_arrow6"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_manajemen_mitra"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Manajemen Mitra"
-                    android:textColor="@color/dark_grey" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow4"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
+        <!-- Role: ALL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_referralku"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_referralku_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/icons_referralku"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Role: ALL -->
-            <LinearLayout
-                android:id="@+id/layout_referralku"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_referralku"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Referralku"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_referralku_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="2dp"
-                    android:src="@drawable/icons_referralku" />
+            <ImageView
+                android:id="@+id/iv_arrow3"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_referralku"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Refferalku"
-                    android:textColor="@color/dark_grey"  />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow5"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
+        <!-- Role: ALL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_customer_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_customer_service_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/icons_customer_service"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Role: ALL -->
-            <LinearLayout
-                android:id="@+id/layout_customer_service"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_customer_service"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Customer service"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_customer_service_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="2dp"
-                    android:src="@drawable/icons_customer_service" />
+            <ImageView
+                android:id="@+id/iv_arrow4"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_customer_service"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Customer service"
-                    android:textColor="@color/dark_grey" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/iv_arrow6"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:paddingEnd="6dp"
-                    android:paddingStart="7dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icons_chevron_right" />
+        <!-- Role: ALL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_keluar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_keluar_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/icons_keluar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Role: ALL -->
-            <LinearLayout
-                android:id="@+id/layout_keluar"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_keluar"
+                style="@style/textStyleMedium_16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:layout_marginBottom="28dp">
+                android:layout_marginStart="26dp"
+                android:text="Keluar"
+                android:textColor="@color/red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/iv_keluar_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:padding="1dp"
-                    android:src="@drawable/icons_keluar" />
+            <ImageView
+                android:id="@+id/iv_arrow5"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/icons_chevron_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_keluar"
-                    style="@style/textStyleMedium_14"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="Keluar"
-                    android:textColor="@color/red" />
-            </LinearLayout>
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
+
 </FrameLayout>

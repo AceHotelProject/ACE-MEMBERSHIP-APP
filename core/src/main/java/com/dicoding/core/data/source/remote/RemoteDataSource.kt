@@ -16,14 +16,17 @@ import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryRespon
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import com.dicoding.core.data.source.remote.response.user.UserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -75,7 +78,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    /////////////////////////////////////////////////////////////////////////////// AUTH
+    ///////////////////////////////////////////////////////////////////////////////
 
     suspend fun login(email: String, password: String): Flow<ApiResponse<LoginResponse>> {
         return flow {
@@ -102,6 +105,264 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             }
         }.flowOn(Dispatchers.IO)
     }
+
+
+    suspend fun createUser(
+        email: String,
+        password: String,
+        name: String,
+        role: String = "member",
+        memberType: String? = null,
+        point: Int = 0,
+        subscriptionStartDate: String? = null,
+        subscriptionEndDate: String? = null
+    ): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.createUser(
+                    email = email,
+                    password = password,
+                    name = name,
+                    role = role,
+                    memberType = memberType,
+                    point = point,
+                    subscriptionStartDate = subscriptionStartDate,
+                    subscriptionEndDate = subscriptionEndDate
+                )
+
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getAllUsersData(): Flow<ApiResponse<List<UserResponse>>> {
+        return flow {
+            try {
+                val response = apiService.getAllUsersData()
+                if (response.data.isNotEmpty()) {
+                    emit(ApiResponse.Success(response.data))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getUserData(id: String): Flow<ApiResponse<UserResponse>> {
+        return flow<ApiResponse<UserResponse>>{
+            try {
+                val response = apiService.getUserData(id)
+
+                if(!response.id.isNullOrEmpty()) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getUserByPhone(phone: String): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.getUserByPhone(phone)
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun updateUserData(
+        id: String,
+        idPicturePath: String? = null,
+        name: String? = null,
+        citizenNumber: String? = null,
+        phone: String? = null,
+        address: String? = null
+    ): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.updateUserData(
+                    id = id,
+                    idPicturePath = idPicturePath,
+                    name = name,
+                    citizenNumber = citizenNumber,
+                    phone = phone,
+                    address = address
+                )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun completeUserData(
+        id: String,
+        pathKTP: String? = null,
+        citizenNumber: String? = null,
+        phone: String? = null,
+        address: String? = null
+    ): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.completeUserData(
+                    id = id,
+                    pathKTP = pathKTP,
+                    citizenNumber = citizenNumber,
+                    phone = phone,
+                    address = address
+                )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun deleteUser(id: String): Flow<ApiResponse<Unit>> {
+        return flow {
+            try {
+                val response = apiService.deleteUser(id)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /////////////////////////////////////////////////////////////////////////////// MEMBERSHIP
+
+    suspend fun createMembership(
+        type: String,
+        duration: Int,
+        price: Int,
+        tnc: List<String>
+    ): Flow<ApiResponse<MembershipResponse>> {
+        return flow {
+            try {
+                val response = apiService.createMembership(
+                    type = type,
+                    duration = duration,
+                    price = price,
+                    tnc = tnc
+                )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getAllMemberships(): Flow<ApiResponse<List<MembershipResponse>>> {
+        return flow {
+            try {
+                val response = apiService.getAllMemberships()
+                if (response.data.isNotEmpty()) {
+                    emit(ApiResponse.Success(response.data))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getMembershipById(id: String): Flow<ApiResponse<MembershipResponse>> {
+        return flow {
+            try {
+                val response = apiService.getMembershipById(id)
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun updateMembership(
+        id: String,
+        type: String? = null,
+        duration: Int? = null,
+        price: Int? = null,
+        tnc: List<String>? = null
+    ): Flow<ApiResponse<MembershipResponse>> {
+        return flow {
+            try {
+                val response = apiService.updateMembership(
+                    id = id,
+                    type = type,
+                    duration = duration,
+                    price = price,
+                    tnc = tnc
+                )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun deleteMembership(id: String): Flow<ApiResponse<Unit>> {
+        return flow {
+            try {
+                val response = apiService.deleteMembership(id)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+
+    ////////////////////////
 
     suspend fun sendOtp(id: String): Flow<ApiResponse<OtpResponse>> = flow {
         try {
@@ -301,5 +562,4 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             }
         }.flowOn(Dispatchers.IO)
     }
-    /////////////////////////////////////////////////////////////////////////////// MERCHANT
 }

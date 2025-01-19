@@ -1,17 +1,13 @@
 package com.dicoding.core.data.source.remote.network
 
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
-import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
-import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
-import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
@@ -22,11 +18,8 @@ import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -56,13 +49,11 @@ interface ApiService {
 
     @GET("stories/{id}")
     suspend fun getDetailStories(
-        @Path("id") id: String
+        @Path("id")id: String
     ): DetailStoryResponse
 /////////////////////////////////////////////////////////////////////////////////
 
-    // Lengkapi response terlebih dahulu
-
-    ////////////////////////////////////////////// Auth
+    // Auth
     @FormUrlEncoded
     @POST("v1/auth/login")
     suspend fun login(
@@ -106,20 +97,27 @@ interface ApiService {
 //    @GET("v1/users")
 //    suspend fun getAllUsers(): List<>
 
-    @GET("v1/users/{id}")
-    suspend fun getUserById(
-        @Path("id") userId: String
-    )
+    @GET("v1/users")
+    suspend fun getAllUsersData() : UserListResponse
 
-    @FormUrlEncoded
+    @GET("v1/users/{id}")
+    suspend fun getUserData(
+        @Path("id") id: String
+    ): UserResponse
+
     @PATCH("v1/users/{id}")
-    suspend fun updateUserById(
-        @Path("id") userId: String,
-        @Field("name") name: String
-    )
+    @FormUrlEncoded
+    suspend fun updateUserData(
+        @Path("id") id: String,
+        @Field("pathKTP") idPicturePath: String? = null,
+        @Field("name") name: String? = null,
+        @Field("citizenNumber") citizenNumber: String? = null,
+        @Field("phone") phone: String? = null,
+        @Field("address") address: String? = null
+    ): UserResponse
 
     @DELETE("v1/users/{id}")
-    suspend fun deleteUserById(
+    suspend fun deleteUser(
         @Path("id") userId: String
     )
 
@@ -179,6 +177,61 @@ interface ApiService {
     suspend fun getSubscriptionById(
         @Path("id") id: String
     )
+    // User
+
+    @POST("v1/users")
+    @FormUrlEncoded
+    suspend fun createUser(
+        @Field("email") email: String,
+        @Field("password") password: String,
+        @Field("name") name: String,
+        @Field("role") role: String = "member",
+        @Field("member_type") memberType: String? = null,
+        @Field("point") point: Int = 0,
+        @Field("subscription_start_date") subscriptionStartDate: String? = null,
+        @Field("subscription_end_date") subscriptionEndDate: String? = null
+    ): UserResponse
+
+    @GET("v1/users")
+    suspend fun getAllUsersData() : UserListResponse
+
+    @GET("v1/users/{id}")
+    suspend fun getUserData(
+        @Path("id") id: String
+    ): UserResponse
+
+    @GET("v1/users/phone/{phone}")
+    suspend fun getUserByPhone(
+        @Path("phone") phone: String
+    ): UserResponse
+
+    @PATCH("v1/users/{id}")
+    @FormUrlEncoded
+    suspend fun updateUserData(
+        @Path("id") id: String,
+        @Field("pathKTP") idPicturePath: String? = null,
+        @Field("name") name: String? = null,
+        @Field("citizenNumber") citizenNumber: String? = null,
+        @Field("phone") phone: String? = null,
+        @Field("address") address: String? = null
+    ): UserResponse
+
+    @PATCH("v1/users/{id}/complete-data")
+    @FormUrlEncoded
+    suspend fun completeUserData(
+        @Path("id") id: String,
+        @Field("pathKTP") pathKTP: String? = null,
+        @Field("citizenNumber") citizenNumber: String? = null,
+        @Field("phone") phone: String? = null,
+        @Field("address") address: String? = null
+    ): UserResponse
+
+    @DELETE("v1/users/{id}")
+    suspend fun deleteUser(
+        @Path("id") id: String
+    ): Unit
+
+    // Non Member
 
     @PATCH("v1/subscriptions/{id}")
     suspend fun updateSubscriptionById(
@@ -186,7 +239,39 @@ interface ApiService {
         @Body updateData: Map<String, Any>
     )
 
-    ////////////////////////////////////////////// Promo
+    @POST("v1/subscriptions")
+    @FormUrlEncoded
+    suspend fun createMembership(
+        @Field("type") type: String,
+        @Field("duration") duration: Int,
+        @Field("price") price: Int,
+        @Field("tnc") tnc: List<String>
+    ): MembershipResponse
+
+    @GET("v1/subscriptions")
+    suspend fun getAllMemberships(): MembershipListResponse
+
+    @GET("v1/subscriptions/{id}")
+    suspend fun getMembershipById(
+        @Path("id") id: String
+    ): MembershipResponse
+
+    @PATCH("v1/subscriptions/{id}")
+    @FormUrlEncoded
+    suspend fun updateMembership(
+        @Path("id") id: String,
+        @Field("type") type: String? = null,
+        @Field("duration") duration: Int? = null,
+        @Field("price") price: Int? = null,
+        @Field("tnc") tnc: List<String>? = null
+    ): MembershipResponse
+
+    @DELETE("v1/subscriptions/{id}")
+    suspend fun deleteMembership(
+        @Path("id") id: String
+    ): Unit
+
+    // Promo
     @FormUrlEncoded
     @POST("v1/promos")
     suspend fun createPromo(
@@ -240,6 +325,13 @@ interface ApiService {
         @Query("page") page: Int,
         @Query("limit") limit: Int
     ): GetPromoHistoryResponse
-    ////////////////////////////////////////////// Merchant
+
+    // Referral Code
+
+    // Mitra
+
+    // Discount and Promotion
+
+    // Poin
 
 }

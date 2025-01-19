@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -9,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
+
 
     <application
         android:name=".view.MyApplication"
@@ -34,6 +38,21 @@
             android:name=".view.status.StatusTemplateActivity"
             android:exported="false" />
         <activity
+            android:name=".view.dashboard.profile.detail.poinku.transfer.TransferPoinActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.poinku.ProfileDetailPoinkuActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.template.StatusTemplateActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.referralku.ProfileDetailReferralkuActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".view.dashboard.profile.detail.detail.ProfileDetailActivity"
+            android:exported="false"/>
+        <activity
             android:name=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity"
             android:exported="false" />
         <activity
@@ -44,7 +63,7 @@
             android:exported="false"
             android:theme="@style/Base.Theme.Membership" />
         <activity
-            android:name=".view.dashboard.member.detailmember.ubahprofile.UbahProfileActivity"
+            android:name=".view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.floatingvalidasi.detailvalidasi.DetailValidasiActivity"
