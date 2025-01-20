@@ -32,6 +32,7 @@ interface UserUseCase {
 
     fun completeUserData(
         id: String,
+        name: String? = null,
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,

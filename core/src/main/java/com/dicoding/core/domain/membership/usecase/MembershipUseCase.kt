@@ -1,6 +1,7 @@
 package com.dicoding.core.domain.membership.usecase
 
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +13,7 @@ interface MembershipUseCase {
         tnc: List<String>
     ): Flow<Resource<Membership>>
 
-    fun getAllMemberships(): Flow<Resource<List<Membership>>>
+    fun getAllMemberships(): Flow<Resource<MembershipListResponse>>
 
     fun getMembershipById(id: String): Flow<Resource<Membership>>
 

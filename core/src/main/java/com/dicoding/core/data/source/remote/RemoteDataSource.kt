@@ -7,6 +7,7 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
@@ -223,6 +224,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     suspend fun completeUserData(
         id: String,
+        name: String? = null,
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
@@ -232,6 +234,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             try {
                 val response = apiService.completeUserData(
                     id = id,
+                    name = name,
                     pathKTP = pathKTP,
                     citizenNumber = citizenNumber,
                     phone = phone,
@@ -289,15 +292,11 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getAllMemberships(): Flow<ApiResponse<List<MembershipResponse>>> {
+    suspend fun getAllMemberships(): Flow<ApiResponse<MembershipListResponse>> {
         return flow {
             try {
                 val response = apiService.getAllMemberships()
-                if (response.data.isNotEmpty()) {
-                    emit(ApiResponse.Success(response.data))
-                } else {
-                    emit(ApiResponse.Empty)
-                }
+                emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Timber.tag("RemoteDataSource").e(e.toString())

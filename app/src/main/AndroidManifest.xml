@@ -35,6 +35,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
+            android:name=".view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.status.StatusTemplateActivity"
             android:exported="false" />
         <activity

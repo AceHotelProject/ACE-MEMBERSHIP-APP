@@ -20,5 +20,18 @@ data class MembershipResponse(
     )
 
 data class MembershipListResponse(
-    val data: List<MembershipResponse> = emptyList()
+    @SerializedName("results")
+    val results: List<MembershipResponse> = emptyList(),
+
+    @SerializedName("page")
+    val page: Int = 1,
+
+    @SerializedName("limit")
+    val limit: Int = 10,
+
+    @SerializedName("totalPages")
+    val totalPages: Int = 0,
+
+    @SerializedName("totalResults")
+    val totalResults: Int = 0
 )

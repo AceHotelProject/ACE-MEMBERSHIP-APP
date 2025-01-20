@@ -5,6 +5,7 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.local.LocalDataSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
@@ -40,13 +41,27 @@ class MembershipRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getAllMemberships(): Flow<Resource<List<Membership>>> {
-        return object : NetworkBoundResource<List<Membership>, List<MembershipResponse>>() {
-            override suspend fun fetchFromApi(response: List<MembershipResponse>): List<Membership> {
-                return response.map { MembershipDataMapper.mapResponseToDomain(it) }
+    override fun getAllMemberships(): Flow<Resource<MembershipListResponse>> {
+        return object : NetworkBoundResource<MembershipListResponse, MembershipListResponse>() {
+            override suspend fun fetchFromApi(response: MembershipListResponse): MembershipListResponse {
+                return MembershipListResponse(
+                    results = response.results.map {
+                        MembershipResponse(
+                            id = it.id,
+                            type = it.type,
+                            duration = it.duration,
+                            price = it.price,
+                            tnc = it.tnc
+                        )
+                    },
+                    page = response.page,
+                    limit = response.limit,
+                    totalPages = response.totalPages,
+                    totalResults = response.totalResults
+                )
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<List<MembershipResponse>>> {
+            override suspend fun createCall(): Flow<ApiResponse<MembershipListResponse>> {
                 return remoteDataSource.getAllMemberships()
             }
         }.asFlow()

@@ -29,9 +29,6 @@ import java.io.ByteArrayOutputStream
 class UbahProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUbahProfileBinding
     private val viewModel: UbahProfileViewModel by viewModels()
-    private var selectedImageUri: Uri? = null
-
-    private var currentImageBitmap: Bitmap? = null
 
     private val CAMERA_PERMISSION = Manifest.permission.CAMERA
     private val STORAGE_PERMISSION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -225,6 +222,8 @@ class UbahProfileActivity : AppCompatActivity() {
                             showToast("Profile berhasil diperbarui")
                             finish()
                         }
+
+                        else -> {}
                     }
                 }
             }

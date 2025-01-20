@@ -1,6 +1,7 @@
 package com.dicoding.core.domain.membership.interactor
 
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
@@ -26,7 +27,7 @@ class MembershipInteractor @Inject constructor(
         )
     }
 
-    override fun getAllMemberships(): Flow<Resource<List<Membership>>> {
+    override fun getAllMemberships(): Flow<Resource<MembershipListResponse>> {
         return membershipRepository.getAllMemberships()
     }
 

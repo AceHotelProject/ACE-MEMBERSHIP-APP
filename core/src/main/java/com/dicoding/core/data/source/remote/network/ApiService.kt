@@ -172,6 +172,7 @@ interface ApiService {
     @FormUrlEncoded
     suspend fun completeUserData(
         @Path("id") id: String,
+        @Field("name") name: String? = null,
         @Field("pathKTP") pathKTP: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,

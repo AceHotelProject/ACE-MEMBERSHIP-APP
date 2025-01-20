@@ -101,6 +101,7 @@ class UserRepository @Inject constructor(
 
     override fun completeUserData(
         id: String,
+        name: String?,
         pathKTP: String?,
         citizenNumber: String?,
         phone: String?,
@@ -114,6 +115,7 @@ class UserRepository @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
                 return remoteDataSource.completeUserData(
                     id = id,
+                    name = name,
                     pathKTP = pathKTP,
                     citizenNumber = citizenNumber,
                     phone = phone,

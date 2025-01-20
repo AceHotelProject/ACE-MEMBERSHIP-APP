@@ -58,6 +58,7 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
 
     override fun completeUserData(
         id: String,
+        name: String?,
         pathKTP: String?,
         citizenNumber: String?,
         phone: String?,
@@ -65,6 +66,7 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
     ): Flow<Resource<User>> {
         return userRepository.completeUserData(
             id = id,
+            name = name,
             pathKTP = pathKTP,
             citizenNumber = citizenNumber,
             phone = phone,

@@ -12,6 +12,7 @@ import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityProfileDetailPoinkuBinding
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity.Companion
+import com.dicoding.membership.view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity
 import com.dicoding.membership.view.dashboard.profile.detail.poinku.transfer.TransferPoinActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,6 +32,14 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
+        binding.layoutTerimaButton.setOnClickListener {
+            viewModel.userData.value?.let { loginDomain ->
+                val intent = Intent(this, TerimaPoinActivity::class.java).apply {
+                    putExtra(TerimaPoinActivity.EXTRA_USER_ID, loginDomain.user.id)
+                }
+                startActivity(intent)
+            }
+        }
         binding.layoutTransferButton.setOnClickListener {
             viewModel.userData.value?.let { loginDomain ->
                 val intent = Intent(this, TransferPoinActivity::class.java).apply {
