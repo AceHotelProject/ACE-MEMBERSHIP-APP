@@ -42,10 +42,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun providePointsRepository(pointsRepository: PointsRepository): IPointsRepository
-
-    @Binds
-    @Singleton
     abstract fun providePromoRepository(promoRepository: PromoRepository): IPromoRepository
 
 }

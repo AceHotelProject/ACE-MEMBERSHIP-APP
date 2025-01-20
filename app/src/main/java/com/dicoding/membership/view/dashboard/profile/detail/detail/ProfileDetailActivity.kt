@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.databinding.ActivityProfileDetailBinding
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity
 import dagger.hilt.android.AndroidEntryPoint

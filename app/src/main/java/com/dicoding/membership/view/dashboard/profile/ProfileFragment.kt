@@ -14,11 +14,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.UserDomain
-import com.dicoding.core.domain.user.model.User
-import com.dicoding.core.utils.constants.UserRole
-import com.dicoding.core.utils.constants.mapToUserRole
-import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.databinding.FragmentProfileBinding
 import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
@@ -97,75 +92,75 @@ class ProfileFragment : Fragment() {
     }
 
     private fun validateToken() {
-        profileViewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
+        viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
             if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkUserRole() {
-        profileViewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
-            val userRole = mapToUserRole(loginDomain.user.role)
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun checkUserRole() {
+//        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+//            val userRole = mapToUserRole(loginDomain.user.role)
+//
+////            Testing
+//            val mockUserRole = UserRole.ADMIN
+//            setupUserVisibility(mockUserRole)
+//
+////            Use This For Real
+////            setupFabVisibility(userRole)
+//
+//            Log.d("HomeFragment", "User Role: ${userRole.display}")
+//        }
+//    }
 
-//            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole)
-
-//            Use This For Real
-//            setupFabVisibility(userRole)
-
-            Log.d("HomeFragment", "User Role: ${userRole.display}")
-        }
-    }
-
-    private fun setupUserVisibility(userRole: UserRole) {
-        when (userRole) {
-            UserRole.ADMIN -> {
-                binding.lnCardMemberCategory.visibility = View.GONE
-                binding.clGunakanPromo.visibility = View.GONE
-                binding.layoutMembershipku.visibility = View.GONE
-                binding.layoutManajemenMitra.visibility = View.VISIBLE
-            }
-            UserRole.MITRA, UserRole.RECEPTIONIST ->{
-                binding.lnCardMemberCategory.visibility = View.GONE
-                binding.clGunakanPromo.visibility = View.GONE
-                binding.layoutMembershipku.visibility = View.GONE
-                binding.layoutManajemenMitra.visibility = View.GONE
-            }
-            UserRole.MEMBER -> {
-                binding.lnCardMemberCategory.visibility = View.VISIBLE
-                binding.clGunakanPromo.visibility = View.VISIBLE
-                binding.layoutMembershipku.visibility = View.VISIBLE
-                binding.layoutManajemenMitra.visibility = View.GONE
-
-                binding.lnBackgroundMenu.background = null
-            }
-            UserRole.NONMEMBER -> {
-                binding.lnCardMemberCategory.visibility = View.VISIBLE
-                binding.tvCardCategoryMember.visibility = View.GONE
-                binding.tvExpiryDate.visibility = View.GONE
-                binding.clGunakanPromo.visibility = View.VISIBLE
-                binding.layoutMembershipku.visibility = View.VISIBLE
-                binding.layoutManajemenMitra.visibility = View.GONE
-
-                binding.lnCardMemberCategory.setBackgroundResource(R.drawable.background_big_non_member)
-                binding.lnBackgroundMenu.background = null
-            }
-            else -> {
-                binding.lnCardMemberCategory.visibility = View.GONE
-                binding.clGunakanPromo.visibility = View.GONE
-                binding.layoutProfilDiri.visibility = View.GONE
-                binding.layoutMembershipku.visibility = View.GONE
-                binding.layoutPoinku.visibility = View.GONE
-                binding.layoutManajemenMitra.visibility = View.GONE
-                binding.layoutReferralku.visibility = View.GONE
-                binding.layoutCustomerService.visibility = View.GONE
-                binding.layoutKeluar.visibility = View.GONE
-            }
-        }
-    }
+//    private fun setupUserVisibility(userRole: UserRole) {
+//        when (userRole) {
+//            UserRole.ADMIN -> {
+//                binding.lnCardMemberCategory.visibility = View.GONE
+//                binding.clGunakanPromo.visibility = View.GONE
+//                binding.layoutMembershipku.visibility = View.GONE
+//                binding.layoutManajemenMitra.visibility = View.VISIBLE
+//            }
+//            UserRole.MITRA, UserRole.RECEPTIONIST ->{
+//                binding.lnCardMemberCategory.visibility = View.GONE
+//                binding.clGunakanPromo.visibility = View.GONE
+//                binding.layoutMembershipku.visibility = View.GONE
+//                binding.layoutManajemenMitra.visibility = View.GONE
+//            }
+//            UserRole.MEMBER -> {
+//                binding.lnCardMemberCategory.visibility = View.VISIBLE
+//                binding.clGunakanPromo.visibility = View.VISIBLE
+//                binding.layoutMembershipku.visibility = View.VISIBLE
+//                binding.layoutManajemenMitra.visibility = View.GONE
+//
+//                binding.lnBackgroundMenu.background = null
+//            }
+//            UserRole.NONMEMBER -> {
+//                binding.lnCardMemberCategory.visibility = View.VISIBLE
+//                binding.tvCardCategoryMember.visibility = View.GONE
+//                binding.tvExpiryDate.visibility = View.GONE
+//                binding.clGunakanPromo.visibility = View.VISIBLE
+//                binding.layoutMembershipku.visibility = View.VISIBLE
+//                binding.layoutManajemenMitra.visibility = View.GONE
+//
+//                binding.lnCardMemberCategory.setBackgroundResource(R.drawable.background_big_non_member)
+//                binding.lnBackgroundMenu.background = null
+//            }
+//            else -> {
+//                binding.lnCardMemberCategory.visibility = View.GONE
+//                binding.clGunakanPromo.visibility = View.GONE
+//                binding.layoutProfilDiri.visibility = View.GONE
+//                binding.layoutMembershipku.visibility = View.GONE
+//                binding.layoutPoinku.visibility = View.GONE
+//                binding.layoutManajemenMitra.visibility = View.GONE
+//                binding.layoutReferralku.visibility = View.GONE
+//                binding.layoutCustomerService.visibility = View.GONE
+//                binding.layoutKeluar.visibility = View.GONE
+//            }
+//        }
+//    }
 
     private fun observeUserData() {
         viewModel.userData.observe(viewLifecycleOwner) { loginDomain ->

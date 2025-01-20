@@ -42,12 +42,12 @@ class StatusTemplateActivity : AppCompatActivity() {
                         tvExpiryTime.text = "EXP $couponExpiry"
                     } else {
                         // Hide coupon layout if code or expiry is missing
-                        binding.root.findViewById<View>(R.id.coupon_layout).visibility = View.GONE
+                        //binding.root.findViewById<View>(R.id.coupon_layout).visibility = View.GONE
                     }
                 }
             } else {
                 // Hide coupon layout if not needed
-                binding.root.findViewById<View>(R.id.coupon_layout).visibility = View.GONE
+                //binding.root.findViewById<View>(R.id.coupon_layout).visibility = View.GONE
             }
         }
     }

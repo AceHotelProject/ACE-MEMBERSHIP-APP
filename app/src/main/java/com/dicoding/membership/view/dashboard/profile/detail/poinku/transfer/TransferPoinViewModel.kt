@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.points.usecase.PointsUseCase
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransferPoinViewModel @Inject constructor (
-    private val userUseCase: UserUseCase,
-    private val pointsUseCase: PointsUseCase
+    private val userUseCase: UserUseCase
 ): ViewModel() {
     private val _userData = MutableLiveData<Resource<User>>()
     val userData: LiveData<Resource<User>> = _userData

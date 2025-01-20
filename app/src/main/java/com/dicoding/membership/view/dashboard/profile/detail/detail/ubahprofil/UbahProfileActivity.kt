@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityUbahProfileBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,7 +1,10 @@
 package com.dicoding.core.data.source.remote.network
 
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
+import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
@@ -12,6 +15,8 @@ import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import com.dicoding.core.data.source.remote.response.user.UserListResponse
+import com.dicoding.core.data.source.remote.response.user.UserResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -20,6 +25,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -78,7 +84,7 @@ interface ApiService {
     suspend fun verifyOtp(
         @Field("id") id: String,
         @Query("token") token: Int
-    ):OtpResponse
+    ): OtpResponse
 
     ////////////////////////////////////////////// User
     @FormUrlEncoded
@@ -92,43 +98,6 @@ interface ApiService {
         @Field("citizenNumber") citizenNumber: String,
         @Field("pathKTP") pathKTP: String,
         @Field("androidId") androidId: String
-    )
-
-//    @GET("v1/users")
-//    suspend fun getAllUsers(): List<>
-
-    @GET("v1/users")
-    suspend fun getAllUsersData() : UserListResponse
-
-    @GET("v1/users/{id}")
-    suspend fun getUserData(
-        @Path("id") id: String
-    ): UserResponse
-
-    @PATCH("v1/users/{id}")
-    @FormUrlEncoded
-    suspend fun updateUserData(
-        @Path("id") id: String,
-        @Field("pathKTP") idPicturePath: String? = null,
-        @Field("name") name: String? = null,
-        @Field("citizenNumber") citizenNumber: String? = null,
-        @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null
-    ): UserResponse
-
-    @DELETE("v1/users/{id}")
-    suspend fun deleteUser(
-        @Path("id") userId: String
-    )
-
-    @FormUrlEncoded
-    @PATCH("v1/users/{userId}/complete-data")
-    suspend fun completeUserData(
-        @Path("userId") userId: String,
-        @Field("pathKTP") pathKTP: String,
-        @Field("citizenNumber") citizenNumber: String,
-        @Field("phone") phone: String,
-        @Field("address") address: String
     )
 
     ////////////////////////////////////////////// Token
@@ -160,23 +129,6 @@ interface ApiService {
         @Query("klasifikasi") klasifikasi: String
     )
 
-    ////////////////////////////////////////////// Subscription
-    @FormUrlEncoded
-    @POST("v1/subscriptions")
-    suspend fun createNewSubscription(
-        @Field("type") type: String,
-        @Field("duration") duration: Int,
-        @Field("price") price: Int,
-        @Field("tnc") tnc: List<String>
-    )
-
-//    @GET("v1/subscriptions")
-//    suspend fun getAllSubscriptions(): List<Subscription>
-
-    @GET("v1/subscriptions/{id}")
-    suspend fun getSubscriptionById(
-        @Path("id") id: String
-    )
     // User
 
     @POST("v1/users")
