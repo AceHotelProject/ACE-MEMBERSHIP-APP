@@ -2,7 +2,8 @@ package com.dicoding.core.domain.promo.interactor
 
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.model.ActivatePromoDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
@@ -63,8 +64,11 @@ class PromoInteractor @Inject constructor(
     override fun deletePromo(id: String): Flow<Resource<Unit>> =
         promoRepository.deletePromo(id)
 
-    override fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>> =
-        promoRepository.activatePromo(id)
+    override fun activatePromoResepsionis(id: String): Flow<Resource<ActivatePromoResepsionisDomain>> =
+        promoRepository.activatePromoResepsionis(id)
+
+    override fun activatePromoUser(id: String): Flow<Resource<ActivatePromoUserDomain>> =
+        promoRepository.activatePromoUser(id)
 
     override fun redeemPromo(token: String): Flow<Resource<Unit>> =
         promoRepository.redeemPromo(token)

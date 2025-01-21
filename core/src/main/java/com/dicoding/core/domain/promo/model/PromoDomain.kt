@@ -18,6 +18,7 @@ data class PromoDomain(
     val maximalUse: Int,
     val used: Int,
     val isActive: Boolean,
+    val status: String,
     val createdBy: String?,
     val updatedBy: String?,
     val token: String?

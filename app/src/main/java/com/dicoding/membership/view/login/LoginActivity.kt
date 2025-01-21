@@ -108,21 +108,21 @@ class LoginActivity : AppCompatActivity() {
                 pass.isEmpty() -> {
                     binding.layoutLoginPass.error = "Password tidak boleh kosong"
                 }
-                pass.length < 8 -> {
-                    binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
-                }
-                !pass.any { it.isDigit() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung angka"
-                }
-                !pass.any { it.isUpperCase() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung huruf besar"
-                }
-                !pass.any { it.isLowerCase() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung huruf kecil"
-                }
-                !pass.any { !it.isLetterOrDigit() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung karakter khusus"
-                }
+//                pass.length < 8 -> {
+//                    binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
+//                }
+//                !pass.any { it.isDigit() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung angka"
+//                }
+//                !pass.any { it.isUpperCase() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung huruf besar"
+//                }
+//                !pass.any { it.isLowerCase() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung huruf kecil"
+//                }
+//                !pass.any { !it.isLetterOrDigit() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung karakter khusus"
+//                }
                 else -> {
                     binding.layoutLoginPass.error = null
                 }
@@ -131,18 +131,10 @@ class LoginActivity : AppCompatActivity() {
             isButtonEnabled(
                 email.isNotEmpty()
                         && pass.isNotEmpty()
-                        && isPasswordValid(pass)
+//                        && isPasswordValid(pass)
                         && Patterns.EMAIL_ADDRESS.matcher(email).matches()
             )
         }
-    }
-
-    private fun isPasswordValid(password: String): Boolean {
-        val hasNumber = password.any { it.isDigit() }
-        val hasUppercase = password.any { it.isUpperCase() }
-        val hasLowercase = password.any { it.isLowerCase() }
-        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
-        return hasNumber && hasUppercase && hasLowercase && hasSpecialChar && password.length >= 8
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {
@@ -241,7 +233,7 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(Intent(this, VerificationActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         putExtra(EXTRA_USER_ID, id)
-                        putExtra(EXTRA_AUTO_SEND_OTP, false)
+                        putExtra(EXTRA_AUTO_SEND_OTP, true)
                     })
                     finish()
                 }

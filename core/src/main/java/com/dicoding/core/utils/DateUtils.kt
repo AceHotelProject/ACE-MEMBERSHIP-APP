@@ -15,6 +15,23 @@ import java.util.Locale
 import java.util.TimeZone
 
 object DateUtils {
+
+    fun convertToIndonesianDateTime(dateStr: String): String {
+        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val desiredFormat = SimpleDateFormat("HH:mm 'WIB.' EEEE, d MMMM yyyy", Locale("id", "ID"))
+
+        sourceFormat.timeZone = TimeZone.getTimeZone("UTC") // Input dianggap UTC
+        desiredFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta") // Output untuk zona waktu Indonesia
+
+        return try {
+            val date = sourceFormat.parse(dateStr) ?: return ""
+            "EXP ${desiredFormat.format(date)}"
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
     fun convertDate(inputDateString: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
         val outputFormat = SimpleDateFormat("d MMM yy", Locale.getDefault())

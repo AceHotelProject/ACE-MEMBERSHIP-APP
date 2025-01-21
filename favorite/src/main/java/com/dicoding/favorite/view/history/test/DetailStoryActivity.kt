@@ -1,5 +1,6 @@
 package com.dicoding.favorite.view.history.test
 
+//import com.dicoding.favorite.view.utils.DaggerStoryComponent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,12 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
-import com.dicoding.favorite.view.utils.DaggerStoryComponent
 import com.dicoding.favorite.view.utils.ViewModelFactory
-import com.dicoding.membership.di.FavoriteModuleDependencies
 import com.dicoding.story.favorite.R
 import com.dicoding.story.favorite.databinding.ActivityDetailStoryBinding
-import dagger.hilt.android.EntryPointAccessors
 import javax.inject.Inject
 
 class DetailStoryActivity : AppCompatActivity() {
@@ -28,16 +26,16 @@ class DetailStoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DaggerStoryComponent.builder()
-            .context(this)
-            .appDependencies(
-                EntryPointAccessors.fromApplication(
-                    applicationContext,
-                    FavoriteModuleDependencies::class.java
-                )
-            )
-            .build()
-            .inject(this)
+//        DaggerStoryComponent.builder()
+//            .context(this)
+//            .appDependencies(
+//                EntryPointAccessors.fromApplication(
+//                    applicationContext,
+//                    FavoriteModuleDependencies::class.java
+//                )
+//            )
+//            .build()
+//            .inject(this)
 
         Log.d("DetailStoryActivity", "Dependencies injected successfully")
         Log.d("DetailStoryActivity", "Factory injected: $factory")

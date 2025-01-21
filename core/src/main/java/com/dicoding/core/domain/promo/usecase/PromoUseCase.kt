@@ -2,11 +2,11 @@ package com.dicoding.core.domain.promo.usecase
 
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.model.ActivatePromoDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
-import com.dicoding.core.domain.promo.model.RedeemPromoDomain
 import kotlinx.coroutines.flow.Flow
 
 interface PromoUseCase {
@@ -46,7 +46,9 @@ interface PromoUseCase {
 
     fun deletePromo(id: String): Flow<Resource<Unit>>
 
-    fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>>
+    fun activatePromoResepsionis(id: String): Flow<Resource<ActivatePromoResepsionisDomain>>
+
+    fun activatePromoUser(id: String): Flow<Resource<ActivatePromoUserDomain>>
 
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 

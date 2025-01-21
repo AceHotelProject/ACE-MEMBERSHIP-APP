@@ -4,7 +4,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ActivatePromoDomain(
+data class ActivatePromoUserDomain(
+    val id: String,
     val promoPictures: List<String>,
     val activationDate: String,
     val promoDetail: String,
@@ -17,8 +18,7 @@ data class ActivatePromoDomain(
     val token: String,
     val promo: String,
     val tokenCode: String,
-    val id: String,
     val promoMemberType: String,
     val user: String,
     val status: String
-) : Parcelable
+): Parcelable

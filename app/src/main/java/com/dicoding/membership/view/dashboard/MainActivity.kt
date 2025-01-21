@@ -14,19 +14,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.dicoding.core.data.source.Resource
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showLongToast
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityMainBinding
-import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.RedeemCouponCodeActivity
+import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,6 +36,7 @@ import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class  MainActivity : AppCompatActivity() {
@@ -81,7 +84,7 @@ class  MainActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
             //            Testing
-            val mockUserRole = UserRole.ADMIN
+            val mockUserRole = UserRole.MEMBER
             //            3C8F61
 
             // Setup navigation graph
@@ -125,8 +128,50 @@ class  MainActivity : AppCompatActivity() {
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
                 binding.lnFab1.visibility = View.GONE
-                binding.promoBanner.visibility = View.VISIBLE
                 binding.bottomNavbar.visibility = View.VISIBLE
+
+                // Observe inactive promos
+                lifecycleScope.launch {
+                    mainViewModel.getProposalPromos().observe(this@MainActivity) { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                result.data?.results?.let { promos ->
+                                    val inactivePromos = promos.filter { it.status == "redeem" }
+                                    val inactiveCount = inactivePromos.size
+
+                                    binding.promoBanner.apply {
+                                        if (inactiveCount > 0) {
+                                            visibility = View.VISIBLE
+                                            binding.tvTotalPromo.apply {
+                                                text = String.format("%d Kupon", inactiveCount)
+                                                visibility = if (inactiveCount > 0) View.VISIBLE else View.GONE
+                                            }
+                                            animate()
+                                                .alpha(1f)
+                                                .setDuration(100)
+                                                .start()
+                                        } else {
+                                            animate()
+                                                .alpha(0f)
+                                                .setDuration(100)
+                                                .withEndAction {
+                                                    visibility = View.GONE
+                                                }
+                                                .start()
+                                        }
+                                    }
+                                }
+                            }
+                            is Resource.Error -> {
+                                binding.promoBanner.visibility = View.GONE
+                                Log.e("MainActivity", "Error getting promos: ${result.message}")
+                            }
+                            else -> {
+                                // Handle other states if needed
+                            }
+                        }
+                    }
+                }
             }
             else -> {
                 binding.lnFab1.visibility = View.GONE

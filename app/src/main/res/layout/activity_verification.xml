@@ -26,7 +26,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="@string/message_welcome_page"
+        android:text="Kode verifikasi telah dikirimkan kepada alamat email yang telah terdaftar. Silahkan kirim ulang kode jika masih belum terkirim."
         android:textSize="14sp"
         android:textColor="@color/dark_grey"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:orientation="horizontal"
-        android:weightSum="4"
+        android:weightSum="6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_email">
@@ -91,6 +91,34 @@
 
         <EditText
             android:id="@+id/vid_forth"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_background_light_grey"
+            android:gravity="center"
+            android:imeOptions="actionNext"
+            android:importantForAccessibility="no"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/vid_fifth"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_background_light_grey"
+            android:gravity="center"
+            android:imeOptions="actionDone"
+            android:importantForAccessibility="no"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/vid_sixth"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_margin="12dp"
@@ -152,11 +180,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <View
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:indeterminateTint="@color/orange_100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

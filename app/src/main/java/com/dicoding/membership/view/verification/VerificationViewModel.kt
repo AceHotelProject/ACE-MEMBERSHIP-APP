@@ -12,9 +12,11 @@ class VerificationViewModel @Inject constructor(
     private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
-    fun sendOtp(id: String) =
-        authUseCase.sendOtp(id).asLiveData()
+    fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
-    fun verifyOtp(id:String, token: Int) =
-        authUseCase.verifyOtp(id, token).asLiveData()
+    fun sendOtp() =
+        authUseCase.sendOtp().asLiveData()
+
+    fun verifyOtp(token: String) =
+        authUseCase.verifyOtp(token).asLiveData()
 }

@@ -19,5 +19,7 @@ class PromoDetailViewModel @Inject constructor(
 
     fun deletePromo(id: String) = promoUseCase.deletePromo(id).asLiveData()
 
-    fun activatePromo(id: String) = promoUseCase.activatePromo(id).asLiveData()
+    fun activatePromoResepsionis(id: String) = promoUseCase.activatePromoResepsionis(id).asLiveData()
+
+    fun activatePromoUser(id: String) = promoUseCase.activatePromoUser(id).asLiveData()
 }

@@ -26,7 +26,7 @@ interface IAuthRepository {
 
     suspend fun deleteToken()
 
-    fun sendOtp(id: String): Flow<Resource<OtpDomain>>
+    fun sendOtp(): Flow<Resource<OtpDomain>>
 
-    fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>>
+    fun verifyOtp(token: String): Flow<Resource<Unit>>
 }

@@ -7,16 +7,14 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
-import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.PromoHistoryItem
-import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
@@ -364,27 +362,46 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     ////////////////////////
 
-    suspend fun sendOtp(id: String): Flow<ApiResponse<OtpResponse>> = flow {
-        try {
-            Log.d(TAG, "Sending OTP for id: $id")
-            val response = apiService.sendOtp(id)
-            emit(ApiResponse.Success(response))
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to send OTP for id: $id. Error: ${e.message}", e)
-            emit(ApiResponse.Error(e.toString()))
-        }
-    }.flowOn(Dispatchers.IO)
+    suspend fun sendOtp(): Flow<ApiResponse<OtpResponse>> {
+        return flow {
+            try {
+                val response = apiService.sendOtp()
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Send OTP error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
-    suspend fun verifyOtp(id: String, token: Int): Flow<ApiResponse<OtpResponse>> = flow {
-        try {
-            Log.d(TAG, "Verifying OTP with id: $id and token: $token")
-            val response = apiService.verifyOtp(id, token)
-            emit(ApiResponse.Success(response))
-        } catch (e: Exception) {
-            Log.e(TAG, "OTP verification failed for token: $token. Error: ${e.message}", e)
-            emit(ApiResponse.Error(e.toString()))
-        }
-    }.flowOn(Dispatchers.IO)
+    suspend fun verifyOtp(token: String): Flow<ApiResponse<Unit>> {
+        return flow {
+            try {
+                val response = apiService.verifyOtp(token)
+                when (response.code()) {
+                    200, 201, 204 -> {
+                        Log.d(TAG, "Verify OTP success with code: ${response.code()}")
+                        emit(ApiResponse.Success(Unit))
+                    }
+                    400, 401 -> {
+                        Log.e(TAG, "Verify OTP failed: Invalid token")
+                        emit(ApiResponse.Error("Kode OTP tidak valid"))
+                    }
+                    404 -> {
+                        Log.e(TAG, "Verify OTP failed: Token not found")
+                        emit(ApiResponse.Error("Kode OTP tidak ditemukan"))
+                    }
+                    else -> {
+                        Log.e(TAG, "Verify OTP failed with code: ${response.code()}")
+                        emit(ApiResponse.Error("Gagal memverifikasi kode OTP (${response.code()})"))
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Verify OTP error: ${e.message}", e)
+                emit(ApiResponse.Error("Gagal memverifikasi kode OTP"))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
     /////////////////////////////////////////////////////////////////////////////// PROMO
     suspend fun createPromo(
@@ -510,10 +527,22 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun activatePromo(id: String): Flow<ApiResponse<ActivatePromoResponse>> {
+    suspend fun activatePromoResepsionis(id: String): Flow<ApiResponse<ActivatePromoResepsionisResponse>> {
         return flow {
             try {
-                val response = apiService.activatePromo(id)
+                val response = apiService.activatePromoResepsionis(id)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Activate promo error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun activatePromoUser(id: String): Flow<ApiResponse<ActivatePromoUserResponse>> {
+        return flow {
+            try {
+                val response = apiService.activatePromoUser(id)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))

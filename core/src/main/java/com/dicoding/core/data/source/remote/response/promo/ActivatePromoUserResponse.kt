@@ -1,11 +1,8 @@
 package com.dicoding.core.data.source.remote.response.promo
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
-data class ActivatePromoResponse(
+data class ActivatePromoUserResponse(
 
 	@field:SerializedName("promo_pictures")
 	val promoPictures: List<String?>? = null,
@@ -26,7 +23,7 @@ data class ActivatePromoResponse(
 	val promoCategory: String? = null,
 
 	@field:SerializedName("merchant_name")
-	val merchantName: String? = null,
+	val merchantName: Any? = null,
 
 	@field:SerializedName("merchant")
 	val merchant: String? = null,
@@ -54,4 +51,4 @@ data class ActivatePromoResponse(
 
 	@field:SerializedName("status")
 	val status: String? = null
-) : Parcelable
+)

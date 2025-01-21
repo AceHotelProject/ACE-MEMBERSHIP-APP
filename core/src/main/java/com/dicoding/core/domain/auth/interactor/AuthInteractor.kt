@@ -36,11 +36,9 @@ class AuthInteractor @Inject constructor(
 
     override suspend fun deleteToken() = authRepository.deleteToken()
 
-    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
-        return authRepository.sendOtp(id)
-    }
+    override fun sendOtp(): Flow<Resource<OtpDomain>> =
+        authRepository.sendOtp()
 
-    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
-        return authRepository.verifyOtp(id, token)
-    }
+    override fun verifyOtp(token: String): Flow<Resource<Unit>> =
+        authRepository.verifyOtp(token)
 }

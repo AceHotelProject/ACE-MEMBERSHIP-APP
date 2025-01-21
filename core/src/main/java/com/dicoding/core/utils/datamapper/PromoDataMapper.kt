@@ -1,13 +1,15 @@
 package com.dicoding.core.utils.datamapper
 
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.DeletePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.RedeemPromoResponse
-import com.dicoding.core.domain.promo.model.ActivatePromoDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.DeletePromoDomain
 import com.dicoding.core.domain.promo.model.GetPromoHistoryDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
@@ -31,6 +33,7 @@ object PromoDataMapper {
             maximalUse = input.maximalUse ?: 0,
             used = input.used ?: 0,
             isActive = input.isActive ?: false,
+            status = input.status ?: "",
             createdBy = input.createdBy,
             updatedBy = input.updatedBy,
             token = input.tokenId
@@ -49,6 +52,7 @@ object PromoDataMapper {
                     name = it.name ?: "",
                     category = it.category ?: "",
                     detail = it.detail ?: "",
+                    status = it.status ?: "",
                     pictures = it.pictures?.filterNotNull() ?: emptyList(),
                     tnc = it.tnc?.filterNotNull() ?: emptyList(),
                     startDate = it.startDate ?: "",
@@ -81,6 +85,7 @@ object PromoDataMapper {
             maximalUse = input.maximalUse ?: 0,
             used = input.used ?: 0,
             isActive = input.isActive ?: false,
+            status = input.status ?: "",
             createdBy = input.createdBy,        // tetap nullable
             updatedBy = input.updatedBy,        // tetap nullable
             token = null                        // tidak ada di response
@@ -132,8 +137,8 @@ object PromoDataMapper {
         )
     }
 
-    fun mapActivatePromoResponseToDomain(input: ActivatePromoResponse): ActivatePromoDomain {
-        return ActivatePromoDomain(
+    fun mapActivatePromoResponseToDomain(input: ActivatePromoResepsionisResponse): ActivatePromoResepsionisDomain {
+        return ActivatePromoResepsionisDomain(
             promoPictures = input.promoPictures?.filterNotNull() ?: emptyList(),
             activationDate = input.activationDate ?: "",
             promoDetail = input.promoDetail ?: "",
@@ -150,6 +155,27 @@ object PromoDataMapper {
             promoMemberType = input.promoMemberType ?: "",
             user = input.user ?: "",
             status = input.status ?: ""
+        )
+    }
+
+    fun mapActivatePromoUserResponseToDomain(input: ActivatePromoUserResponse): ActivatePromoUserDomain {
+        return ActivatePromoUserDomain(
+            id = input.id.orEmpty(),
+            promoPictures = input.promoPictures?.filterNotNull()?.map { it } ?: emptyList(),
+            activationDate = input.activationDate.orEmpty(),
+            promoDetail = input.promoDetail.orEmpty(),
+            userName = input.userName.orEmpty(),
+            promoName = input.promoName.orEmpty(),
+            promoCategory = input.promoCategory.orEmpty(),
+            merchantName = input.merchantName?.toString().orEmpty(),
+            merchant = input.merchant.orEmpty(),
+            promoTnc = input.promoTnc?.filterNotNull()?.map { it } ?: emptyList(),
+            token = input.token.orEmpty(),
+            promo = input.promo.orEmpty(),
+            tokenCode = input.tokenCode.orEmpty(),
+            promoMemberType = input.promoMemberType.orEmpty(),
+            user = input.user.orEmpty(),
+            status = input.status.orEmpty()
         )
     }
 }

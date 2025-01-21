@@ -5,7 +5,8 @@ import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
@@ -74,17 +75,13 @@ interface ApiService {
         @Field("password") password: String
     ): RegisterResponse
 
-
     @POST("v1/auth/send-otp")
-    suspend fun sendOtp(
-        @Field("id") id: String
-    ):OtpResponse
+    suspend fun sendOtp(): OtpResponse
 
     @POST("v1/auth/verify-otp")
     suspend fun verifyOtp(
-        @Field("id") id: String,
-        @Query("token") token: Int
-    ): OtpResponse
+        @Query("token") token: String
+    ): Response<Unit>
 
     ////////////////////////////////////////////// User
     @FormUrlEncoded
@@ -263,9 +260,14 @@ interface ApiService {
     ): Response<Unit>
 
     @POST("v1/promos/activate/{id}")
-    suspend fun activatePromo(
+    suspend fun activatePromoResepsionis(
         @Path("id") id: String
-    ): ActivatePromoResponse
+    ): ActivatePromoResepsionisResponse
+
+    @POST("v1/promos/activate-user/{id}")
+    suspend fun activatePromoUser(
+        @Path("id") id: String
+    ): ActivatePromoUserResponse
 
     @POST("v1/promos/redeem/{token}")
     suspend fun redeemPromo(

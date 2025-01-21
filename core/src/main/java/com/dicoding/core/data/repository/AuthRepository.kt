@@ -93,26 +93,26 @@ class AuthRepository @Inject constructor(
         return datastoreManager.deleteToken()
     }
 
-    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
+    override fun sendOtp(): Flow<Resource<OtpDomain>> {
         return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
             override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
                 return AuthDataMapper.mapOtpResponseToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
-                return remoteDataSource.sendOtp(id)
+                return remoteDataSource.sendOtp()
             }
         }.asFlow()
     }
 
-    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
-        return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
-            override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
-                return AuthDataMapper.mapOtpResponseToDomain(response)
+    override fun verifyOtp(token: String): Flow<Resource<Unit>> {
+        return object : NetworkBoundResource<Unit, Unit>() {
+            override suspend fun fetchFromApi(response: Unit): Unit {
+                return
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
-                return remoteDataSource.verifyOtp(id, token)
+            override suspend fun createCall(): Flow<ApiResponse<Unit>> {
+                return remoteDataSource.verifyOtp(token)
             }
         }.asFlow()
     }
