@@ -14,6 +14,8 @@ interface IAuthRepository {
 
     fun getUser(): Flow<LoginDomain>
 
+    suspend fun deleteUser(user: LoginDomain)
+
     suspend fun insertCacheUser(user: LoginDomain)
 
     fun saveAccessToken(token: String): Flow<Boolean>

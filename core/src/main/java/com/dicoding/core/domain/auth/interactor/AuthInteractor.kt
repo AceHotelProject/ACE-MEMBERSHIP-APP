@@ -22,6 +22,8 @@ class AuthInteractor @Inject constructor(
 
     override fun getUser(): Flow<LoginDomain> = authRepository.getUser()
 
+    override suspend fun deleteUser(user: LoginDomain) = authRepository.deleteUser(user)
+
     override suspend fun insertCacheUser(user: LoginDomain) = authRepository.insertCacheUser(user)
 
     override fun saveAccessToken(token: String): Flow<Boolean> =

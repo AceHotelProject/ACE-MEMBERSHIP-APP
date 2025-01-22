@@ -14,6 +14,11 @@ import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
@@ -588,6 +593,88 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Log.e(TAG, "Get promo history error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /////////////////////////////////////////////////////////////////////////////// Merchants
+    suspend fun createMerchant(request: CreateMerchantRequest): Flow<ApiResponse<CreateMerchantResponse>> {
+        return flow {
+            try {
+                val response = apiService.createMerchant(request)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Create merchant error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getMerchants(page: Int, limit: Int): Flow<ApiResponse<GetMerchantsResponse>> {
+        return flow {
+            try {
+                val response = apiService.getMerchants(page, limit)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Get merchants error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getMerchantById(id: String): Flow<ApiResponse<GetMerchantsByIdResponse>> {
+        return flow {
+            try {
+                val response = apiService.getMerchantById(id)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Get merchant by ID error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun updateMerchant(id: String, request: CreateMerchantRequest): Flow<ApiResponse<UpdateMerchantResponse>> {
+        return flow {
+            try {
+                val response = apiService.updateMerchant(id, request)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Update merchant error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun deleteMerchant(id: String): Flow<ApiResponse<Unit>> {
+        return flow {
+            try {
+                val response = apiService.deleteMerchant(id)
+                when (response.code()) {
+                    204, 200 -> {
+                        Log.d(TAG, "Delete merchant success with code: ${response.code()}")
+                        emit(ApiResponse.Success(Unit))
+                    }
+                    400 -> {
+                        Log.e(TAG, "Delete merchant failed: Bad Request")
+                        emit(ApiResponse.Error("Permintaan tidak valid"))
+                    }
+                    404 -> {
+                        Log.e(TAG, "Delete merchant failed: Merchant not found")
+                        emit(ApiResponse.Error("Merchant tidak ditemukan"))
+                    }
+                    403 -> {
+                        Log.e(TAG, "Delete merchant failed: Forbidden")
+                        emit(ApiResponse.Error("Anda tidak memiliki akses untuk menghapus merchant ini"))
+                    }
+                    else -> {
+                        Log.e(TAG, "Delete merchant failed with code: ${response.code()}")
+                        emit(ApiResponse.Error("Gagal menghapus merchant (${response.code()})"))
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Delete merchant error: ${e.message}", e)
+                emit(ApiResponse.Error("Gagal menghapus merchant"))
             }
         }.flowOn(Dispatchers.IO)
     }

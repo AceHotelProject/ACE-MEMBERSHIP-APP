@@ -5,6 +5,11 @@ import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
@@ -280,7 +285,33 @@ interface ApiService {
         @Query("limit") limit: Int
     ): GetPromoHistoryResponse
 
-    // Referral Code
+    // Merchants
+    @POST("v1/merchants")
+    suspend fun createMerchant(
+        @Body request: CreateMerchantRequest
+    ): CreateMerchantResponse
+
+    @GET("v1/merchants")
+    suspend fun getMerchants(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10
+    ): GetMerchantsResponse
+
+    @GET("v1/merchants/{id}")
+    suspend fun getMerchantById(
+        @Path("id") id: String
+    ): GetMerchantsByIdResponse
+
+    @PATCH("v1/merchants/{id}")
+    suspend fun updateMerchant(
+        @Path("id") id: String,
+        @Body request: CreateMerchantRequest
+    ): UpdateMerchantResponse
+
+    @DELETE("v1/merchants/{id}")
+    suspend fun deleteMerchant(
+        @Path("id") id: String
+    ): Response<Unit>
 
     // Mitra
 

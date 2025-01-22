@@ -49,6 +49,16 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteUser(user: LoginDomain) {
+        val userEntity = AuthDataMapper.mapAuthToEntity(user)
+
+        return appExecutors.diskIO().execute {
+            GlobalScope.launch(Dispatchers.IO) {
+                localDataSource.deleteUser(userEntity)
+            }
+        }
+    }
+
     override fun register(email: String, password: String): Flow<Resource<RegisterDomain>> {
         return object : NetworkBoundResource<RegisterDomain, RegisterResponse>() {
             override suspend fun fetchFromApi(response: RegisterResponse): RegisterDomain {
