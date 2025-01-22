@@ -56,7 +56,7 @@ class AuthRepositoryTester @Inject constructor(
     }
 
     override suspend fun deleteToken() {
-        return datastoreManager.deleteToken()
+        return datastoreManager.deleteAllData()
     }
 
     ////////////////////////////////////////////////////////////////////////////

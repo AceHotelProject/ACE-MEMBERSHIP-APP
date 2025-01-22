@@ -99,9 +99,15 @@ class AuthRepository @Inject constructor(
         return datastoreManager.getRefreshToken()
     }
 
-    override suspend fun deleteToken() {
-        return datastoreManager.deleteToken()
+    override suspend fun deleteAllData() {
+        return datastoreManager.deleteAllData()
     }
+
+    override fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean> =
+        datastoreManager.saveEmailVerifiedStatus(isVerified)
+
+    override fun getEmailVerifiedStatus(): Flow<Boolean> =
+        datastoreManager.getEmailVerifiedStatus()
 
     override fun sendOtp(): Flow<Resource<OtpDomain>> {
         return object : NetworkBoundResource<OtpDomain, OtpResponse>() {

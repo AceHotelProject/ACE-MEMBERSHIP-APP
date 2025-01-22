@@ -57,10 +57,32 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
         }
     }
 
-    suspend fun deleteToken() {
+    suspend fun deleteAllData() {
         dataStore.edit { preferences ->
             preferences.remove(ACCESS_TOKEN_KEY)
             preferences.remove(REFRESH_TOKEN_KEY)
+            preferences.remove(LOGIN_STATUS_KEY)
+            preferences.remove(EMAIL_VERIFIED_KEY)
+        }
+    }
+
+    fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean> {
+        return flow {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[EMAIL_VERIFIED_KEY] = isVerified
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+                Log.e("DatastoreManager", e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    fun getEmailVerifiedStatus(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[EMAIL_VERIFIED_KEY] ?: false
         }
     }
 
@@ -88,7 +110,7 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token_key")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token_key")
-
+        private val EMAIL_VERIFIED_KEY = booleanPreferencesKey("email_verified_key")
         private val LOGIN_STATUS_KEY = booleanPreferencesKey("login_status_key")
     }
 }

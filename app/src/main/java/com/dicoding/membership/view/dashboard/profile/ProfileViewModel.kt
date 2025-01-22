@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.dicoding.core.data.source.local.entity.auth.UserEntity
 import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +25,8 @@ class ProfileViewModel @Inject constructor(
         authUseCase.deleteUser(user)
     }
 
-    fun deleteToken() = viewModelScope.launch {
-        authUseCase.deleteToken()
+    fun deleteAllData() = viewModelScope.launch {
+        authUseCase.deleteAllData()
     }
 
     fun getUserData() {

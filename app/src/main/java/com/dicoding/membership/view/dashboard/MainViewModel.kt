@@ -19,4 +19,6 @@ class MainViewModel @Inject constructor(
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
     fun getProposalPromos() = promoUseCase.getProposalPromos().asLiveData()
+
+    fun getEmailVerifiedStatus() = authUseCase.getEmailVerifiedStatus().asLiveData()
 }

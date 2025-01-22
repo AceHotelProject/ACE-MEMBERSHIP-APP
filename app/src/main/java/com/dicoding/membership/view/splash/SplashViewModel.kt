@@ -16,4 +16,6 @@ class SplashViewModel @Inject constructor(
     fun getUser() = authUseCase.getUser().asLiveData()
 
     fun getAccessToken() = authUseCase.getAccessToken().asLiveData()
+
+    fun getEmailVerifiedStatus() = authUseCase.getEmailVerifiedStatus().asLiveData()
 }

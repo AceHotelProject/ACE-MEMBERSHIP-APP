@@ -36,7 +36,13 @@ class AuthInteractor @Inject constructor(
 
     override fun getRefreshToken(): Flow<String> = authRepository.getRefreshToken()
 
-    override suspend fun deleteToken() = authRepository.deleteToken()
+    override suspend fun deleteAllData() = authRepository.deleteAllData()
+
+    override fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean> =
+        authRepository.saveEmailVerifiedStatus(isVerified)
+
+    override fun getEmailVerifiedStatus(): Flow<Boolean> =
+        authRepository.getEmailVerifiedStatus()
 
     override fun sendOtp(): Flow<Resource<OtpDomain>> =
         authRepository.sendOtp()

@@ -30,7 +30,7 @@ class AuthAuthenticator @Inject constructor(
         // Untuk 401 dari endpoint lain, lakukan logout
         return if (response.code == 401 && accessToken.isNotEmpty()) {
             runBlocking {
-                datastoreManager.deleteToken()
+                datastoreManager.deleteAllData()
                 datastoreManager.saveLoginStatus(false).first()
 
                 Log.e("AuthAuthenticator", "Token expired. User logged out.")

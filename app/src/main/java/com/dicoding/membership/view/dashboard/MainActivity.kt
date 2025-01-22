@@ -31,6 +31,8 @@ import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.Redeem
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
+import com.dicoding.membership.view.verification.VerificationActivity
+import com.dicoding.membership.view.welcome.WelcomeActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -182,9 +184,26 @@ class  MainActivity : AppCompatActivity() {
     }
 
     private fun validateToken() {
+        // Validasi token
         mainViewModel.getRefreshToken().observe(this) { token ->
             if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
+                return@observe
+            }
+
+            // Validasi email verified
+            mainViewModel.getEmailVerifiedStatus().observe(this) { isVerified ->
+                if (!isVerified) {
+                    // Redirect ke VerificationActivity
+                    mainViewModel.getUser().observe(this) { user ->
+                        startActivity(Intent(this, WelcomeActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            putExtra(VerificationActivity.EXTRA_USER_ID, user.user.id)
+                            putExtra(VerificationActivity.EXTRA_AUTO_SEND_OTP, true)
+                        })
+                        finish()
+                    }
+                }
             }
         }
     }

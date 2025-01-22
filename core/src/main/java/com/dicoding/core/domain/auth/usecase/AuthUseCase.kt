@@ -26,7 +26,11 @@ interface AuthUseCase {
 
     fun getRefreshToken(): Flow<String>
 
-    suspend fun deleteToken()
+    suspend fun deleteAllData()
+
+    fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean>
+
+    fun getEmailVerifiedStatus(): Flow<Boolean>
 
     fun sendOtp(): Flow<Resource<OtpDomain>>
 

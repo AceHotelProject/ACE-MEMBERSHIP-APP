@@ -111,7 +111,7 @@ class ProfileFragment : Fragment() {
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
             user?.let {
                 viewModel.deleteUser(it)
-                viewModel.deleteToken()
+                viewModel.deleteAllData()
 
                 showLoading(false)
 

@@ -285,10 +285,21 @@ class VerificationActivity : AppCompatActivity() {
 
     private fun handleVerificationSuccess() {
         Toast.makeText(this, "Verifikasi berhasil", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        })
-        finish()
+
+        showLoading(true)
+
+        verificationViewModel.saveEmailVerifiedStatus(true)
+        verificationViewModel.getEmailVerifiedStatus().observe(this) { isVerified ->
+            showLoading(false)
+            if (isVerified) {
+                startActivity(Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
+            } else {
+                Toast.makeText(this, "Gagal menyimpan status verifikasi", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
