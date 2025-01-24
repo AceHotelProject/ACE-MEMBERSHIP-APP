@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="silver"
-                        android:background="@drawable/chip_category"
+                        android:background="@drawable/chip_category_orange"
                         android:paddingLeft="10dp"
                         android:paddingBottom="4dp"
                         android:paddingRight="10dp"

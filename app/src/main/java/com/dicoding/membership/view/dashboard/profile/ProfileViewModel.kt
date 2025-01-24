@@ -10,15 +10,21 @@ import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val authUseCase: AuthUseCase) : ViewModel() {
+class ProfileViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase,
+    private val userUseCase: UserUseCase
+) : ViewModel() {
 
     private val _userData = MutableLiveData<LoginDomain>()
     val userData: LiveData<LoginDomain> = _userData
+
+
 
     fun getUserData() {
         viewModelScope.launch {

@@ -9,7 +9,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:src="@drawable/icons_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,10 +19,9 @@
         style="@style/textStyleMedium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="Transfer"
         android:textColor="@color/black"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,7 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:src="@drawable/icon_copper_coin_black"/>
+                    android:src="@drawable/icon_copper_coin_black_big"/>
 
                 <TextView
                     android:id="@+id/transfer_jumlah_poinku"
@@ -270,6 +269,7 @@
                 style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginTop="12dp"
                 android:text="Tujuan Transfer"
                 android:textColor="@color/black" />
@@ -283,6 +283,7 @@
                 app:boxStrokeWidthFocused="0dp"
                 app:endIconTint="@color/dark_grey"
                 app:errorEnabled="true"
+                android:visibility="gone"
                 app:errorIconDrawable="@null"
                 app:errorIconTint="@color/red"
                 app:errorTextColor="@color/red"

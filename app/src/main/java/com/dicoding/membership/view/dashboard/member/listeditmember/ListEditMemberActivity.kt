@@ -14,6 +14,7 @@ import com.dicoding.membership.databinding.ActivityListEditMemberBinding
 import com.dicoding.membership.databinding.ActivityMainBinding
 import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.member.listeditmember.editmember.EditMemberActivity
+import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,12 +46,35 @@ class ListEditMemberActivity : AppCompatActivity() {
             adapter = membershipAdapter
         }
 
-        membershipAdapter.setOnItemClickCallback { membership ->
-            // Handle click if needed
+        membershipAdapter.setOnEditClickCallback { membership ->
+            // Handle edit action
+            val intent = Intent(this@ListEditMemberActivity, EditMemberActivity::class.java).apply {
+                putExtra("SCREEN_TITLE", "Edit Membership")
+                putExtra("BUTTON_TEXT", "Simpan")
+                putExtra("MEMBERSHIP_ID", membership.id)
+            }
+            startActivity(intent)
+        }
+
+        membershipAdapter.setOnDeleteClickCallback { membership ->
+            // Show delete confirmation dialog
+            val dialog = GlobalTwoButtonDialog().apply {
+                setDialogTitle("Hapus Membership")
+                setDialogMessage("Apakah anda yakin ingin menghapus membership ini?")
+                setOnYesClickListener {
+                    // Call delete function in your ViewModel
+                    viewModel.deleteMembership(membership.id!!)
+                }
+                setOnNoClickListener {
+                    // Dialog will automatically dismiss
+                }
+            }
+            dialog.show(supportFragmentManager, "delete_dialog")
         }
     }
 
     private fun setupObservers() {
+        // Main observer for list data
         viewModel.memberships.observe(this) { result ->
             //Log.d("Debug", "Observer triggered with result: $result")  // Add this
             when (result) {
@@ -89,6 +113,26 @@ class ListEditMemberActivity : AppCompatActivity() {
                 }
             }
         }
+        // Delete state observer
+        viewModel.deleteState.observe(this) { result ->
+            when (result) {
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+                is Resource.Success -> {
+                    showLoading(false)
+                    Toast.makeText(this, "Membership berhasil dihapus", Toast.LENGTH_SHORT).show()
+                    viewModel.getMemberships()
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    showError(result.message)
+                }
+                else -> {
+                    showLoading(false)
+                }
+            }
+        }
     }
 
     private fun showEmptyState(boolean: Boolean) {
@@ -99,9 +143,8 @@ class ListEditMemberActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.btnClose.visibility = if(isLoading) View.GONE else View.VISIBLE
-        binding.detailTitle.visibility = if(isLoading) View.GONE else View.VISIBLE
-        binding.constraintLayout2.visibility = if(isLoading) View.GONE else View.VISIBLE
+        binding.layoutEmptyList.visibility = View.GONE //regardless of the condition
+        binding.membershipRv.visibility = if(isLoading) View.GONE else View.VISIBLE
         binding.loadingOverlay.visibility = if(isLoading) View.VISIBLE else View.GONE
 
     }
@@ -120,6 +163,14 @@ class ListEditMemberActivity : AppCompatActivity() {
 //            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 //            startActivity(intent)
             finish()
+        }
+        binding.fabAddMembership.setOnClickListener {
+            //add Membership via FAB
+            val intent = Intent(this@ListEditMemberActivity, EditMemberActivity::class.java).apply {
+                putExtra("SCREEN_TITLE", "Tambah Membership")
+                putExtra("BUTTON_TEXT", "Tambah")
+            }
+            startActivity(intent)
         }
     }
 

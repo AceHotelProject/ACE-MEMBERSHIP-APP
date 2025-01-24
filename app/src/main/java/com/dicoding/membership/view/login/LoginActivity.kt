@@ -108,21 +108,21 @@ class LoginActivity : AppCompatActivity() {
                 pass.isEmpty() -> {
                     binding.layoutLoginPass.error = "Password tidak boleh kosong"
                 }
-                pass.length < 8 -> {
-                    binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
-                }
-                !pass.any { it.isDigit() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung angka"
-                }
-                !pass.any { it.isUpperCase() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung huruf besar"
-                }
-                !pass.any { it.isLowerCase() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung huruf kecil"
-                }
-                !pass.any { !it.isLetterOrDigit() } -> {
-                    binding.layoutLoginPass.error = "Password harus mengandung karakter khusus"
-                }
+//                pass.length < 8 -> {
+//                    binding.layoutLoginPass.error = getString(R.string.wrong_password_format)
+//                }
+//                !pass.any { it.isDigit() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung angka"
+//                }
+//                !pass.any { it.isUpperCase() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung huruf besar"
+//                }
+//                !pass.any { it.isLowerCase() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung huruf kecil"
+//                }
+//                !pass.any { !it.isLetterOrDigit() } -> {
+//                    binding.layoutLoginPass.error = "Password harus mengandung karakter khusus"
+//                }
                 else -> {
                     binding.layoutLoginPass.error = null
                 }
@@ -138,11 +138,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isPasswordValid(password: String): Boolean {
-        val hasNumber = password.any { it.isDigit() }
-        val hasUppercase = password.any { it.isUpperCase() }
-        val hasLowercase = password.any { it.isLowerCase() }
-        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
-        return hasNumber && hasUppercase && hasLowercase && hasSpecialChar && password.length >= 8
+        return password.length >= 8
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {
@@ -198,6 +194,7 @@ class LoginActivity : AppCompatActivity() {
 
                     is Resource.Success -> {
                         result.data?.let { loginData ->
+                            Log.d("Debug LOGIN", "Simpan data user: ${loginData}")
                             // Simpan data user
                             loginViewModel.insertCacheUser(loginData)
 

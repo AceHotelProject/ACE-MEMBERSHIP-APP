@@ -87,7 +87,12 @@ class EditMemberActivity : AppCompatActivity() {
         val duration = binding.tiTipeBulan.text.toString().toInt()
         val price = binding.tiTipeHarga.text.toString().toInt()
         val tncString = binding.tiTipeSyaratKetentuan.text.toString()
-        val tncList = tncString.split(";").map { it.trim() }
+        val tncList = if (tncString.contains(";")) {
+            tncString.split(";").map { it.trim() }.filter { it.isNotEmpty() }
+        } else {
+            listOf(tncString.trim())
+        }
+        Log.d("TnC Debug", "TnC List: $tncList")
 
         when (binding.btnAdd.text) {
             "Simpan" -> {
@@ -273,8 +278,6 @@ class EditMemberActivity : AppCompatActivity() {
                 binding.tiTipeSyaratKetentuan.error = "Syarat dan ketentuan tidak boleh kosong"
             } else if (syaratketentuan.length > 200) {
                 binding.tiTipeSyaratKetentuan.error = "Syarat dan ketentuan maksimal 200 karakter"
-            } else if (!syaratketentuan.matches(Regex("^[a-zA-Z ]+$"))) {
-                binding.tiTipeSyaratKetentuan.error = "Syarat dan ketentuan hanya boleh huruf"
             } else {
                 binding.tiTipeSyaratKetentuan.error = null
             }
@@ -302,7 +305,7 @@ class EditMemberActivity : AppCompatActivity() {
                 tipemember.isNotEmpty() && tipemember.length <= 20 && tipemember.matches(Regex("^[a-zA-Z ]+$")) &&
                         bulanberlaku.isNotEmpty() && try { bulanberlaku.toInt() in 1..60 } catch (e: NumberFormatException) { false } &&
                         hargamember.isNotEmpty() && try { hargamember.toInt() in 1..50000000 } catch (e: NumberFormatException) { false } &&
-                        syaratketentuan.isNotEmpty() && syaratketentuan.length <= 200 && syaratketentuan.matches(Regex("^[a-zA-Z ]+$"))
+                        syaratketentuan.isNotEmpty() && syaratketentuan.length <= 200
                         //potonganharga.isNotEmpty() && try { potonganharga.toInt() in 1..1000000 } catch (e: NumberFormatException) { false }
             )
         }

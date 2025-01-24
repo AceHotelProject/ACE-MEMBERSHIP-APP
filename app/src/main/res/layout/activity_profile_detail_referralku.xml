@@ -217,7 +217,7 @@
                 android:id="@+id/referralku_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_referralku_terima_poin"/>
+                tools:listitem="@layout/item_history_poin"/>
 
         </LinearLayout>
     </ScrollView>

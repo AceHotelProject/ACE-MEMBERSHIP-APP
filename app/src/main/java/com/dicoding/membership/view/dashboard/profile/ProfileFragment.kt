@@ -44,7 +44,6 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
-        observeUserData()
         validateToken()
 
         //checkUserRole()
@@ -87,6 +86,11 @@ class ProfileFragment : Fragment() {
                 }
                 startActivity(intent)
             }
+        }
+
+        //Logout
+        binding.layoutKeluar.setOnClickListener {
+            //logout
         }
 
     }
@@ -162,19 +166,6 @@ class ProfileFragment : Fragment() {
 //        }
 //    }
 
-    private fun observeUserData() {
-        viewModel.userData.observe(viewLifecycleOwner) { loginDomain ->
-            updateUI(loginDomain.user)
-        }
-    }
-
-    private fun updateUI(user: UserDomain) {
-        with(binding) {
-
-            // Show/hide admin specific layouts based on role
-
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

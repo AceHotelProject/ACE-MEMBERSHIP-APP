@@ -5,6 +5,9 @@ import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
+import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
@@ -145,7 +148,7 @@ interface ApiService {
     ): UserResponse
 
     @GET("v1/users")
-    suspend fun getAllUsersData() : UserListResponse
+    suspend fun getAllUsersData(@Query("page") page: Int): UserListResponse
 
     @GET("v1/users/{id}")
     suspend fun getUserData(
@@ -165,7 +168,8 @@ interface ApiService {
         @Field("name") name: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null
+        @Field("address") address: String? = null,
+        @Field("memberType") memberType: String? = null
     ): UserResponse
 
     @PATCH("v1/users/{id}/complete-data")
@@ -176,7 +180,8 @@ interface ApiService {
         @Field("pathKTP") pathKTP: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null
+        @Field("address") address: String? = null,
+        @Field("memberType") memberType: String? = null
     ): UserResponse
 
     @DELETE("v1/users/{id}")
@@ -285,6 +290,24 @@ interface ApiService {
 
     // Discount and Promotion
 
-    // Poin
+    // Points
 
+    @FormUrlEncoded
+    @POST("v1/points/transfer")
+    suspend fun pointsTransfer(
+        @Field("to") to: String,
+        @Field("from") from: String,
+        @Field("amount") amount: Int,
+        @Field("notes") notes: String
+    ): PointHistoryResponseItem
+
+    @GET("v1/points/{userId}")
+    suspend fun getUserPoints(
+        @Path("userId") userId: String
+    ): PointsResponse
+
+    @GET("v1/points/history/{userId}")
+    suspend fun getUserHistory(
+        @Path("userId") userId: String
+    ): PointHistoryResponse
 }

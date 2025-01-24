@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="Hotel"
                 android:textColor="@color/orange_100"
-                android:background="@drawable/chip_category"
+                android:background="@drawable/chip_category_orange"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingTop="4dp"

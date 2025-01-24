@@ -2,6 +2,7 @@ package com.dicoding.core.domain.user.usecase
 
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.model.UserList
 import kotlinx.coroutines.flow.Flow
 
 interface UserUseCase {
@@ -17,7 +18,7 @@ interface UserUseCase {
         subscriptionEndDate: String? = null
     ): Flow<Resource<User>>
 
-    fun getAllUsersData(): Flow<Resource<List<User>>>
+    fun getAllUsersData(page: Int): Flow<Resource<UserList>>
 
     fun getUserData(id: String): Flow<Resource<User>>
 
@@ -27,7 +28,8 @@ interface UserUseCase {
         name: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null
+        address: String? = null,
+        memberType: String? = null
     ): Flow<Resource<User>>
 
     fun completeUserData(
@@ -36,7 +38,8 @@ interface UserUseCase {
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null
+        address: String? = null,
+        memberType: String? = null
     ): Flow<Resource<User>>
 
     fun getUserByPhone(phone: String): Flow<Resource<User>>

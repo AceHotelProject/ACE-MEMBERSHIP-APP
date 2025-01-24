@@ -3,30 +3,62 @@ package com.dicoding.core.data.source.remote.response.points
 import com.google.gson.annotations.SerializedName
 
 data class PointsResponse(
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String? = null,
 
-    @SerializedName("point_recieved")
-    val pointReceived: Int? = null,
+    @SerializedName("points")
+    val points: Int = 0,
 
-    @SerializedName("point_sent")
-    val pointSent: Int? = null,
+    @SerializedName("totalPointIn")
+    val totalPointIn: Int = 0,
 
-    @SerializedName("refferal_profit")
-    val refferalProfit: Int? = null
+    @SerializedName("totalPointOut")
+    val totalPointOut: Int = 0,
+
+    @SerializedName("totalPointReferral")
+    val totalPointReferral: Int = 0
+)
+
+data class PointsInfo(
+    @SerializedName("name")
+    val name: String? = null,
+
+    @SerializedName("id")
+    val id: String? = null
+
+)
+
+data class PointHistoryResponseItem(
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("from")
+    val from: String,
+    @SerializedName("to")
+    val to: String,
+    @SerializedName("amount")
+    val amount: Int,
+    @SerializedName("notes")
+    val notes: String,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("id")
+    val id: String
 )
 
 data class PointHistoryResponse(
-    @SerializedName("id") val id: String? = null,
-    @SerializedName("type") val type: String? = null,
-    @SerializedName("user_sender_id") val userSenderId: String? = null,
-    @SerializedName("user_reciever_id") val userReceiverId: String? = null,
-    @SerializedName("ammount") val amount: Int? = null,
-    @SerializedName("note") val note: String? = null,
-    @SerializedName("purpose") val purpose: String? = null,
-    @SerializedName("timestamp") val timestamp: String? = null
-)
+    @SerializedName("pointIn")
+    val pointIn: Int = 0,
 
-data class PointHistoryListResponse(
-    val data: List<PointHistoryResponse> = emptyList()
+    @SerializedName("pointOut")
+    val pointOut: Int = 0,
+
+    @SerializedName("pointReferral")
+    val pointReferral: Int = 0,
+
+    @SerializedName("totalPoint")
+    val totalPoint: Int = 0,
+
+    //perlu di revisi
+    @SerializedName("history")
+    val listHistory: List<PointHistoryResponseItem> = emptyList()
 )

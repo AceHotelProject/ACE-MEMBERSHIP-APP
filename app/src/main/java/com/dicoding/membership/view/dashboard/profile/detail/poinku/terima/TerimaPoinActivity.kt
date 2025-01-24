@@ -115,8 +115,6 @@ class TerimaPoinActivity : AppCompatActivity() {
     private fun showLoading(boolean: Boolean){
         binding.progressBar.visibility = if(boolean) View.VISIBLE else View.GONE
         binding.linearLayout.visibility = if(boolean) View.GONE else View.VISIBLE
-        binding.btnClose.visibility = if(boolean) View.GONE else View.VISIBLE
-        binding.terimaTitle.visibility = if(boolean) View.GONE else View.VISIBLE
         binding.terimaButtonCek.visibility = if(boolean) View.GONE else View.VISIBLE
 
     }

@@ -3,6 +3,7 @@ package com.dicoding.core.domain.user.interactor
 import com.dicoding.core.data.repository.UserRepository
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.usecase.UserUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -31,8 +32,8 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         )
     }
 
-    override fun getAllUsersData(): Flow<Resource<List<User>>> {
-        return userRepository.getAllUsersData()
+    override fun getAllUsersData(page: Int): Flow<Resource<UserList>> {
+        return userRepository.getAllUsersData(page)
     }
 
     override fun getUserData(id: String): Flow<Resource<User>> =
@@ -44,7 +45,8 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         name: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?
+        address: String?,
+        memberType: String?
     ): Flow<Resource<User>> {
         return userRepository.updateUserData(
             id = id,
@@ -52,7 +54,8 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
             name = name,
             citizenNumber = citizenNumber,
             phone = phone,
-            address = address
+            address = address,
+            memberType = memberType
         )
     }
 
@@ -62,7 +65,8 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         pathKTP: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?
+        address: String?,
+        memberType: String?
     ): Flow<Resource<User>> {
         return userRepository.completeUserData(
             id = id,
@@ -70,7 +74,8 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
             pathKTP = pathKTP,
             citizenNumber = citizenNumber,
             phone = phone,
-            address = address
+            address = address,
+            memberType = memberType
         )
     }
 

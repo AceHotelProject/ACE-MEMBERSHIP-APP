@@ -1,61 +1,85 @@
-package com.dicoding.core.data.source.remote.response.user
+    package com.dicoding.core.data.source.remote.response.user
 
-import com.google.gson.annotations.SerializedName
+    import com.google.gson.annotations.SerializedName
 
-data class UserResponse(
-    @field:SerializedName("id")
-    val id: String? = null,
+    data class UserResponse(
+        @SerializedName("id")
+        val id: String? = null,
 
-    @field:SerializedName("name")
-    val name: String? = "Anonymous",
+        @SerializedName("name")
+        val name: String? = null,
 
-    @field:SerializedName("email")
-    val email: String? = null,
+        @SerializedName("email")
+        val email: String? = null,
 
-    @field:SerializedName("is_validated")
-    val isValidated: Boolean = false,
+        @SerializedName("isEmailVerified")
+        val isEmailVerified: Boolean = false,
 
-    @field:SerializedName("phone")
-    val phone: String? = null,
+        @SerializedName("isNumberVerified")
+        val isNumberVerified: Boolean = false,
 
-    @field:SerializedName("address")
-    val address: String? = null,
+        @SerializedName("isPhoneVerified")
+        val isPhoneVerified: Boolean = false,
 
-    @field:SerializedName("citizenNumber")
-    val citizenNumber: String? = null,
+        @SerializedName("isValidated")
+        val isValidated: Boolean = false,
 
-    @field:SerializedName("pathKTP")
-    val idPicturePath: String? = null,
+        @SerializedName("phone")
+        val phone: String? = null,
 
-    @field:SerializedName("role")
-    val role: String = "nonMember",
+        @SerializedName("address")
+        val address: String? = null,
 
-    //need to be fixed the underscore
-    @field:SerializedName("merchant_id")
-    val merchantId: String? = null,
+        @SerializedName("citizenNumber")
+        val citizenNumber: String? = null,
 
-    @field:SerializedName("androidId")
-    val androidId: String? = null,
+        @SerializedName("pathKTP")
+        val pathKTP: String? = null,
 
-    @field:SerializedName("member_type")
-    val memberType: String? = null,
+        @SerializedName("role")
+        val role: String = "user",
 
-    @field:SerializedName("coupon_used")
-    val couponUsed: Int? = null,
+        @SerializedName("merchantId")
+        val merchantId: String? = null,
 
-    @field:SerializedName("point")
-    val point: Int = 0,
+        @SerializedName("androidId")
+        val androidId: String? = null,
 
-    @field:SerializedName("refferal_point")
-    val refferalPoint: Int? = null,
+        @SerializedName("memberType")
+        val memberType: String? = null,
 
-    @field:SerializedName("subscription_start_date")
-    val subscriptionStartDate: String? = null,
+        @SerializedName("couponUsed")
+        val couponUsed: List<String> = emptyList(),
 
-    @field:SerializedName("subscription_end_date")
-    val subscriptionEndDate: String? = null
-)
+        @SerializedName("point")
+        val point: Int = 0,
 
-data class UserListResponse(
-    val data: List<UserResponse> = emptyList()
-)
+        @SerializedName("refferalPoint")
+        val refferalPoint: Int = 0,
+
+        @SerializedName("subscriptionStartDate")
+        val subscriptionStartDate: String? = null,
+
+        @SerializedName("subscriptionEndDate")
+        val subscriptionEndDate: String? = null,
+
+        @SerializedName("createdAt")
+        val createdAt: String? = null
+    )
+
+    data class UserListResponse(
+        @SerializedName("results")
+        val data: List<UserResponse> = emptyList(),
+
+        @SerializedName("page")
+        val page: Int = 1,
+
+        @SerializedName("limit")
+        val limit: Int = 10,
+
+        @SerializedName("totalPages")
+        val totalPages: Int = 1,
+
+        @SerializedName("totalResults")
+        val totalResults: Int = 0
+    )

@@ -9,14 +9,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeMemberReferralActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityHomeMemberReferralBinding
+    private var selectedPackage: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeMemberReferralBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        selectedPackage = intent.getStringExtra(SELECTED_PACKAGE) ?: return
         setupClickListeners()
         //implementasi kode referral
     }
@@ -30,9 +31,13 @@ class HomeMemberReferralActivity : AppCompatActivity() {
         binding.btnContinue.setOnClickListener {
             startActivity(Intent(this, HomeMemberRegisterActivity::class.java).apply {
                 // pass data to next activity here.
+                putExtra(HomeMemberRegisterActivity.SELECTED_PACKAGE, selectedPackage)
             })
         }
 
 
+    }
+    companion object {
+        const val SELECTED_PACKAGE = "selected_package"
     }
 }

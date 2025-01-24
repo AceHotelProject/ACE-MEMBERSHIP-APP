@@ -41,13 +41,15 @@ class HomeMemberRegisterViewModel @Inject constructor(
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null
+        address: String? = null,
+        memberType: String? = null
     ) = userUseCase.completeUserData(
         id = id,
         name = name,
         pathKTP = pathKTP,
         citizenNumber = citizenNumber,
         phone = phone,
-        address = address
+        address = address,
+        memberType = memberType
     ).asLiveData()
 }

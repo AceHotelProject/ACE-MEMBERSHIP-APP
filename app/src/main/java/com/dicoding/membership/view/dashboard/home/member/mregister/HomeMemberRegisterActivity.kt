@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -32,6 +33,7 @@ import java.io.ByteArrayOutputStream
 class HomeMemberRegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeMemberRegisterBinding
     private val viewModel: HomeMemberRegisterViewModel by viewModels()
+    private var selectedPackage: String? = ""
 
     private val CAMERA_PERMISSION = Manifest.permission.CAMERA
     private val STORAGE_PERMISSION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -45,6 +47,7 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
         binding = ActivityHomeMemberRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        selectedPackage = intent.getStringExtra(SELECTED_PACKAGE) ?: return
         handleImageButton()
         isButtonEnabled(false)
         handleEditText()
@@ -301,6 +304,7 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                     val citizenNumber = edRegisterNik.text?.toString() ?: "0000000000000000"
                     val phone = edRegisterPhone.text?.toString() ?: "000000000000"
                     val address = edRegisterAddress.text?.toString() ?: "Default Address"
+                    val memberType = selectedPackage
 
                     viewModel.completeUserData(
                         id = userId,
@@ -308,7 +312,8 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                         pathKTP = idPicturePath,
                         citizenNumber = citizenNumber,
                         phone = phone,
-                        address = address
+                        address = address,
+                        memberType = memberType
                     ).observe(this@HomeMemberRegisterActivity) { result ->
                         when (result) {
                             is Resource.Error -> {
@@ -336,6 +341,9 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                                 showLoading(false)
                                 isButtonEnabled(true)
 
+                                // Debug memberType
+                                Log.d("Membertype Update", "Membertype updated to $memberType")
+
                                 // Status Template Activity
                                 val statusTemplate = StatusTemplate(
                                     title = "Membership Berhasil",
@@ -359,6 +367,10 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        const val SELECTED_PACKAGE = "selected_package"
     }
 
 }
