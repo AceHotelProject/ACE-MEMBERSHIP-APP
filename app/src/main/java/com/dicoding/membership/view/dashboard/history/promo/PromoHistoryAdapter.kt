@@ -2,9 +2,9 @@ package com.dicoding.membership.view.dashboard.history.promo
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +48,24 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                 }
 
                 // Set member status visibility to GONE since we don't use it
-                tvColourStatus.visibility = View.GONE
+                tvColourStatus.apply {
+                    text = history.status
+                    when (history.status.lowercase()) {
+                        "active" -> {
+                            setTextColor(ContextCompat.getColor(context, R.color.green))
+                            background.setTint(ContextCompat.getColor(context, R.color.green_accent))
+                        }
+                        "redeemed" -> {
+                            setTextColor(ContextCompat.getColor(context, com.dicoding.core.R.color.red))
+                            val redAccentTransparent = ColorUtils.setAlphaComponent(
+                                ContextCompat.getColor(context, R.color.red),
+                                64
+                            )
+
+                            background.setTint(redAccentTransparent)
+                        }
+                    }
+                }
 
                 // Format and set date
                 tvPromoDate.text = formatDate(history.activationDate)

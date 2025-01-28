@@ -58,3 +58,16 @@ data class CreatePromoResponse(
 	@field:SerializedName("start_date")
 	val startDate: String? = null
 ) : Parcelable
+
+data class CreatePromoRequest(
+	val name: String?,
+	val category: String?,
+	val detail: String?,
+	val pictures: List<String>?,
+	val tnc: List<String>?,
+	val start_date: String?,
+	val end_date: String?,
+	val member_type: String?,
+	val maximal_use: Int?,
+	val is_active: Boolean?
+)

@@ -35,6 +35,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
+            android:name=".view.dashboard.admin.manajemenmitra.ManajemenMitraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.addmitra.AddMitraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.admin.addmitra.addpegawai.AddPegawaiActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.status.StatusTemplateActivity"
             android:exported="false" />
         <activity
@@ -53,7 +62,7 @@
             android:name=".view.dashboard.profile.detail.detail.ProfileDetailActivity"
             android:exported="false"/>
         <activity
-            android:name=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity"
+            android:name=".view.dashboard.admin.detailmitra.DetailMitraActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity"

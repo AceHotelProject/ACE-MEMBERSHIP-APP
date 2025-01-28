@@ -118,15 +118,13 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.getPromos().collectLatest { pagingData ->
+                homeViewModel.getPromos(
+                    category = "", // Kosong karena di home tidak ada filter kategori
+                    status = "valid", // Hanya tampilkan yang valid
+                    name = "" // Kosong karena tidak ada pencarian
+                ).collectLatest { pagingData ->
                     Log.d("HomeFragment", "Received paging data")
-                    // Filter paging data
-                    val filteredPagingData = pagingData.filter {
-                        Log.d("HomeFragment", "Checking promo: ${it.name}, isActive: ${it.isActive}")
-                        it.status == "active"
-                    }
-                    Log.d("HomeFragment", "Submitting filtered paging data to mitra adapter")
-                    promoAdapter.submitData(filteredPagingData)
+                    promoAdapter.submitData(pagingData)
                     // You can also observe the paging state here
                     promoAdapter.addLoadStateListener { loadState ->
                         when (loadState.refresh) {
@@ -157,7 +155,7 @@ class HomeFragment : Fragment() {
                         isProposalLoading = false
                         updateLoadingState()
                         result.data?.let { promoData ->
-                            val inactiveCount = promoData.results.filter { it.status == "active" }.size
+                            val inactiveCount = promoData.results.size // Tidak perlu filter karena sudah difilter di API
                             binding.tvCouponCount.apply {
                                 text = "$inactiveCount"
                                 visibility = if (inactiveCount > 0) View.VISIBLE else View.GONE

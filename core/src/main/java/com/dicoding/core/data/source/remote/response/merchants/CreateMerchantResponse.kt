@@ -179,7 +179,7 @@ data class Merchant(
 ) : Parcelable
 
 
-// Request Body Create Promo
+@Parcelize
 data class CreateMerchantRequest(
 	@field:SerializedName("merchantData")
 	val merchantData: MerchantData,
@@ -189,23 +189,34 @@ data class CreateMerchantRequest(
 
 	@field:SerializedName("receptionistData")
 	val receptionistData: UserData
-)
+): Parcelable
 
+@Parcelize
 data class MerchantData(
+	@field:SerializedName("picturesUrl")
+	val picturesUrl: List<String> = emptyList(),
+
 	@field:SerializedName("name")
 	val name: String,
 
+	@field:SerializedName("merchantType")
+	val merchantType: String,
+
 	@field:SerializedName("detail")
 	val detail: String,
+) : Parcelable
 
-	@field:SerializedName("merchantType")
-	val merchantType: String
-)
-
+@Parcelize
 data class UserData(
+	@field:SerializedName("name")
+	val name: String? = null,
+
 	@field:SerializedName("email")
 	val email: String,
 
+	@field:SerializedName("phone")
+	val phone: String? = null,
+
 	@field:SerializedName("password")
 	val password: String
-)
+):Parcelable

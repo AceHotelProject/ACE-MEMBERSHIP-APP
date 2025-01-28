@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 interface PromoUseCase {
     fun createPromo(
         name: String,
-        token: String,
         category: String,
         detail: String,
         pictures: List<String>,
@@ -20,13 +19,14 @@ interface PromoUseCase {
         startDate: String,
         endDate: String,
         memberType: String,
-        merchantId: String,
         maximalUse: Int,
-        used: Int,
-        isActive: Boolean
     ): Flow<Resource<PromoDomain>>
 
-    fun getPromos(): Flow<PagingData<PromoDomain>>
+    fun getPromos(
+        category: String,
+        status: String,
+        name: String
+    ): Flow<PagingData<PromoDomain>>
 
     fun getProposalPromos(): Flow<Resource<GetPromosDomain>>
 

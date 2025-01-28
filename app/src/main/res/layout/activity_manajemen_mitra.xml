@@ -45,35 +45,42 @@
         app:layout_constraintTop_toTopOf="parent" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 
-  <ScrollView
-      android:id="@+id/cl_body"
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/swipe_refresh"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_marginTop="32dp"
       android:layout_marginStart="24dp"
       android:layout_marginEnd="24dp"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/upper_bar"
       app:layout_constraintBottom_toTopOf="@id/cl_button">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/cl_button">
 
-      <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/admin_manajemen_mitra_recyclerview"
+    <ScrollView
+        android:id="@+id/cl_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:scrollbars="none">
+
+      <LinearLayout
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent"
-          tools:itemCount="2"
-          tools:listitem="@layout/item_manajemen_mitra" />
-    </LinearLayout>
-  </ScrollView>
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/admin_manajemen_mitra_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_manajemen_mitra" />
+      </LinearLayout>
+    </ScrollView>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/cl_button"
@@ -86,8 +93,9 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent">
+
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_add_mitra"
         style="@style/textStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,6 +104,19 @@
         android:padding="10dp"
         android:text="Tambah"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
   </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <ProgressBar
+      android:id="@+id/progress_bar"
+      android:visibility="gone"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:indeterminateTint="@color/orange_100"
+      app:layout_constraintBottom_toTopOf="@id/cl_button"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/upper_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

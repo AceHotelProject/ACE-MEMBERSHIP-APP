@@ -73,7 +73,7 @@ class PromoDetailActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.MEMBER
+            val mockUserRole = UserRole.ADMIN
             setupUserVisibility(mockUserRole, promo)
 
 //            Use This For Real
@@ -149,7 +149,6 @@ class PromoDetailActivity : AppCompatActivity() {
 
     private fun bindDataToLayout(promo: PromoDomain?, source: String?) {
         binding.apply {
-            // Menampilkan gambar promo jika ada
             // Menampilkan gambar promo jika ada
             if (promo?.pictures?.isNotEmpty() == true) {
                 try {
@@ -313,7 +312,7 @@ class PromoDetailActivity : AppCompatActivity() {
                             hideLoading()
                             showToast("Promo berhasil disetujui")
                             navigateToStatus(
-                                title = "Promo Dibuat",
+                                title = "Promo Disetujui",
                                 description = "Promo telah berhasil disetujui dan akan segera aktif sesuai dengan tanggal yang telah ditentukan",
                                 tokenCode = result.data?.tokenCode ?: "",
                                 activationDate = result.data?.activationDate ?: "",

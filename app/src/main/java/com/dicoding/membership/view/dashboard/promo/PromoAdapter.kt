@@ -1,14 +1,19 @@
 package com.dicoding.membership.view.dashboard.promo
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.utils.ImageUtils
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemDashboardPromoBinding
@@ -23,6 +28,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
     // Default
     private var userRole: UserRole = UserRole.NONMEMBER
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setUserRole(role: UserRole) {
         Log.d("PromoAdapter", "Setting user role to: ${role.name}")
         userRole = role
@@ -34,6 +40,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
         this.onItemClickCallback = onItemClickCallback
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(promos: List<PromoDomain>) {
         Log.d("PromoAdapter", "Submitting new list with size: ${promos.size}")
         promos.forEach { promo ->
@@ -93,12 +100,13 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
 
                 // Load gambar pertama jika ada
                 if (data.pictures.isNotEmpty()) {
-                    Glide.with(itemView.context)
-                        .load(data.pictures[0])
-                        .centerCrop()
-                        .placeholder(R.drawable.image_empty)
-                        .error(R.drawable.image_empty)
-                        .into(itemDashboardPromoImageView)
+                    loadImage(
+                        imageUrl = data.pictures[0],
+                        imageView = itemDashboardPromoImageView,
+                        context = itemView.context
+                    )
+                } else {
+                    itemDashboardPromoImageView.setImageResource(R.drawable.image_empty)
                 }
 
                 when (userRole) {
@@ -128,6 +136,34 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                     onItemClickCallback?.onItemClicked(data)
                 }
             }
+        }
+    }
+
+    fun loadImage(imageUrl: String, imageView: ImageView, context: Context) {
+        try {
+            when {
+                imageUrl.startsWith("content://") || imageUrl.startsWith("file://") -> {
+                    val file = ImageUtils.uriToFile(Uri.parse(imageUrl), context)
+                    val compressedFile = ImageUtils.reduceFileImage(file)
+
+                    Glide.with(context)
+                        .load(compressedFile)
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(imageView)
+                }
+                imageUrl.startsWith("https://") -> {
+                    Glide.with(context)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(imageView)
+                }
+                else -> imageView.setImageResource(R.drawable.image_empty)
+            }
+        } catch (e: Exception) {
+            Log.e("ImageLoading", "Error loading image: ${e.message}")
+            imageView.setImageResource(R.drawable.image_empty)
         }
     }
 

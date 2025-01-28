@@ -31,12 +31,9 @@ import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.Redeem
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
-import com.dicoding.membership.view.verification.VerificationActivity
-import com.dicoding.membership.view.welcome.WelcomeActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -86,7 +83,7 @@ class  MainActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
             //            Testing
-            val mockUserRole = UserRole.MEMBER
+            val mockUserRole = UserRole.ADMIN
             //            3C8F61
 
             // Setup navigation graph
@@ -138,7 +135,7 @@ class  MainActivity : AppCompatActivity() {
                         when (result) {
                             is Resource.Success -> {
                                 result.data?.results?.let { promos ->
-                                    val inactivePromos = promos.filter { it.status == "redeem" }
+                                    val inactivePromos = promos.filter { it.status == "active" }
                                     val inactiveCount = inactivePromos.size
 
                                     binding.promoBanner.apply {
@@ -189,21 +186,6 @@ class  MainActivity : AppCompatActivity() {
             if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
                 return@observe
-            }
-
-            // Validasi email verified
-            mainViewModel.getEmailVerifiedStatus().observe(this) { isVerified ->
-                if (!isVerified) {
-                    // Redirect ke VerificationActivity
-                    mainViewModel.getUser().observe(this) { user ->
-                        startActivity(Intent(this, WelcomeActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            putExtra(VerificationActivity.EXTRA_USER_ID, user.user.id)
-                            putExtra(VerificationActivity.EXTRA_AUTO_SEND_OTP, true)
-                        })
-                        finish()
-                    }
-                }
             }
         }
     }
@@ -352,23 +334,23 @@ class  MainActivity : AppCompatActivity() {
     }
 
 //    Dicoding Tester Feature Module
-    private fun checkAndNavigateToFeature(moduleName: String, destinationId: Int, navController: NavController) {
-        if (splitInstallManager.installedModules.contains(moduleName)) {
-            navController.navigate(destinationId)
-        } else {
-            val request = SplitInstallRequest.newBuilder()
-                .addModule(moduleName)
-                .build()
-
-            splitInstallManager.startInstall(request)
-                .addOnSuccessListener {
-                    navController.navigate(destinationId)
-                }
-                .addOnFailureListener {
-                    showLongToast("Error installing module: $moduleName")
-                }
-        }
-    }
+//    private fun checkAndNavigateToFeature(moduleName: String, destinationId: Int, navController: NavController) {
+//        if (splitInstallManager.installedModules.contains(moduleName)) {
+//            navController.navigate(destinationId)
+//        } else {
+//            val request = SplitInstallRequest.newBuilder()
+//                .addModule(moduleName)
+//                .build()
+//
+//            splitInstallManager.startInstall(request)
+//                .addOnSuccessListener {
+//                    navController.navigate(destinationId)
+//                }
+//                .addOnFailureListener {
+//                    showLongToast("Error installing module: $moduleName")
+//                }
+//        }
+//    }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setFabClickListener() {
@@ -419,11 +401,6 @@ class  MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-
-    private fun setupActionBar() {
-        supportActionBar?.hide()
     }
 
     private fun checkNotificationPermission() {

@@ -1,12 +1,14 @@
 package com.dicoding.core.di
 
 import com.dicoding.core.data.repository.AuthRepository
+import com.dicoding.core.data.repository.FileRepository
 import com.dicoding.core.data.repository.PromoRepository
 import com.dicoding.core.data.repository.MembershipRepository
 import com.dicoding.core.data.repository.MerchantRepository
 import com.dicoding.core.data.repository.test.AuthRepositoryTester
 import com.dicoding.core.data.repository.test.StoryRepositoryTester
 import com.dicoding.core.domain.auth.repository.IAuthRepository
+import com.dicoding.core.domain.file.repository.IFileRepository
 import com.dicoding.core.domain.promo.repository.IPromoRepository
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.domain.merchants.repository.IMerchantRepository
@@ -49,5 +51,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideMerchantRepository(merchantRepository: MerchantRepository):IMerchantRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideFileRepository(fileRepository: FileRepository):IFileRepository
 
 }

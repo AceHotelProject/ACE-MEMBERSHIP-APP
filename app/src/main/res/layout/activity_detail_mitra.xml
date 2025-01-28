@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.dashboard.promo.detail.detailmitra.DetailMitraActivity">
+    tools:context=".view.dashboard.admin.detailmitra.DetailMitraActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upper_bar"
@@ -56,7 +56,7 @@
             tools:layout_editor_absoluteX="4dp">
 
             <ImageView
-                android:id="@+id/detail_promo_image_view"
+                android:id="@+id/detail_mitra_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:backgroundTint="@color/green"
@@ -83,7 +83,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/detail_promo_category"
+                android:id="@+id/detail_mitra_category"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/detail_promo_name"
+                android:id="@+id/detail_mitra_name"
                 style="@style/textStyleSemIBold_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                 android:src="@drawable/vector_line" />
 
             <TextView
-                android:id="@+id/detail_deskripsi"
+                android:id="@+id/tv_deskripsi"
                 style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
                 android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/detail_promo_description"
+                android:id="@+id/detail_description"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
                 android:textColor="@color/black" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_ajuan_promo"
+                android:id="@+id/rv_promo_active"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -218,4 +218,15 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/orange_100"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

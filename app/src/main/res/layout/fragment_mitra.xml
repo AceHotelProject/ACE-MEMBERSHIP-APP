@@ -26,7 +26,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvAMGreeting"
+                android:id="@+id/tv_mitra_owner"
                 style="@style/textStyleSemIBold_20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/imgHotel"
+                android:id="@+id/iv_mitra"
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
                 android:layout_marginTop="16dp"
@@ -48,7 +48,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tvAMGreeting" />
 
             <TextView
-                android:id="@+id/tvAMMembershipType"
+                android:id="@+id/tvMitraType"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/tvHotelName"
+                android:id="@+id/tv_mitra_name"
                 style="@style/textStyleSemIBold_20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,6 +118,7 @@
                             android:text="Promo Mitra" />
 
                         <TextView
+                            android:id="@+id/tv_mitra_promo"
                             style="@style/textStyleSemIBold_20"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -142,6 +143,7 @@
 
                         <TextView
                             style="@style/textStyleSemIBold_20"
+                            android:id="@+id/tv_mitra_promo_use"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
@@ -167,6 +169,7 @@
 
                     <TextView
                         style="@style/textStyleSemIBold_20"
+                        android:id="@+id/tv_mitra_poin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/icons_point"
@@ -200,6 +203,7 @@
 
                         <TextView
                             style="@style/textStyleSemIBold_20_selected_green"
+                            android:id="@+id/tv_mitra_poin_terima"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/icons_point"
@@ -221,10 +225,11 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Poin Terima" />
+                            android:text="Poin Transfer" />
 
                         <TextView
                             style="@style/textStyleSemIBold_20"
+                            android:id="@+id/tv_mitra_poin_transfer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/icons_point"
@@ -246,6 +251,7 @@
 
             <TextView
                 style="@style/textStyleMedium_14"
+                android:id="@+id/tv_mitra_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -255,4 +261,23 @@
             </TextView>
         </LinearLayout>
     </ScrollView>
+
+    <View
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/orange_100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

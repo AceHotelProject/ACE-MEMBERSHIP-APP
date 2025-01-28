@@ -23,17 +23,22 @@ import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.HTTP
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ApiService {
 
@@ -230,34 +235,27 @@ interface ApiService {
     @POST("v1/promos")
     suspend fun createPromo(
         @Field("name") name: String,
-        @Field("token") token: String,
         @Field("category") category: String,
         @Field("detail") detail: String,
-        @Field("pictures") pictures: List<String>,
-        @Field("tnc") tnc: List<String>,
+        @Field("pictures[]") pictures: List<String>?,
+        @Field("tnc[]") tnc: List<String>,
         @Field("start_date") startDate: String,
         @Field("end_date") endDate: String,
         @Field("member_type") memberType: String,
-        @Field("merchant") merchant: String,
         @Field("maximal_use") maximalUse: Int,
-        @Field("used") used: Int,
-        @Field("is_active") isActive: Boolean
     ): CreatePromoResponse
-
-    @GET("v1/promos")
-    suspend fun getPromos(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10
-    ): GetPromoResponse
-
-    @GET("v1/promos")
-    suspend fun getProposalPromos(): GetPromoResponse
 
     @PATCH("v1/promos/manage/{id}")
     suspend fun editPromo(
         @Path("id") id: String,
         @Body request: EditPromoRequest
     ): EditPromoResponse
+
+    @GET("v1/promos")
+    suspend fun getPromos(@QueryMap queryMap: Map<String, String>): GetPromoResponse
+
+    @GET("v1/promos")
+    suspend fun getProposalPromos(): GetPromoResponse
 
     @DELETE("v1/promos/manage/{id}")
     suspend fun deletePromo(
@@ -313,10 +311,15 @@ interface ApiService {
         @Path("id") id: String
     ): Response<Unit>
 
-    // Mitra
+    // File
+    @Multipart
+    @POST("v1/files/upload")
+    suspend fun uploadFile(
+        @Part file: MultipartBody.Part
+    ): Response<List<String>>
 
-    // Discount and Promotion
-
-    // Poin
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "v1/files/delete", hasBody = true)
+    suspend fun deleteFile(@Field("fileId") fileId: String): Response<Unit>
 
 }

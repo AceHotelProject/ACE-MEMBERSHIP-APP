@@ -131,6 +131,7 @@ object MerchantDataMapper {
         return UpdateMerchantDomain(
             createdAt = response.createdAt.orEmpty(),
             name = response.name.orEmpty(),
+            phone = response.phone.orEmpty(),
             picturesUrl = response.picturesUrl?.filterNotNull()?.map { it.toString() } ?: emptyList(),
             detail = response.detail.orEmpty(),
             id = response.id.orEmpty(),

@@ -13,6 +13,9 @@ data class UpdateMerchantResponse(
 	@field:SerializedName("name")
 	val name: String? = null,
 
+	@field:SerializedName("phone")
+	val phone: String? = null,
+
 	@field:SerializedName("picturesUrl")
 	val picturesUrl: List<String?>? = null,
 

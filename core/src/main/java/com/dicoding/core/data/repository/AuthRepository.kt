@@ -91,12 +91,20 @@ class AuthRepository @Inject constructor(
         return datastoreManager.saveRefreshToken(token)
     }
 
+    override fun saveMerchantId(id: String): Flow<Boolean> {
+        return datastoreManager.saveMerchantId(id)
+    }
+
     override fun getAccessToken(): Flow<String> {
         return datastoreManager.getAccessToken()
     }
 
     override fun getRefreshToken(): Flow<String> {
         return datastoreManager.getRefreshToken()
+    }
+
+    override fun getMerchantId(): Flow<String> {
+        return datastoreManager.getMerchantId()
     }
 
     override suspend fun deleteAllData() {

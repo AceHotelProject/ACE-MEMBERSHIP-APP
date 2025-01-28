@@ -63,6 +63,7 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
             preferences.remove(REFRESH_TOKEN_KEY)
             preferences.remove(LOGIN_STATUS_KEY)
             preferences.remove(EMAIL_VERIFIED_KEY)
+            preferences.remove(MERCHANT_ID_KEY)
         }
     }
 
@@ -83,6 +84,26 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
     fun getEmailVerifiedStatus(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
             preferences[EMAIL_VERIFIED_KEY] ?: false
+        }
+    }
+
+    fun saveMerchantId(id: String): Flow<Boolean> {
+        return flow {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[MERCHANT_ID_KEY] = id
+                }
+                emit(true)
+            } catch (e: Exception) {
+                emit(false)
+                Log.e("DatastoreManager", e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    fun getMerchantId(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[MERCHANT_ID_KEY] ?: ""
         }
     }
 
@@ -112,5 +133,6 @@ class DatastoreManager @Inject constructor(private val dataStore: DataStore<Pref
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token_key")
         private val EMAIL_VERIFIED_KEY = booleanPreferencesKey("email_verified_key")
         private val LOGIN_STATUS_KEY = booleanPreferencesKey("login_status_key")
+        private val MERCHANT_ID_KEY = stringPreferencesKey("merchant_id_key")
     }
 }

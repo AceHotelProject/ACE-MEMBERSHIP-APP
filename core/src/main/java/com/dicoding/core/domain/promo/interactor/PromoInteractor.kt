@@ -18,7 +18,6 @@ class PromoInteractor @Inject constructor(
 
     override fun createPromo(
         name: String,
-        token: String,
         category: String,
         detail: String,
         pictures: List<String>,
@@ -26,19 +25,20 @@ class PromoInteractor @Inject constructor(
         startDate: String,
         endDate: String,
         memberType: String,
-        merchantId: String,
         maximalUse: Int,
-        used: Int,
-        isActive: Boolean
     ): Flow<Resource<PromoDomain>> =
         promoRepository.createPromo(
-            name, token, category, detail, pictures, tnc,
-            startDate, endDate, memberType, merchantId,
-            maximalUse, used, isActive
+            name, category, detail, pictures, tnc,
+            startDate, endDate, memberType,
+            maximalUse
         )
 
-    override fun getPromos(): Flow<PagingData<PromoDomain>> =
-        promoRepository.getPromos()
+    override fun getPromos(
+        category: String,
+        status: String,
+        name: String
+    ): Flow<PagingData<PromoDomain>> =
+        promoRepository.getPromos(category, status, name)
 
     override fun getProposalPromos(): Flow<Resource<GetPromosDomain>> =
         promoRepository.getProposalPromos()

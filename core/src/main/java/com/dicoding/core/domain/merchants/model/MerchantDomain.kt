@@ -112,6 +112,7 @@ data class GetMerchantByIdDomain(
 data class UpdateMerchantDomain(
     val createdAt: String,
     val name: String,
+    val phone: String,
     val picturesUrl: List<String>,
     val detail: String,
     val id: String,

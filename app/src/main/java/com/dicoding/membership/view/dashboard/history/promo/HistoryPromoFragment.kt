@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -105,38 +105,38 @@ class HistoryPromoFragment : Fragment() {
         viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
             if (token.isNotEmpty()) {
                 lifecycleScope.launch {
-                    viewModel.getPromoHistory()
-                        .collectLatest { pagingData ->
+                    launch {
+                        viewModel.getPromoHistory().collect { pagingData ->
                             historyAdapter.submitData(pagingData)
                         }
-                }
+                    }
 
-                // Handle loading state
-                lifecycleScope.launch {
-                    historyAdapter.loadStateFlow.collectLatest { loadState ->
-                        // Update SwipeRefreshLayout state
-                        binding.swipeRefresh.isRefreshing = loadState.refresh is LoadState.Loading
+                    historyAdapter.addLoadStateListener { loadState ->
+                        Log.d("PromoHistory", "LoadState: ${loadState.refresh}")
+                        Log.d("PromoHistory", "ItemCount: ${historyAdapter.itemCount}")
+
+                        // Immediately set swipeRefresh to false to hide its progress indicator
+                        binding.swipeRefresh.isRefreshing = false
 
                         when (loadState.refresh) {
                             is LoadState.Loading -> {
-                                if (!binding.swipeRefresh.isRefreshing) {
-                                    showLoading()
-                                }
+                                Log.d("PromoHistory", "State: Loading")
+                                showLoading()
                                 hideEmptyState()
                             }
                             is LoadState.Error -> {
+                                Log.d("PromoHistory", "State: Error")
                                 hideLoading()
-                                binding.swipeRefresh.isRefreshing = false
-                                val error = (loadState.refresh as LoadState.Error).error
-                                showError(error.message ?: "Terjadi kesalahan")
-                                showEmptyState()
+                                showError((loadState.refresh as LoadState.Error).error.message)
                             }
                             is LoadState.NotLoading -> {
+                                Log.d("PromoHistory", "State: NotLoading")
                                 hideLoading()
-                                binding.swipeRefresh.isRefreshing = false
                                 if (historyAdapter.itemCount == 0) {
+                                    Log.d("PromoHistory", "Showing empty state")
                                     showEmptyState()
                                 } else {
+                                    Log.d("PromoHistory", "Hiding empty state")
                                     hideEmptyState()
                                 }
                             }
@@ -144,7 +144,6 @@ class HistoryPromoFragment : Fragment() {
                     }
                 }
             } else {
-                binding.swipeRefresh.isRefreshing = false
                 showError("Token kosong, silakan login ulang.")
             }
         }

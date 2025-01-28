@@ -22,9 +22,13 @@ interface AuthUseCase {
 
     fun saveRefreshToken(token: String): Flow<Boolean>
 
+    fun saveMerchantId(id: String): Flow<Boolean>
+
     fun getAccessToken(): Flow<String>
 
     fun getRefreshToken(): Flow<String>
+
+    fun getMerchantId(): Flow<String>
 
     suspend fun deleteAllData()
 

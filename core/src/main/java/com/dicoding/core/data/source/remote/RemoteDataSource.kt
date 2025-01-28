@@ -7,19 +7,20 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
-import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
-import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
-import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
+import com.dicoding.core.data.source.remote.response.file.FileUploadResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
+import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
+import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
+import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.MultipartBody
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -411,7 +413,6 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     /////////////////////////////////////////////////////////////////////////////// PROMO
     suspend fun createPromo(
         name: String,
-        token: String,
         category: String,
         detail: String,
         pictures: List<String>,
@@ -419,17 +420,14 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         startDate: String,
         endDate: String,
         memberType: String,
-        merchant: String,
         maximalUse: Int,
-        used: Int,
-        isActive: Boolean
     ): Flow<ApiResponse<CreatePromoResponse>> {
         return flow {
             try {
                 val response = apiService.createPromo(
-                    name, token, category, detail, pictures, tnc,
-                    startDate, endDate, memberType, merchant,
-                    maximalUse, used, isActive
+                    name, category, detail, pictures, tnc,
+                    startDate, endDate, memberType,
+                    maximalUse
                 )
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
@@ -439,10 +437,17 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPromos(page: Int, limit: Int): Flow<ApiResponse<GetPromoResponse>> {
+    suspend fun getPromos(
+        page: Int,
+        limit: Int,
+        category: String = "",
+        status: String = "",
+        name: String = ""
+    ): Flow<ApiResponse<GetPromoResponse>> {
         return flow {
             try {
-                val response = apiService.getPromos(page, limit)
+                val queryMap = createQueryMap(page, limit, category, status, name)
+                val response = apiService.getPromos(queryMap)
                 if (response.results?.isNotEmpty() == true) {
                     emit(ApiResponse.Success(response))
                 } else {
@@ -453,6 +458,22 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 Log.e(TAG, "Get promos error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
+    }
+
+    private fun createQueryMap(
+        page: Int,
+        limit: Int,
+        category: String?,
+        status: String?,
+        name: String?
+    ): Map<String, String> {
+        return mutableMapOf<String, String>().apply {
+            put("page", page.toString())
+            put("limit", limit.toString())
+            category?.takeIf { it.isNotEmpty() }?.let { put("category", it) }
+            status?.takeIf { it.isNotEmpty() }?.let { put("status", it) }
+            name?.takeIf { it.isNotEmpty() }?.let { put("name", it) }
+        }
     }
 
     suspend fun getProposalPromos(): Flow<ApiResponse<GetPromoResponse>> {
@@ -675,6 +696,40 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             } catch (e: Exception) {
                 Log.e(TAG, "Delete merchant error: ${e.message}", e)
                 emit(ApiResponse.Error("Gagal menghapus merchant"))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /////////////////////////////////////////////////////////////////////////////// File
+    suspend fun uploadFile(file: MultipartBody.Part): Flow<ApiResponse<FileUploadResponse>> {
+        return flow {
+            try {
+                val response = apiService.uploadFile(file)
+                if (response.isSuccessful && response.body() != null) {
+                    val urls = response.body()!!
+                    emit(ApiResponse.Success(FileUploadResponse(urls)))
+                } else {
+                    emit(ApiResponse.Error("Upload failed"))
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Upload error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun deleteFile(fileId: String): Flow<ApiResponse<Boolean>> {
+        return flow {
+            try {
+                val response = apiService.deleteFile(fileId)
+                if (response.isSuccessful) {
+                    emit(ApiResponse.Success(true))
+                } else {
+                    emit(ApiResponse.Error(response.message() ?: "Unknown error"))
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e("FileRemoteDataSource", "Delete error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
     }

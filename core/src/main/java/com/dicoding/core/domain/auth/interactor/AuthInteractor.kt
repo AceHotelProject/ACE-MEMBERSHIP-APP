@@ -32,9 +32,15 @@ class AuthInteractor @Inject constructor(
     override fun saveRefreshToken(token: String): Flow<Boolean> =
         authRepository.saveRefreshToken(token)
 
+    override fun saveMerchantId(id: String): Flow<Boolean> =
+        authRepository.saveMerchantId(id)
+
+
     override fun getAccessToken(): Flow<String> = authRepository.getAccessToken()
 
     override fun getRefreshToken(): Flow<String> = authRepository.getRefreshToken()
+
+    override fun getMerchantId(): Flow<String> = authRepository.getMerchantId()
 
     override suspend fun deleteAllData() = authRepository.deleteAllData()
 
