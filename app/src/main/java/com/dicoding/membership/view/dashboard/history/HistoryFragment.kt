@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.history
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentHistoryBinding
+import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -156,9 +158,26 @@ class HistoryFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 when (position) {
-                    0 -> updateButtonStates(binding.btnPromo, binding.btnTransferPoin, binding.btnMember)
-                    1 -> updateButtonStates(binding.btnTransferPoin, binding.btnPromo, binding.btnMember)
-                    2 -> updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
+                    0 -> {
+                        updateButtonStates(binding.btnPromo, binding.btnTransferPoin, binding.btnMember)
+                        binding.btnSearch.setOnClickListener {
+                            // Navigate to promo search
+                        }
+                    }
+                    1 -> {
+                        updateButtonStates(binding.btnTransferPoin, binding.btnPromo, binding.btnMember)
+                        binding.btnSearch.setOnClickListener {
+                            // Navigate to poin search
+                            val intent = Intent(requireContext(), PencarianPoinActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+                    2 -> {
+                        updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
+                        binding.btnSearch.setOnClickListener {
+                            // Navigate to member search
+                        }
+                    }
                 }
             }
         })

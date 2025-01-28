@@ -1,4 +1,4 @@
-package com.dicoding.membership.view.dashboard.history.poin
+package com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HistoryTransferPointViewModel @Inject constructor(
+class PencarianPoinViewModel @Inject constructor(
     private val pointsUseCase: PointsUseCase,
     private val authUseCase: AuthUseCase
 ): ViewModel(){

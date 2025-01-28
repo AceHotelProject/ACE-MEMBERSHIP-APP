@@ -203,7 +203,7 @@ interface ApiService {
         @Field("type") type: String,
         @Field("duration") duration: Int,
         @Field("price") price: Int,
-        @Field("tnc") tnc: List<String>
+        @Field("tnc[]") tnc: List<String>
     ): MembershipResponse
 
     @GET("v1/subscriptions")
@@ -221,7 +221,7 @@ interface ApiService {
         @Field("type") type: String? = null,
         @Field("duration") duration: Int? = null,
         @Field("price") price: Int? = null,
-        @Field("tnc") tnc: List<String>? = null
+        @Field("tnc[]") tnc: List<String>? = null
     ): MembershipResponse
 
     @DELETE("v1/subscriptions/{id}")

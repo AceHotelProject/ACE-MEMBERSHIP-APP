@@ -1,5 +1,8 @@
 package com.dicoding.core.domain.points.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 data class Points(
     val id: String,
     val points: Int,
@@ -7,15 +10,23 @@ data class Points(
     val totalPointOut: Int,
     val totalPointReferral: Int
 )
+
+@Parcelize
+data class PointsHistoryData(
+    val name: String,
+    val id: String
+): Parcelable
+
+@Parcelize
 data class PointHistory(
     val type: String,
-    val from: String,
-    val to: String,
+    val from: PointsHistoryData,
+    val to: PointsHistoryData,
     val amount: Int,
     val notes: String,
     val createdAt: String,
     val id: String
-)
+) : Parcelable
 
 data class UserPointHistory(
     val pointIn: Int,

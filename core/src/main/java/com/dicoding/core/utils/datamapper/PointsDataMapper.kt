@@ -15,6 +15,7 @@ import com.dicoding.core.domain.auth.model.TokensFormat
 import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.core.domain.points.model.Points
+import com.dicoding.core.domain.points.model.PointsHistoryData
 import com.dicoding.core.domain.points.model.UserPointHistory
 import com.dicoding.core.domain.user.model.User
 
@@ -30,8 +31,8 @@ object PointsDataMapper {
 
     fun mapPointTransferResponseToDomain(input: PointHistoryResponseItem): PointHistory = PointHistory(
         type = input.type,
-        from = input.from,
-        to = input.to,
+        from = PointsHistoryData(input.from.name!!, input.from.id!!),
+        to = PointsHistoryData(input.to.name!!, input.to.id!!),
         amount = input.amount,
         notes = input.notes,
         createdAt = input.createdAt,

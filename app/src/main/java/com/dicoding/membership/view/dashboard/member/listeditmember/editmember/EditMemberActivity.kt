@@ -33,6 +33,7 @@ class EditMemberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditMemberBinding
     private val viewModel: EditMemberViewModel by viewModels()
     private var membershipId: String? = null
+    private var screenTitle: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class EditMemberActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Data passed: Title & button
-        val screenTitle = intent.getStringExtra("SCREEN_TITLE") ?: "Edit Membership"  // Default value if null
+        screenTitle = intent.getStringExtra("SCREEN_TITLE") ?: "Edit Membership"  // Default value if null
         val buttonText = intent.getStringExtra("BUTTON_TEXT") ?: "Simpan"  // Default value if null
         binding.detailTitle.text = screenTitle
         binding.btnAdd.text = buttonText
@@ -123,14 +124,27 @@ class EditMemberActivity : AppCompatActivity() {
                         }
                         is Resource.Success -> {
                             showLoading(false)
-                            val statusTemplate = StatusTemplate(
-                                title = "Perbaharui Berhasil",
-                                description = "Data membership telah berhasil disimpan",
-                                showCoupon = false,
-                                promoCode = "",
-                                expiryTime = "",
-                                buttonText = "Selesai"
-                            )
+                            var statusTemplate = StatusTemplate("", "", false, "", "", "")
+                            if(screenTitle=="Tambah Membership"){
+                                statusTemplate = StatusTemplate(
+                                    title = "Berhasil dibuat",
+                                    description = "Data membership telah berhasil dibuat",
+                                    showCoupon = false,
+                                    promoCode = "",
+                                    expiryTime = "",
+                                    buttonText = "Selesai"
+                                )
+                            } else {
+                                statusTemplate = StatusTemplate(
+                                    title = "Perbaharui Berhasil",
+                                    description = "Data membership telah berhasil disimpan",
+                                    showCoupon = false,
+                                    promoCode = "",
+                                    expiryTime = "",
+                                    buttonText = "Selesai"
+                                )
+                            }
+
 
                             val intent = Intent(this@EditMemberActivity, StatusTemplateActivity::class.java).apply {
                                 putExtra(StatusTemplateActivity.EXTRA_STATUS_TEMPLATE, statusTemplate)

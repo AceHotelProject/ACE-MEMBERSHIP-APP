@@ -22,35 +22,44 @@ class ListEditMemberViewModel @Inject constructor(
 
     private val _memberships = MutableLiveData<Resource<MembershipListResponse>>()
     val memberships: LiveData<Resource<MembershipListResponse>> = _memberships
-    private val _deleteState = MutableLiveData<Resource<Unit>>()
-    val deleteState: LiveData<Resource<Unit>> = _deleteState
 
     fun deleteMembership(id: String) {
         viewModelScope.launch {
             membershipUseCase.deleteMembership(id)
                 .onStart {
-                    _deleteState.value = Resource.Loading()
+                    //Log.d("ViewModelDeleteDebug","Loading..")
                 }
-                .catch { e ->
-                    _deleteState.value = Resource.Error(e.message ?: "An error occurred")
+                .catch { _ ->
+                    //Log.d("ViewModelDeleteDebug","In resource error")
                 }
-                .collect { result ->
-                    _deleteState.value = result
-                    if (result is Resource.Success) {
-                        // Refresh the membership list after successful deletion
-                        getMemberships()
-                    }
+                .collect { _ ->
+                    Log.d("ViewModelDeleteDebug", "Success result")
+                    kotlinx.coroutines.delay(200)
+                    getMemberships()
                 }
         }
     }
 
     fun getMemberships() {
         viewModelScope.launch {
-            Log.d("Debug", "ViewModel: getMemberships called")  // Add this
+            Log.d("Debug", "ViewModel: getMemberships called")
             membershipUseCase.getAllMemberships()
                 .collect { result ->
-                    Log.d("Debug", "ViewModel: received result $result")  // Add this
-                    _memberships.value = result
+                    Log.d("Debug", "ViewModel: received result $result")
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let { response ->
+                                // For now it is sorted with the cheapest to more expensive
+                                val sortedResults = response.results.sortedBy { it.price ?: Int.MAX_VALUE }
+
+                                val sortedResponse = response.copy(results = sortedResults)
+                                _memberships.value = Resource.Success(sortedResponse)
+                            } ?: run {
+                                _memberships.value = result
+                            }
+                        }
+                        else -> _memberships.value = result
+                    }
                 }
         }
     }

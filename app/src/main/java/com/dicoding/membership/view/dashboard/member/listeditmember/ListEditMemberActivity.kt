@@ -76,63 +76,37 @@ class ListEditMemberActivity : AppCompatActivity() {
     private fun setupObservers() {
         // Main observer for list data
         viewModel.memberships.observe(this) { result ->
-            //Log.d("Debug", "Observer triggered with result: $result")  // Add this
             when (result) {
                 is Resource.Success -> {
                     showLoading(false)
                     result.data?.let { response ->
-                        //Log.d("Debug", "Response received: $response")  // Add this
                         if (response.totalResults == 0) {
-                            //Log.d("Debug", "Empty Results confirmed")
                             showEmptyState(true)
                         } else {
-                            //Log.d("Debug", "Non-empty Results confirmed: ${response.results.size} items")  // Modified
-                            showEmptyState(false)
-                            membershipAdapter.submitList(response.results)
+                            showEmptyState(false)// Clear the current list
+                            membershipAdapter.submitList(response.results)  // Submit new list
                         }
                     } ?: run {
-                        //Log.d("Debug", "Response data is null")  // Add this
                         showEmptyState(true)
                     }
                 }
                 is Resource.Loading -> {
-                    //Log.d("Debug", "Loading state")  // Add this
                     showLoading(true)
                 }
                 is Resource.Error -> {
-                    Log.d("Debug", "Error state: ${result.message}")  // Add this
                     showLoading(false)
-                    showEmptyState(true)  // Show empty state on error
+                    showEmptyState(true)
                     showError(result.message)
                 }
                 else -> {
-                    Log.d("Debug", "Unknown state")  // Add this
                     showLoading(false)
-                    showEmptyState(true)  // Show empty state on unknown condition
+                    showEmptyState(true)
                     showError("Terjadi kesalahan")
                 }
             }
         }
-        // Delete state observer
-        viewModel.deleteState.observe(this) { result ->
-            when (result) {
-                is Resource.Loading -> {
-                    showLoading(true)
-                }
-                is Resource.Success -> {
-                    showLoading(false)
-                    Toast.makeText(this, "Membership berhasil dihapus", Toast.LENGTH_SHORT).show()
-                    viewModel.getMemberships()
-                }
-                is Resource.Error -> {
-                    showLoading(false)
-                    showError(result.message)
-                }
-                else -> {
-                    showLoading(false)
-                }
-            }
-        }
+
+
     }
 
     private fun showEmptyState(boolean: Boolean) {

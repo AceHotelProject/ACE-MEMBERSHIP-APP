@@ -19,7 +19,7 @@ data class PointsResponse(
     val totalPointReferral: Int = 0
 )
 
-data class PointsInfo(
+data class PointsHistoryResponseItemData(
     @SerializedName("name")
     val name: String? = null,
 
@@ -32,9 +32,9 @@ data class PointHistoryResponseItem(
     @SerializedName("type")
     val type: String,
     @SerializedName("from")
-    val from: String,
+    val from: PointsHistoryResponseItemData,
     @SerializedName("to")
-    val to: String,
+    val to: PointsHistoryResponseItemData,
     @SerializedName("amount")
     val amount: Int,
     @SerializedName("notes")

@@ -339,6 +339,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     ): Flow<ApiResponse<MembershipResponse>> {
         return flow {
             try {
+                Log.d("RemoteDataSourceDebug","TNC: ${tnc}")
                 val response = apiService.updateMembership(
                     id = id,
                     type = type,
@@ -348,8 +349,10 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
+                    Log.d("RemoteDataSourceDebug","${response}")
                 } else {
                     emit(ApiResponse.Empty)
+                    Log.d("RemoteDataSourceDebug","${response}")
                 }
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
