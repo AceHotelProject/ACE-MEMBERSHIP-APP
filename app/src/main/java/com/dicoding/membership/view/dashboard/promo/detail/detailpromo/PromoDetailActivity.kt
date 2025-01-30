@@ -20,6 +20,7 @@ import com.dicoding.core.utils.ImageUtils.uriToFile
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
+import com.dicoding.membership.core.utils.DateUtils
 import com.dicoding.membership.databinding.ActivityPromoDetailBinding
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
@@ -54,7 +55,7 @@ class PromoDetailActivity : AppCompatActivity() {
 
         validateToken()
 
-        checkUserRole()
+        promo?.let { checkUserRole(it) }
     }
 
     private fun validateToken() {
@@ -67,13 +68,13 @@ class PromoDetailActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkUserRole() {
+    private fun checkUserRole(promo: PromoDomain) {
         viewModel.getUser().observe(this) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole)
+            val mockUserRole = UserRole.MEMBER
+            setupUserVisibility(mockUserRole, promo)
 
 //            Use This For Real
 //            setupFabVisibility(userRole)
@@ -82,7 +83,7 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupUserVisibility(userRole: UserRole) {
+    private fun setupUserVisibility(userRole: UserRole, promo: PromoDomain?) {
         when (userRole) {
             UserRole.ADMIN, UserRole.MITRA -> {
                 binding.layoutItemDetailPromo.visibility = View.GONE
@@ -96,7 +97,16 @@ class PromoDetailActivity : AppCompatActivity() {
                 binding.btnTolak.visibility = View.GONE
             }
             UserRole.MEMBER -> {
-                binding.layoutItemDetailPromo.visibility = View.VISIBLE
+                if (!promo?.token.isNullOrEmpty()) {
+                    // Token tersedia, tampilkan layout dan isi token
+                    binding.layoutItemDetailPromo.visibility = View.VISIBLE
+                    binding.tvPromoCode.text = promo?.token
+                    Log.d("PromoDetailActivity", "Token tersedia, layout tampil")
+                } else {
+                    // Token kosong, sembunyikan layout
+                    binding.layoutItemDetailPromo.visibility = View.GONE
+                    Log.d("PromoDetailActivity", "Token kosong, layout disembunyikan")
+                }
                 binding.btnPakai.visibility = View.VISIBLE
                 binding.btnMenu.visibility = View.GONE
                 binding.btnSetuju.visibility = View.GONE
@@ -218,7 +228,7 @@ class PromoDetailActivity : AppCompatActivity() {
                     showConfirmationDialog(
                         "Konfirmasi Promo",
                         "Apakah Anda yakin ingin menyetujui promo ini?",
-                        onConfirm = { handleActivatePromo(promoId) }
+                        onConfirm = { handleActivatePromoResepsionis(promoId) }
                     )
                 }
             }
@@ -227,7 +237,7 @@ class PromoDetailActivity : AppCompatActivity() {
             btnTolak.setOnClickListener {
                 promo?.id?.let { promoId ->
                     showConfirmationDialog(
-                        "Hapus Promo",
+                        "Tolak Promo",
                         "Apakah Anda yakin ingin menolak promo ini?",
                         onConfirm = { handleDeletePromo(promoId) }
                     )
@@ -259,11 +269,45 @@ class PromoDetailActivity : AppCompatActivity() {
         }.show(supportFragmentManager, "ConfirmationDialog")
     }
 
-    private fun handleActivatePromo(promoId: String) {
+    private fun handleActivatePromoUser(promoId: String) {
         viewModel.getRefreshToken().observe(this) { token ->
             if (token.isNotEmpty()) {
                 showLoading()
-                viewModel.activatePromo(promoId).observe(this) { result ->
+                viewModel.activatePromoUser(promoId).observe(this) { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            hideLoading()
+                            showToast("Promo berhasil digunakan")
+                            navigateToStatus(
+                                title = "Promo Digunakan",
+                                description = "Promo telah berhasil diaktifkan segera hubungi resepsionis untuk menggunakan promo sesuai dengan tanggal yang telah ditentukan",
+                                tokenCode = result.data?.tokenCode ?: "",
+                                activationDate = result.data?.activationDate ?: "",
+                                showCoupon = true
+                            )
+                        }
+                        is Resource.Error -> {
+                            hideLoading()
+                            showToast(result.message ?: "Terjadi kesalahan")
+                        }
+                        is Resource.Loading -> {
+                            showLoading()
+                        }
+                        else -> {
+                            hideLoading()
+                            showToast("Terjadi kesalahan")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun handleActivatePromoResepsionis(promoId: String) {
+        viewModel.getRefreshToken().observe(this) { token ->
+            if (token.isNotEmpty()) {
+                showLoading()
+                viewModel.activatePromoResepsionis(promoId).observe(this) { result ->
                     when (result) {
                         is Resource.Success -> {
                             hideLoading()
@@ -273,7 +317,7 @@ class PromoDetailActivity : AppCompatActivity() {
                                 description = "Promo telah berhasil disetujui dan akan segera aktif sesuai dengan tanggal yang telah ditentukan",
                                 tokenCode = result.data?.tokenCode ?: "",
                                 activationDate = result.data?.activationDate ?: "",
-                                showCoupon = true
+                                showCoupon = false
                             )
                         }
                         is Resource.Error -> {
@@ -328,13 +372,16 @@ class PromoDetailActivity : AppCompatActivity() {
         activationDate: String = "",
         showCoupon : Boolean
     ) {
+
+        val formattedDate = DateUtils.convertToIndonesianDateTime(activationDate)
+
         val statusTemplate = StatusTemplate(
             title = title,
             description = description,
             showCoupon = showCoupon,
             buttonText = "Selesai",
             promoCode = tokenCode,
-            expiryTime = activationDate
+            expiryTime = formattedDate
         )
 
         val intent = Intent(this, StatusTemplateActivity::class.java).apply {
@@ -361,7 +408,7 @@ class PromoDetailActivity : AppCompatActivity() {
                     showConfirmationDialog(
                         "Gunakan Promo",
                         "Apakah Anda yakin ingin menggunakan promo ini",
-                        onConfirm = { handleActivatePromo(promoId) }
+                        onConfirm = { handleActivatePromoUser(promoId) }
                     )
                 }
             }

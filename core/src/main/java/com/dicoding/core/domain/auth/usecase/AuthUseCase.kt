@@ -14,6 +14,8 @@ interface AuthUseCase {
 
     fun getUser(): Flow<LoginDomain>
 
+    suspend fun deleteUser(user: LoginDomain)
+
     suspend fun insertCacheUser(user: LoginDomain)
 
     fun saveAccessToken(token: String): Flow<Boolean>
@@ -24,9 +26,13 @@ interface AuthUseCase {
 
     fun getRefreshToken(): Flow<String>
 
-    suspend fun deleteToken()
+    suspend fun deleteAllData()
 
-    fun sendOtp(id: String): Flow<Resource<OtpDomain>>
+    fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean>
 
-    fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>>
+    fun getEmailVerifiedStatus(): Flow<Boolean>
+
+    fun sendOtp(): Flow<Resource<OtpDomain>>
+
+    fun verifyOtp(token: String): Flow<Resource<Unit>>
 }

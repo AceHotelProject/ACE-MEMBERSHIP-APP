@@ -1,6 +1,7 @@
 package com.dicoding.membership.view.verification
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,12 +9,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.databinding.ActivityVerificationBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.login.LoginActivity
+import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,6 +36,8 @@ class VerificationActivity : AppCompatActivity() {
         binding = ActivityVerificationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        validateToken()
+
         getIntentData()
 
         sendOtpAutomatically()
@@ -43,11 +49,13 @@ class VerificationActivity : AppCompatActivity() {
         handleOtp()
 
         handleButtonSend()
+    }
 
-        if (autoSendOtp) {
-            startTimer()
-        } else {
-            sendOtpAutomatically()
+    private fun validateToken() {
+        verificationViewModel.getRefreshToken().observe(this) { token ->
+            if (token.isEmpty() || token == "") {
+                TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
+            }
         }
     }
 
@@ -74,6 +82,8 @@ class VerificationActivity : AppCompatActivity() {
         binding.vidSecond.text?.clear()
         binding.vidThird.text?.clear()
         binding.vidForth.text?.clear()
+        binding.vidFifth.text?.clear()
+        binding.vidSixth.text?.clear()
 
         // Request focus to first field
         binding.vidFirst.requestFocus()
@@ -82,7 +92,7 @@ class VerificationActivity : AppCompatActivity() {
         isButtonEnabled(false)
 
         // Send new OTP and restart timer
-        verificationViewModel.sendOtp(id).observe(this) { result ->
+        verificationViewModel.sendOtp().observe(this) { result ->
             when (result) {
                 is Resource.Loading -> {
                     showLoading(true)
@@ -90,7 +100,7 @@ class VerificationActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     showLoading(false)
                     Toast.makeText(this, "Kode OTP baru telah dikirim", Toast.LENGTH_SHORT).show()
-                    startTimer() // This will reset and restart the timer
+                    startTimer()
                 }
                 is Resource.Error -> {
                     showLoading(false)
@@ -99,6 +109,13 @@ class VerificationActivity : AppCompatActivity() {
                 }
                 else -> {}
             }
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 
@@ -173,10 +190,49 @@ class VerificationActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (p0?.isEmpty() == true) {
+                if (p0?.length == 1) {
+                    binding.vidFifth.requestFocus()
+                } else if (p0?.isEmpty() == true) {
                     binding.vidThird.requestFocus()
                 }
                 checkInputs()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                checkInputs()
+            }
+        })
+
+        binding.vidFifth.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                checkInputs()
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (p0?.length == 1) {
+                    binding.vidSixth.requestFocus()
+                } else if (p0?.isEmpty() == true) {
+                    binding.vidForth.requestFocus()
+                }
+                checkInputs()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                checkInputs()
+            }
+        })
+
+        binding.vidSixth.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                checkInputs()
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (p0?.isEmpty() == true) {
+                    binding.vidFifth.requestFocus()
+                }
+                checkInputs()
+                hideKeyboard()
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -189,16 +245,19 @@ class VerificationActivity : AppCompatActivity() {
         val isComplete = binding.vidFirst.text?.length == 1 &&
                 binding.vidSecond.text?.length == 1 &&
                 binding.vidThird.text?.length == 1 &&
-                binding.vidForth.text?.length == 1
+                binding.vidForth.text?.length == 1 &&
+                binding.vidFifth.text?.length == 1 &&
+                binding.vidSixth.text?.length == 1
 
         isButtonEnabled(isComplete)
     }
 
     private fun handleButtonSend() {
         binding.btnSend.setOnClickListener {
-            val otpCode = "${binding.vidFirst.text}${binding.vidSecond.text}${binding.vidThird.text}${binding.vidForth.text}".toInt()
+            hideKeyboard()
+            val otpCode = "${binding.vidFirst.text}${binding.vidSecond.text}${binding.vidThird.text}${binding.vidForth.text}${binding.vidFifth.text}${binding.vidSixth.text}"
 
-            verificationViewModel.verifyOtp(id, otpCode).observe(this) { result ->
+            verificationViewModel.verifyOtp(otpCode).observe(this) { result ->
                 when (result) {
                     is Resource.Loading -> {
                         showLoading(true)
@@ -206,11 +265,7 @@ class VerificationActivity : AppCompatActivity() {
                     }
                     is Resource.Success -> {
                         showLoading(false)
-                        Toast.makeText(this, "Verifikasi berhasil", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, LoginActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        })
-                        finish()
+                        handleVerificationSuccess()
                     }
                     is Resource.Error -> {
                         showLoading(false)
@@ -223,17 +278,36 @@ class VerificationActivity : AppCompatActivity() {
         }
 
         binding.ivRefresh.setOnClickListener {
+            hideKeyboard()
             sendOtpAutomatically()
         }
     }
+
+    private fun handleVerificationSuccess() {
+        Toast.makeText(this, "Verifikasi berhasil", Toast.LENGTH_SHORT).show()
+
+        showLoading(true)
+
+        verificationViewModel.saveEmailVerifiedStatus(true)
+        verificationViewModel.getEmailVerifiedStatus().observe(this) { isVerified ->
+            showLoading(false)
+            if (isVerified) {
+                startActivity(Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
+            } else {
+                Toast.makeText(this, "Gagal menyimpan status verifikasi", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     private fun startTimer() {
         timer?.cancel()
         timer = null
 
-        binding.ivRefresh.isEnabled = false
-
-        timer = object : CountDownTimer(15 * 60 * 1000, 1000) {
+        timer = object : CountDownTimer(5 * 60 * 1000, 1000) {
             @SuppressLint("DefaultLocale")
             override fun onTick(millisUntilFinished: Long) {
                 val minutes = millisUntilFinished / 60000
@@ -243,14 +317,16 @@ class VerificationActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 binding.tvTimer.text = "00:00"
-                binding.ivRefresh.isEnabled = true
                 timer = null
             }
         }.start()
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.apply {
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
     }
 
     override fun onDestroy() {

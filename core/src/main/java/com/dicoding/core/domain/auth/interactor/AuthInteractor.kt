@@ -22,6 +22,8 @@ class AuthInteractor @Inject constructor(
 
     override fun getUser(): Flow<LoginDomain> = authRepository.getUser()
 
+    override suspend fun deleteUser(user: LoginDomain) = authRepository.deleteUser(user)
+
     override suspend fun insertCacheUser(user: LoginDomain) = authRepository.insertCacheUser(user)
 
     override fun saveAccessToken(token: String): Flow<Boolean> =
@@ -34,13 +36,17 @@ class AuthInteractor @Inject constructor(
 
     override fun getRefreshToken(): Flow<String> = authRepository.getRefreshToken()
 
-    override suspend fun deleteToken() = authRepository.deleteToken()
+    override suspend fun deleteAllData() = authRepository.deleteAllData()
 
-    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
-        return authRepository.sendOtp(id)
-    }
+    override fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean> =
+        authRepository.saveEmailVerifiedStatus(isVerified)
 
-    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
-        return authRepository.verifyOtp(id, token)
-    }
+    override fun getEmailVerifiedStatus(): Flow<Boolean> =
+        authRepository.getEmailVerifiedStatus()
+
+    override fun sendOtp(): Flow<Resource<OtpDomain>> =
+        authRepository.sendOtp()
+
+    override fun verifyOtp(token: String): Flow<Resource<Unit>> =
+        authRepository.verifyOtp(token)
 }

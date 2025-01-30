@@ -131,14 +131,10 @@ class LoginActivity : AppCompatActivity() {
             isButtonEnabled(
                 email.isNotEmpty()
                         && pass.isNotEmpty()
-                        && isPasswordValid(pass)
+//                        && isPasswordValid(pass)
                         && Patterns.EMAIL_ADDRESS.matcher(email).matches()
             )
         }
-    }
-
-    private fun isPasswordValid(password: String): Boolean {
-        return password.length >= 8
     }
 
     private fun isButtonEnabled(isEnabled: Boolean) {
@@ -194,7 +190,6 @@ class LoginActivity : AppCompatActivity() {
 
                     is Resource.Success -> {
                         result.data?.let { loginData ->
-                            Log.d("Debug LOGIN", "Simpan data user: ${loginData}")
                             // Simpan data user
                             loginViewModel.insertCacheUser(loginData)
 
@@ -238,7 +233,7 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(Intent(this, VerificationActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         putExtra(EXTRA_USER_ID, id)
-                        putExtra(EXTRA_AUTO_SEND_OTP, false)
+                        putExtra(EXTRA_AUTO_SEND_OTP, true)
                     })
                     finish()
                 }

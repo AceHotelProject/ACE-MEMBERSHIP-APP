@@ -110,9 +110,14 @@ object AuthDataMapper {
         )
     }
 
-    fun mapOtpResponseToDomain(response: OtpResponse): OtpDomain {
+    fun mapOtpResponseToDomain(input: OtpResponse): OtpDomain {
         return OtpDomain(
-            message = response.message ?: ""
+            expires = input.expires.orEmpty(),
+            blacklisted = input.blacklisted ?: false,
+            id = input.id.orEmpty(),
+            type = input.type.orEmpty(),
+            user = input.user.orEmpty(),
+            token = input.token.orEmpty()
         )
     }
 }

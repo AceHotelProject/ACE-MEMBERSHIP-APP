@@ -998,10 +998,32 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         binding.apply {
             // Text inputs
             edAddPromo.setText(promo.name)
-            acTipeMember.setText(promo.memberType)
-            acCategoryPromo.setText(promo.category)
             edDeskripsiPromo.setText(promo.detail)
             edMaxUse.setText(promo.maximalUse.toString())
+
+            // Setup member type dropdown dengan nilai default
+            val tipeMitraOptions = arrayOf("Platinum", "Gold", "Silver")
+            val memberAdapter = ArrayAdapter(this@StaffAddPromoActivity,
+                android.R.layout.simple_dropdown_item_1line, tipeMitraOptions)
+            acTipeMember.apply {
+                setAdapter(memberAdapter)
+                setText(promo.memberType, false) // false agar tidak trigger dropdown
+                setOnClickListener {
+                    showDropDown()
+                }
+            }
+
+            // Setup category dropdown dengan nilai default
+            val categoryPromoOptions = arrayOf("Discount", "Buy One Get One", "Cashback", "Flash Sale", "Bundle Offer")
+            val categoryAdapter = ArrayAdapter(this@StaffAddPromoActivity,
+                android.R.layout.simple_dropdown_item_1line, categoryPromoOptions)
+            acCategoryPromo.apply {
+                setAdapter(categoryAdapter)
+                setText(promo.category, false) // false agar tidak trigger dropdown
+                setOnClickListener {
+                    showDropDown()
+                }
+            }
 
             // Syarat & Ketentuan
             val tncString = promo.tnc.joinToString(";")

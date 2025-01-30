@@ -49,6 +49,16 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteUser(user: LoginDomain) {
+        val userEntity = AuthDataMapper.mapAuthToEntity(user)
+
+        return appExecutors.diskIO().execute {
+            GlobalScope.launch(Dispatchers.IO) {
+                localDataSource.deleteUser(userEntity)
+            }
+        }
+    }
+
     override fun register(email: String, password: String): Flow<Resource<RegisterDomain>> {
         return object : NetworkBoundResource<RegisterDomain, RegisterResponse>() {
             override suspend fun fetchFromApi(response: RegisterResponse): RegisterDomain {
@@ -89,30 +99,36 @@ class AuthRepository @Inject constructor(
         return datastoreManager.getRefreshToken()
     }
 
-    override suspend fun deleteToken() {
-        return datastoreManager.deleteToken()
+    override suspend fun deleteAllData() {
+        return datastoreManager.deleteAllData()
     }
 
-    override fun sendOtp(id: String): Flow<Resource<OtpDomain>> {
+    override fun saveEmailVerifiedStatus(isVerified: Boolean): Flow<Boolean> =
+        datastoreManager.saveEmailVerifiedStatus(isVerified)
+
+    override fun getEmailVerifiedStatus(): Flow<Boolean> =
+        datastoreManager.getEmailVerifiedStatus()
+
+    override fun sendOtp(): Flow<Resource<OtpDomain>> {
         return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
             override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
                 return AuthDataMapper.mapOtpResponseToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
-                return remoteDataSource.sendOtp(id)
+                return remoteDataSource.sendOtp()
             }
         }.asFlow()
     }
 
-    override fun verifyOtp(id: String, token: Int): Flow<Resource<OtpDomain>> {
-        return object : NetworkBoundResource<OtpDomain, OtpResponse>() {
-            override suspend fun fetchFromApi(response: OtpResponse): OtpDomain {
-                return AuthDataMapper.mapOtpResponseToDomain(response)
+    override fun verifyOtp(token: String): Flow<Resource<Unit>> {
+        return object : NetworkBoundResource<Unit, Unit>() {
+            override suspend fun fetchFromApi(response: Unit): Unit {
+                return
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<OtpResponse>> {
-                return remoteDataSource.verifyOtp(id, token)
+            override suspend fun createCall(): Flow<ApiResponse<Unit>> {
+                return remoteDataSource.verifyOtp(token)
             }
         }.asFlow()
     }

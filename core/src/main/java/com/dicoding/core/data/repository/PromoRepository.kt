@@ -9,11 +9,13 @@ import com.dicoding.core.data.source.paging.PromoHistoryPagingSource
 import com.dicoding.core.data.source.paging.PromosPagingSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
-import com.dicoding.core.domain.promo.model.ActivatePromoDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
@@ -120,14 +122,26 @@ class PromoRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>> {
-        return object : NetworkBoundResource<ActivatePromoDomain, ActivatePromoResponse>() {
-            override suspend fun fetchFromApi(response: ActivatePromoResponse): ActivatePromoDomain {
+    override fun activatePromoResepsionis(id: String): Flow<Resource<ActivatePromoResepsionisDomain>> {
+        return object : NetworkBoundResource<ActivatePromoResepsionisDomain, ActivatePromoResepsionisResponse>() {
+            override suspend fun fetchFromApi(response: ActivatePromoResepsionisResponse): ActivatePromoResepsionisDomain {
                 return PromoDataMapper.mapActivatePromoResponseToDomain(response)
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<ActivatePromoResponse>> {
-                return remoteDataSource.activatePromo(id)
+            override suspend fun createCall(): Flow<ApiResponse<ActivatePromoResepsionisResponse>> {
+                return remoteDataSource.activatePromoResepsionis(id)
+            }
+        }.asFlow()
+    }
+
+    override fun activatePromoUser(id: String): Flow<Resource<ActivatePromoUserDomain>> {
+        return object : NetworkBoundResource<ActivatePromoUserDomain, ActivatePromoUserResponse>() {
+            override suspend fun fetchFromApi(response: ActivatePromoUserResponse): ActivatePromoUserDomain {
+                return PromoDataMapper.mapActivatePromoUserResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<ActivatePromoUserResponse>> {
+                return remoteDataSource.activatePromoUser(id)
             }
         }.asFlow()
     }

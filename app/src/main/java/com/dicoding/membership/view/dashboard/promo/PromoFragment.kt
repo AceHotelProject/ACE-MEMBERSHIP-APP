@@ -133,7 +133,7 @@ class PromoFragment : Fragment() {
                                 }
 
                                 // Filter hanya yang non-active
-                                val filteredPromos = promos.filter { !it.isActive }
+                                val filteredPromos = promos.filter { it.status == "draft" }
                                 Log.d("PromoFragment", "Filtered Proposal Promos (non-active) size: ${filteredPromos.size}")
                                 filteredPromos.forEach { promo ->
                                     Log.d("PromoFragment", "Filtered Promo: ${promo.name}, isActive: ${promo.isActive}")
@@ -167,7 +167,7 @@ class PromoFragment : Fragment() {
                     // Filter paging data
                     val filteredPagingData = pagingData.filter {
                         Log.d("PromoFragment", "Checking promo: ${it.name}, isActive: ${it.isActive}")
-                        it.isActive
+                        it.status == "active"
                     }
                     Log.d("PromoFragment", "Submitting filtered paging data to mitra adapter")
                     promoMitraAdapter.submitData(filteredPagingData)

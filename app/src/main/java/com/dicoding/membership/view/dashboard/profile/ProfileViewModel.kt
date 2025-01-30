@@ -5,26 +5,29 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
-import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
-import com.dicoding.core.domain.user.model.User
-import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
-    private val userUseCase: UserUseCase
+    private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
     private val _userData = MutableLiveData<LoginDomain>()
     val userData: LiveData<LoginDomain> = _userData
 
+    fun getUser() = authUseCase.getUser().asLiveData()
 
+    fun deleteUser(user: LoginDomain) = viewModelScope.launch {
+        authUseCase.deleteUser(user)
+    }
+
+    fun deleteAllData() = viewModelScope.launch {
+        authUseCase.deleteAllData()
+    }
 
     fun getUserData() {
         viewModelScope.launch {

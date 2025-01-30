@@ -36,6 +36,9 @@ data class ResultsItem(
 	@field:SerializedName("is_active")
 	val isActive: Boolean? = null,
 
+	@field:SerializedName("status")
+	val status: String? = null,
+
 	@field:SerializedName("tnc")
 	val tnc: List<String?>? = null,
 

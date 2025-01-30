@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.register
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +10,7 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
@@ -145,6 +147,9 @@ class RegisterActivity : AppCompatActivity() {
             navigateToLoginActivity()
         }
         binding.btnRegister.setOnClickListener {
+
+            hideKeyboard()
+
             val email = binding.edRegisterEmail.text.toString()
             val password = binding.edRegisterPass.text.toString()
 
@@ -177,20 +182,8 @@ class RegisterActivity : AppCompatActivity() {
                         hideLoading()
                         isButtonEnabled(true)
                         showToast(getString(R.string.register_success))
-//                        If OTP Doesn't Ready
-//                        navigateToLoginActivity()
 
-//                        Change to navigate VerificationActivity
-                        val id = result.data?.user?.id
-                        if (id != null) {
-                            navigateToOtpActivity(id)
-                        } else {
-                            showToast("Error: User ID not found")
-                            Log.e(
-                                "RegisterActivity",
-                                "User ID is null after successful registration"
-                            )
-                        }
+                        navigateToLoginActivity()
                     }
 
                     else -> {}
@@ -205,20 +198,17 @@ class RegisterActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToOtpActivity(id: String) {
-        Log.d("RegisterActivity", "Navigating to Verification Activity with userId: $id")
-        val intent = Intent(this, VerificationActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(VerificationActivity.EXTRA_USER_ID, id)
-            putExtra(VerificationActivity.EXTRA_AUTO_SEND_OTP, true)
-        }
-        startActivity(intent)
-    }
-
     private fun showLoading() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
             loadingOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        currentFocus?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 

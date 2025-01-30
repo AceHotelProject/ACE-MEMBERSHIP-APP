@@ -9,6 +9,13 @@ import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
 import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
@@ -77,17 +84,13 @@ interface ApiService {
         @Field("password") password: String
     ): RegisterResponse
 
-
     @POST("v1/auth/send-otp")
-    suspend fun sendOtp(
-        @Field("id") id: String
-    ):OtpResponse
+    suspend fun sendOtp(): OtpResponse
 
     @POST("v1/auth/verify-otp")
     suspend fun verifyOtp(
-        @Field("id") id: String,
-        @Query("token") token: Int
-    ): OtpResponse
+        @Query("token") token: String
+    ): Response<Unit>
 
     ////////////////////////////////////////////// User
     @FormUrlEncoded
@@ -271,9 +274,14 @@ interface ApiService {
     ): Response<Unit>
 
     @POST("v1/promos/activate/{id}")
-    suspend fun activatePromo(
+    suspend fun activatePromoResepsionis(
         @Path("id") id: String
-    ): ActivatePromoResponse
+    ): ActivatePromoResepsionisResponse
+
+    @POST("v1/promos/activate-user/{id}")
+    suspend fun activatePromoUser(
+        @Path("id") id: String
+    ): ActivatePromoUserResponse
 
     @POST("v1/promos/redeem/{token}")
     suspend fun redeemPromo(
@@ -286,7 +294,33 @@ interface ApiService {
         @Query("limit") limit: Int
     ): GetPromoHistoryResponse
 
-    // Referral Code
+    // Merchants
+    @POST("v1/merchants")
+    suspend fun createMerchant(
+        @Body request: CreateMerchantRequest
+    ): CreateMerchantResponse
+
+    @GET("v1/merchants")
+    suspend fun getMerchants(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10
+    ): GetMerchantsResponse
+
+    @GET("v1/merchants/{id}")
+    suspend fun getMerchantById(
+        @Path("id") id: String
+    ): GetMerchantsByIdResponse
+
+    @PATCH("v1/merchants/{id}")
+    suspend fun updateMerchant(
+        @Path("id") id: String,
+        @Body request: CreateMerchantRequest
+    ): UpdateMerchantResponse
+
+    @DELETE("v1/merchants/{id}")
+    suspend fun deleteMerchant(
+        @Path("id") id: String
+    ): Response<Unit>
 
     // Mitra
 

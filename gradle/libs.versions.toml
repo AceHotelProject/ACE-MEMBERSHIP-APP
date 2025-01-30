@@ -30,7 +30,7 @@ dagger = "2.30.1"
 featureDeliveryKtx = "2.1.0"
 timber = "5.0.1"
 swiperefreshlayout = "1.1.0"
-
+threetenabp = "1.4.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -73,6 +73,8 @@ feature-delivery-ktx = { group = "com.google.android.play", name = "feature-deli
 floating-action-button = { group = "com.github.clans", name = "fab", version = "1.6.4" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threetenabp" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

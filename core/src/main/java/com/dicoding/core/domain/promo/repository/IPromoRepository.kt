@@ -2,7 +2,9 @@ package com.dicoding.core.domain.promo.repository
 
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.promo.model.ActivatePromoDomain
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
+import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
+import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
@@ -45,7 +47,9 @@ interface IPromoRepository {
 
     fun deletePromo(id: String): Flow<Resource<Unit>>
 
-    fun activatePromo(id: String): Flow<Resource<ActivatePromoDomain>>
+    fun activatePromoResepsionis(id: String): Flow<Resource<ActivatePromoResepsionisDomain>>
+
+    fun activatePromoUser(id: String): Flow<Resource<ActivatePromoUserDomain>>
 
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 

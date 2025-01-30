@@ -87,6 +87,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                 detailPromoTitle.text = data.name
                 detailPromoDescription.text = data.detail
                 detailPromoCategory.text = data.category
+                itemDashboardPromoCode.text = data.token
 
                 Log.d("PromoAdapter", "Binding item with role: ${userRole.name}")
 
@@ -107,27 +108,20 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                         Log.d("PromoAdapter", "Setting ADMIN/MITRA/RECEPTIONIST visibility")
                     }
                     UserRole.MEMBER, UserRole.NONMEMBER -> {
-                        // Custom behavior for MEMBER
-                        layoutUser.visibility = View.VISIBLE
-                        Log.d("PromoAdapter", "Setting MEMBER and NONMEMBER visibility")
+                        if (!data.token.isNullOrEmpty()) {
+                            layoutUser.visibility = View.VISIBLE
+                            itemDashboardPromoCode.text = data.token
+                            itemDashboardPromoExpiryTime.text = data.endDate
+                            Log.d("PromoAdapter", "Token ditemukan, layoutUser ditampilkan")
+                        } else {
+                            layoutUser.visibility = View.GONE
+                            Log.d("PromoAdapter", "Token kosong, layoutUser disembunyikan")
+                        }
                     }
                     else -> {
                         // Default behavior
                         layoutUser.visibility = View.GONE
                     }
-                }
-
-                if (layoutUser.visibility == View.VISIBLE) {
-                    itemDashboardPromoCode.text = data.token
-                    itemDashboardPromoExpiryTime.text = data.endDate
-                    Log.d("PromoAdapter", "Setting code: ${data.token}")
-                    Log.d("PromoAdapter", "Setting expiry: ${data.endDate}")
-                }
-                if (layoutUser.visibility == View.VISIBLE) {
-                    itemDashboardPromoCode.text = data.token
-                    itemDashboardPromoExpiryTime.text = data.endDate
-                    Log.d("PromoAdapter", "Setting code: ${data.token}")
-                    Log.d("PromoAdapter", "Setting expiry: ${data.endDate}")
                 }
 
                 root.setOnClickListener {

@@ -2,8 +2,11 @@ package com.dicoding.membership.view.verification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -12,9 +15,17 @@ class VerificationViewModel @Inject constructor(
     private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
-    fun sendOtp(id: String) =
-        authUseCase.sendOtp(id).asLiveData()
+    fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
-    fun verifyOtp(id:String, token: Int) =
-        authUseCase.verifyOtp(id, token).asLiveData()
+    fun sendOtp() =
+        authUseCase.sendOtp().asLiveData()
+
+    fun verifyOtp(token: String) =
+        authUseCase.verifyOtp(token).asLiveData()
+
+    fun saveEmailVerifiedStatus(isVerified: Boolean) = viewModelScope.launch {
+        authUseCase.saveEmailVerifiedStatus(isVerified).collect {  }
+    }
+
+    fun getEmailVerifiedStatus() = authUseCase.getEmailVerifiedStatus().asLiveData()
 }

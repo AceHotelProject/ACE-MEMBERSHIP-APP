@@ -7,6 +7,8 @@ import com.dicoding.core.domain.membership.interactor.MembershipInteractor
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
 import com.dicoding.core.domain.points.interactor.PointsInteractor
 import com.dicoding.core.domain.points.usecase.PointsUseCase
+import com.dicoding.core.domain.merchants.interactor.MerchantInteractor
+import com.dicoding.core.domain.merchants.usecase.MerchantUseCase
 import com.dicoding.core.domain.promo.interactor.PromoInteractor
 import com.dicoding.core.domain.promo.usecase.PromoUseCase
 import com.dicoding.core.domain.test.auth.usecase.AuthUseCaseTester
@@ -52,6 +54,9 @@ abstract class AppModule {
     @Singleton
     abstract fun providePromoUseCase(promoInteractor: PromoInteractor): PromoUseCase
 
+    @Binds
+    @Singleton
+    abstract fun provideMerchantUseCase(merchantInteractor: MerchantInteractor): MerchantUseCase
     @Binds
     @Singleton
     abstract fun providePointsUseCase(pointsInteractor: PointsInteractor): PointsUseCase

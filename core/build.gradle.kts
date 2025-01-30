@@ -84,6 +84,9 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.glide.compiler)
 
+    // Date
+    implementation(libs.threetenabp)
+
     // Timber
     implementation(libs.timber)
 }
