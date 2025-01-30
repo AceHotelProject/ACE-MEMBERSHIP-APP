@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
+        android:background="@drawable/custom_background_history">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/filter_bar"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            style="@style/textStyleSemIBold_24"
+            android:text="Filter"/>
+
+        <TextView
+            android:id="@+id/tv_date_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            style="@style/textStyleMedium_14"
+            android:text="Berdasarkan Tanggal"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filter_recyclerview_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_filter_chip"/>
+
+        <TextView
+            android:id="@+id/tv_status_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/textStyleMedium_14"
+            android:text="Berdasarkan Status"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filter_recyclerview_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            tools:listitem="@layout/item_filter_chip"
+            tools:itemCount="4"/>
+
+        <TextView
+            android:id="@+id/tv_category_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/textStyleMedium_14"
+            android:text="Berdasarkan Kategori"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filter_recyclerview_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            tools:listitem="@layout/item_filter_chip" />
+    </LinearLayout>
+
+</LinearLayout>

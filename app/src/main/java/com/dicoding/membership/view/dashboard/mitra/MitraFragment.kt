@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.mitra
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.databinding.FragmentMitraBinding
+import com.dicoding.membership.view.dashboard.admin.addmitra.AddMitraActivity
 import com.dicoding.membership.view.dashboard.admin.manajemenmitra.MerchantPagingAdapter
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,18 +76,36 @@ class MitraFragment : Fragment() {
         lifecycleScope.launch {
             Log.d("MitraFragment", "Starting getFirstMerchant")
             val tempAdapter = MerchantPagingAdapter()
+            var isDataEmpty = true
 
             // Launch untuk loadState
             lifecycleScope.launch {
                 tempAdapter.loadStateFlow.collect { loadState ->
                     Log.d("MitraFragment", "Load state: ${loadState.refresh}")
-                    if (loadState.refresh is LoadState.NotLoading) {
-                        val firstMerchant = tempAdapter.snapshot().firstOrNull()
-                        if (firstMerchant != null) {
-                            Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
-                            viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
-                                if (saved) loadMerchantData(firstMerchant.id)
+                    when (loadState.refresh) {
+                        is LoadState.NotLoading -> {
+                            val firstMerchant = tempAdapter.snapshot().firstOrNull()
+                            if (firstMerchant != null) {
+                                isDataEmpty = false
+                                Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
+                                viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
+                                    if (saved) loadMerchantData(firstMerchant.id)
+                                }
+                            } else {
+                                // No merchant data found, navigate to AddMitraActivity
+                                Log.d("MitraFragment", "No merchant data found, navigating to AddMitraActivity")
+                                navigateToAddMitra()
                             }
+                        }
+                        is LoadState.Error -> {
+                            // Handle error state if needed
+                            Log.e("MitraFragment", "Error loading merchants: ${(loadState.refresh as LoadState.Error).error.message}")
+                            if (isDataEmpty) {
+                                navigateToAddMitra()
+                            }
+                        }
+                        else -> {
+                            // Loading state, do nothing
                         }
                     }
                 }
@@ -97,6 +117,13 @@ class MitraFragment : Fragment() {
                 tempAdapter.submitData(pagingData)
             }
         }
+    }
+
+    private fun navigateToAddMitra() {
+        val intent = Intent(requireActivity(), AddMitraActivity::class.java)
+        startActivity(intent)
+        // Optional: finish current activity if you don't want to keep it in the back stack
+        // requireActivity().finish()
     }
 
     private fun loadMerchantData(merchantId: String) {

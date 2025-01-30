@@ -1,8 +1,13 @@
 package com.dicoding.membership.view.dashboard.promo
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemButtonPromoBinding
 
 class PromoCategoryAdapter(
@@ -24,14 +29,30 @@ class PromoCategoryAdapter(
                 text = category
                 isSelected = position == selectedPosition
 
+                setBackgroundResource(R.drawable.custom_button_white)
+
+                setBackgroundTintList(
+                    ColorStateList.valueOf(
+                        if (isSelected)
+                            ContextCompat.getColor(context, R.color.orange_100)
+                        else
+                            Color.WHITE
+                    ))
+
+                setTextColor(
+                    if (isSelected) Color.WHITE
+                    else Color.BLACK // sesuaikan dengan warna default yang diinginkan
+                )
+
                 setOnClickListener {
                     val previousSelected = selectedPosition
                     selectedPosition = position
                     notifyItemChanged(previousSelected)
                     notifyItemChanged(selectedPosition)
 
-                    // Pass empty string for "All", otherwise pass category name
-                    onCategorySelected(if (category == "All") "" else category)
+                    val selectedCategory = if (category == "All") "" else category
+                    Log.d("PromoCategoryAdapter", "Selected category: $selectedCategory")
+                    onCategorySelected(selectedCategory)
                 }
             }
         }

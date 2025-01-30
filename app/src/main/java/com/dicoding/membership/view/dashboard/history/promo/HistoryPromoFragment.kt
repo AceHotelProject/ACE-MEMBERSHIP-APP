@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -106,7 +105,9 @@ class HistoryPromoFragment : Fragment() {
             if (token.isNotEmpty()) {
                 lifecycleScope.launch {
                     launch {
-                        viewModel.getPromoHistory().collect { pagingData ->
+                        viewModel.getPromoHistory(
+                            promoCategory = viewModel.selectedCategory.value
+                        ).collect { pagingData ->
                             historyAdapter.submitData(pagingData)
                         }
                     }

@@ -106,7 +106,7 @@
             android:exported="false"
             android:theme="@style/Base.Theme.Membership" />
         <activity
-            android:name=".view.dashboard.history.historysearch.HistorySearchActivity"
+            android:name=".view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.history.historydetailpoin.HistoryDetailPoinActivity"

@@ -18,7 +18,7 @@ import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentPromoBinding
-import com.dicoding.membership.view.dashboard.history.historysearch.HistorySearchActivity
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -113,12 +113,12 @@ class PromoFragment : Fragment() {
         }
 
         binding.buttonDashboardPromoSearch.setOnClickListener {
-            val intent = Intent(requireActivity(), HistorySearchActivity::class.java)
+            val intent = Intent(requireActivity(), PromoSearchActivity::class.java)
             startActivity(intent)
         }
 
         promoCategoryAdapter = PromoCategoryAdapter { category ->
-            // Refresh promos dengan kategori yang dipilih
+            Log.d("PromoFragment", "Category selected: $category")
             viewModel.setCategory(category)
             promoMitraAdapter.refresh()
         }
@@ -150,16 +150,29 @@ class PromoFragment : Fragment() {
                         is LoadState.Loading -> {
                             showLoading()
                             binding.scrollView2.visibility = View.GONE
+                            binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
                             Log.d("PromoFragment", "Ajuan Promo Loading")
                         }
                         is LoadState.NotLoading -> {
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
                             Log.d("PromoFragment", "Ajuan Promo Ready")
+
+                            // Check if adapter is empty
+                            if (ajuanPromoAdapter.itemCount == 0) {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.VISIBLE
+                                binding.rvPromoMitra.visibility = View.GONE
+                            } else {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                                binding.rvPromoMitra.visibility = View.VISIBLE
+                            }
+
+                            Log.d("PromoFragment", "Promo Ajuan Ready with ${ajuanPromoAdapter.itemCount} items")
                         }
                         is LoadState.Error -> {
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
+                            binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
                             showError((loadState.refresh as LoadState.Error).error.message)
                         }
                     }
@@ -172,16 +185,28 @@ class PromoFragment : Fragment() {
                         is LoadState.Loading -> {
                             showLoading()
                             binding.scrollView2.visibility = View.GONE
+                            binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
                             Log.d("PromoFragment", "Promo Mitra Loading")
                         }
                         is LoadState.NotLoading -> {
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
                             Log.d("PromoFragment", "Promo Mitra Ready")
+
+                            if (promoMitraAdapter.itemCount == 0) {
+                                binding.tvTidakAdaRiwayatMitra.visibility = View.VISIBLE
+                                binding.rvPromoMitra.visibility = View.GONE
+                            } else {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                                binding.rvPromoMitra.visibility = View.VISIBLE
+                            }
+
+                            Log.d("PromoFragment", "Promo Mitra Ready with ${promoMitraAdapter.itemCount} items")
                         }
                         is LoadState.Error -> {
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
+                            binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
                             showError((loadState.refresh as LoadState.Error).error.message)
                         }
                     }
@@ -200,14 +225,11 @@ class PromoFragment : Fragment() {
             }
 
             launch {
-                viewModel.getPromos(
-                    category = viewModel.selectedCategory.value,
-                    status = "",
-                    name = ""
-                ).collect { pagingData ->
+                viewModel.promos.collect { pagingData ->
                     promoMitraAdapter.submitData(pagingData)
                 }
             }
+
         }
     }
 
@@ -248,6 +270,8 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.VISIBLE
                 binding.tvPromoMitra.visibility = View.VISIBLE
                 binding.rvPromoMitra.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
                 binding.rvPromoCategory.visibility = View.VISIBLE
@@ -255,6 +279,7 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.GONE
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
             }
             else -> {
                 binding.rvPromoCategory.visibility = View.GONE
@@ -262,6 +287,8 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.GONE
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.GONE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
             }
         }
         setTextVisibilityBasedOnLoading(binding.progressBar.visibility == View.VISIBLE, userRole)

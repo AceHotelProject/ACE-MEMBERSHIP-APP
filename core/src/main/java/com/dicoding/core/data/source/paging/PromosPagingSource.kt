@@ -1,5 +1,6 @@
 package com.dicoding.core.data.source.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.dicoding.core.data.source.remote.RemoteDataSource
@@ -26,6 +27,8 @@ class PromosPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PromoDomain> {
         return try {
             val position = params.key ?: START_PAGE_INDEX
+
+            Log.d("PromosPagingSource", "Loading with category: $category")
 
             val response = remoteDataSource.getPromos(
                 page = position,

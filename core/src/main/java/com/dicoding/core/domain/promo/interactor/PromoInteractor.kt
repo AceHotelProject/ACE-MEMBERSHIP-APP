@@ -73,6 +73,10 @@ class PromoInteractor @Inject constructor(
     override fun redeemPromo(token: String): Flow<Resource<Unit>> =
         promoRepository.redeemPromo(token)
 
-    override fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>> =
-        promoRepository.getPromoHistory()
+    override fun getPromoHistory(
+        promoName: String,
+        promoCategory: String,
+        status: String
+    ): Flow<PagingData<PromoHistoryDomain>> =
+        promoRepository.getPromoHistory(promoName, promoCategory, status)
 }

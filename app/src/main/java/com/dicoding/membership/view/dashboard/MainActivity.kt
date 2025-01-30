@@ -83,7 +83,7 @@ class  MainActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
             //            Testing
-            val mockUserRole = UserRole.ADMIN
+            val mockUserRole = UserRole.MEMBER
             //            3C8F61
 
             // Setup navigation graph

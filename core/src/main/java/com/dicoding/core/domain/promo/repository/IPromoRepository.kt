@@ -53,5 +53,9 @@ interface IPromoRepository {
 
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 
-    fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>>
+    fun getPromoHistory(
+        promoName: String,
+        promoCategory: String,
+        status: String
+    ): Flow<PagingData<PromoHistoryDomain>>
 }

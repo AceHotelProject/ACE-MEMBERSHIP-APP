@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -94,52 +95,78 @@ class AddPegawaiActivity : AppCompatActivity() {
             val receptionistPassword = addPegawaiKataSandiResepsionis.text.toString()
             val receptionistConfirmPassword = addPegawaiKonfirmasiKataSandiResepsionis.text.toString()
 
-            // Validasi form tidak boleh kosong
-            if (ownerName.isEmpty()) addPegawaiNamaOwner.error = "Nama tidak boleh kosong"
-            if (ownerEmail.isEmpty()) addPegawaiEmailOwner.error = "Email tidak boleh kosong"
-            if (ownerTelepon.isEmpty()) addPegawaiTeleponOwner.error = "Nomor telepon tidak boleh kosong"
-            if (ownerTelepon.length < 10 || ownerTelepon.length > 13) {
-                addPegawaiTeleponOwner.error = "Nomor telepon harus 10-13 digit"
+            // Owner validations
+            if (ownerName.isEmpty()) {
+                addPegawaiNamaOwner.error = "Nama tidak boleh kosong"
             }
-            if (!ownerTelepon.matches(Regex("^[0-9]+$"))) {
+
+            // Email validation for owner
+            if (!Patterns.EMAIL_ADDRESS.matcher(ownerEmail).matches()) {
+                addPegawaiEmailOwner.error = "Format email tidak valid"
+            }
+
+            // Phone validation for owner
+            if (ownerTelepon.isEmpty()) {
+                addPegawaiTeleponOwner.error = "Nomor telepon tidak boleh kosong"
+            } else if (ownerTelepon.length < 10 || ownerTelepon.length > 13) {
+                addPegawaiTeleponOwner.error = "Nomor telepon harus 10-13 digit"
+            } else if (!ownerTelepon.matches(Regex("^[0-9]+$"))) {
                 addPegawaiTeleponOwner.error = "Nomor telepon hanya boleh angka"
             }
 
-            if (receptionistName.isEmpty()) addPegawaiNamaResepsionis.error = "Nama tidak boleh kosong"
-            if (receptionistEmail.isEmpty()) addPegawaiEmailResepsionis.error = "Email tidak boleh kosong"
-            if (receptionistTelepon.isEmpty()) addPegawaiTeleponResepsionis.error = "Nomor telepon tidak boleh kosong"
-            if (receptionistTelepon.length < 10 || receptionistTelepon.length > 13) {
-                addPegawaiTeleponResepsionis.error = "Nomor telepon harus 10-13 digit"
+            // Password validation for owner
+            if (ownerPassword.length < 8) {
+                addPegawaiKataSandiOwner.error = "Password minimal 8 karakter"
             }
-            if (!receptionistTelepon.matches(Regex("^[0-9]+$"))) {
+            if (ownerConfirmPassword.isNotEmpty() && ownerPassword != ownerConfirmPassword) {
+                addPegawaiKonfirmasiKataSandiOwner.error = "Password tidak sama"
+            }
+
+            // Receptionist validations
+            if (receptionistName.isEmpty()) {
+                addPegawaiNamaResepsionis.error = "Nama tidak boleh kosong"
+            }
+
+            // Email validation for receptionist
+            if (!Patterns.EMAIL_ADDRESS.matcher(receptionistEmail).matches()) {
+                addPegawaiEmailResepsionis.error = "Format email tidak valid"
+            }
+
+            // Phone validation for receptionist
+            if (receptionistTelepon.isEmpty()) {
+                addPegawaiTeleponResepsionis.error = "Nomor telepon tidak boleh kosong"
+            } else if (receptionistTelepon.length < 10 || receptionistTelepon.length > 13) {
+                addPegawaiTeleponResepsionis.error = "Nomor telepon harus 10-13 digit"
+            } else if (!receptionistTelepon.matches(Regex("^[0-9]+$"))) {
                 addPegawaiTeleponResepsionis.error = "Nomor telepon hanya boleh angka"
             }
 
-            // Validasi password match
-            if (ownerPassword != ownerConfirmPassword) {
-                addPegawaiKonfirmasiKataSandiOwner.error = "Password tidak sama"
+            // Password validation for receptionist
+            if (receptionistPassword.length < 8) {
+                addPegawaiKataSandiResepsionis.error = "Password minimal 8 karakter"
             }
-            if (receptionistPassword != receptionistConfirmPassword) {
+            if (receptionistConfirmPassword.isNotEmpty() && receptionistPassword != receptionistConfirmPassword) {
                 addPegawaiKonfirmasiKataSandiResepsionis.error = "Password tidak sama"
             }
 
-            // Enable button jika semua validasi terpenuhi
-            addMitraLanjutkanBtn.isEnabled = ownerName.isNotEmpty() &&
-                    ownerEmail.isNotEmpty() &&
-                    ownerTelepon.isNotEmpty() &&
-                    ownerTelepon.length in 10..13 &&
-                    ownerTelepon.matches(Regex("^[0-9]+$")) &&
-                    ownerPassword.isNotEmpty() &&
-                    ownerConfirmPassword.isNotEmpty() &&
-                    ownerPassword == ownerConfirmPassword &&
-                    receptionistName.isNotEmpty() &&
-                    receptionistEmail.isNotEmpty() &&
-                    receptionistTelepon.isNotEmpty() &&
-                    receptionistTelepon.length in 10..13 &&
-                    receptionistTelepon.matches(Regex("^[0-9]+$")) &&
-                    receptionistPassword.isNotEmpty() &&
-                    receptionistConfirmPassword.isNotEmpty() &&
-                    receptionistPassword == receptionistConfirmPassword
+            // Enable button if all validations pass
+            addMitraLanjutkanBtn.isEnabled =
+                ownerName.isNotEmpty() &&
+                        Patterns.EMAIL_ADDRESS.matcher(ownerEmail).matches() &&
+                        ownerTelepon.isNotEmpty() &&
+                        ownerTelepon.length in 10..13 &&
+                        ownerTelepon.matches(Regex("^[0-9]+$")) &&
+                        ownerPassword.length >= 8 &&
+                        ownerConfirmPassword.isNotEmpty() &&
+                        ownerPassword == ownerConfirmPassword &&
+                        receptionistName.isNotEmpty() &&
+                        Patterns.EMAIL_ADDRESS.matcher(receptionistEmail).matches() &&
+                        receptionistTelepon.isNotEmpty() &&
+                        receptionistTelepon.length in 10..13 &&
+                        receptionistTelepon.matches(Regex("^[0-9]+$")) &&
+                        receptionistPassword.length >= 8 &&
+                        receptionistConfirmPassword.isNotEmpty() &&
+                        receptionistPassword == receptionistConfirmPassword
         }
     }
 

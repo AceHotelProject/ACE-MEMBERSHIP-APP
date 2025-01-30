@@ -147,7 +147,7 @@
                     android:drawablePadding="12sp"
                     android:ems="10"
                     android:hint="Masukkan nomor Owner"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />
@@ -343,7 +343,7 @@
                     android:drawablePadding="12sp"
                     android:ems="10"
                     android:hint="Masukkan nomor Resepsionis"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />

@@ -447,6 +447,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         return flow {
             try {
                 val queryMap = createQueryMap(page, limit, category, status, name)
+                Log.d("RemoteDataSource", "Query Map: $queryMap")
                 val response = apiService.getPromos(queryMap)
                 if (response.results?.isNotEmpty() == true) {
                     emit(ApiResponse.Success(response))
@@ -463,17 +464,15 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     private fun createQueryMap(
         page: Int,
         limit: Int,
-        category: String?,
-        status: String?,
-        name: String?
-    ): Map<String, String> {
-        return mutableMapOf<String, String>().apply {
-            put("page", page.toString())
-            put("limit", limit.toString())
-            category?.takeIf { it.isNotEmpty() }?.let { put("category", it) }
-            status?.takeIf { it.isNotEmpty() }?.let { put("status", it) }
-            name?.takeIf { it.isNotEmpty() }?.let { put("name", it) }
-        }
+        category: String,
+        status: String,
+        name: String
+    ): Map<String, String> = buildMap {
+        put("page", page.toString())
+        put("limit", limit.toString())
+        if (category.isNotEmpty()) put("category", category)
+        if (status.isNotEmpty()) put("status", status)
+        if (name.isNotEmpty()) put("name", name)
     }
 
     suspend fun getProposalPromos(): Flow<ApiResponse<GetPromoResponse>> {
@@ -606,16 +605,39 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPromoHistory(page: Int, limit: Int): Flow<ApiResponse<GetPromoHistoryResponse>> {
+    suspend fun getPromoHistory(
+        page: Int,
+        limit: Int,
+        promoName: String = "",
+        promoCategory: String = "",
+        status: String = ""
+    ): Flow<ApiResponse<GetPromoHistoryResponse>> {
         return flow {
             try {
-                val response = apiService.getPromoHistory(page, limit)
+                val queryMap = createHistoryQueryMap(page, limit, promoName, promoCategory, status)
+                val response = apiService.getPromoHistory(queryMap)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Log.e(TAG, "Get promo history error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
+    }
+
+    private fun createHistoryQueryMap(
+        page: Int,
+        limit: Int,
+        promoName: String?,
+        promoCategory: String?,
+        status: String?
+    ): Map<String, String> {
+        return mutableMapOf<String, String>().apply {
+            put("page", page.toString())
+            put("limit", limit.toString())
+            promoName?.takeIf { it.isNotEmpty() }?.let { put("promo_name", it) }
+            promoCategory?.takeIf { it.isNotEmpty() }?.let { put("promo_category", it) }
+            status?.takeIf { it.isNotEmpty() }?.let { put("status", it) }
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////// Merchants

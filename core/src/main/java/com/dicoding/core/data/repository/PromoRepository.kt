@@ -160,7 +160,11 @@ class PromoRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>> {
+    override fun getPromoHistory(
+        promoName: String,
+        promoCategory: String,
+        status: String
+    ): Flow<PagingData<PromoHistoryDomain>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
@@ -168,7 +172,12 @@ class PromoRepository @Inject constructor(
                 initialLoadSize = 10
             ),
             pagingSourceFactory = {
-                PromoHistoryPagingSource(remoteDataSource)
+                PromoHistoryPagingSource(
+                    remoteDataSource,
+                    promoName,
+                    promoCategory,
+                    status
+                )
             }
         ).flow
     }

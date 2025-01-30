@@ -230,7 +230,7 @@ interface ApiService {
         @Path("id") id: String
     ): Unit
 
-    // Promo
+    ////////////////////////////////////////////// Promo
     @FormUrlEncoded
     @POST("v1/promos")
     suspend fun createPromo(
@@ -278,12 +278,9 @@ interface ApiService {
     ): Response<Unit>
 
     @GET("v1/promos/history")
-    suspend fun getPromoHistory(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): GetPromoHistoryResponse
+    suspend fun getPromoHistory(@QueryMap queryMap: Map<String, String>): GetPromoHistoryResponse
 
-    // Merchants
+    ////////////////////////////////////////////// Merchants
     @POST("v1/merchants")
     suspend fun createMerchant(
         @Body request: CreateMerchantRequest
@@ -311,7 +308,7 @@ interface ApiService {
         @Path("id") id: String
     ): Response<Unit>
 
-    // File
+    ////////////////////////////////////////////// File
     @Multipart
     @POST("v1/files/upload")
     suspend fun uploadFile(
