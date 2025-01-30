@@ -148,7 +148,9 @@ interface ApiService {
     ): UserResponse
 
     @GET("v1/users")
-    suspend fun getAllUsersData(@Query("page") page: Int): UserListResponse
+    suspend fun getAllUsersData(
+        @Query("page") page: Int
+    ): UserListResponse
 
     @GET("v1/users/{id}")
     suspend fun getUserData(

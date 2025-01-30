@@ -18,6 +18,7 @@ import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentHistoryBinding
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -176,6 +177,8 @@ class HistoryFragment : Fragment() {
                         updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
                         binding.btnSearch.setOnClickListener {
                             // Navigate to member search
+                            val intent = Intent(requireActivity(), PencarianMemberActivity::class.java)
+                            startActivity(intent)
                         }
                     }
                 }

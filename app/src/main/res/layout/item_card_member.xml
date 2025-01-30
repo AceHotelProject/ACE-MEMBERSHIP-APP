@@ -35,7 +35,7 @@
             android:paddingBottom="5dp"
             android:background="@drawable/chip_category_green"
             android:padding="5dp"
-            android:text="Join"
+            android:text="Active"
             android:textColor="@color/green"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/label_membership_type"

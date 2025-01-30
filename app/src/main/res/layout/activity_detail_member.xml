@@ -95,7 +95,7 @@
 
                     <TextView
                         style="@style/textStyleSemIBold_10_selected"
-                        android:id="@+id/tv_tipe"
+                        android:id="@+id/tv_membership_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="silver"
@@ -124,6 +124,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/tv_expiry_member"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,6 +151,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/tv_verifikator"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -174,6 +176,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/tv_tgl_transaksi"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -226,6 +229,7 @@
                         android:textColor="@color/dark_grey" />
 
                     <TextView
+                        android:id="@+id/tv_user_nama"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -249,6 +253,7 @@
                         android:textColor="@color/dark_grey" />
 
                     <TextView
+                        android:id="@+id/tv_user_NIK"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -273,6 +278,7 @@
                         android:textColor="@color/dark_grey" />
 
                     <TextView
+                        android:id="@+id/tv_user_phone"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -295,6 +301,7 @@
                         android:textColor="@color/dark_grey" />
 
                     <TextView
+                        android:id="@+id/tv_user_address"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -317,6 +324,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/tv_user_email"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -335,7 +343,7 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_close">
 
             <ImageView
-                android:id="@+id/detail_profile_ktp_image_view"
+                android:id="@+id/iv_ktp_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/green"
@@ -359,4 +367,12 @@
         android:src="@drawable/icon_pencil"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+    <ProgressBar
+        android:id="@+id/loading_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

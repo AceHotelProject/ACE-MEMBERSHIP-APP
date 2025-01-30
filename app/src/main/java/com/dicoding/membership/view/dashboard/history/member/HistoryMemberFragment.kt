@@ -1,60 +1,117 @@
 package com.dicoding.membership.view.dashboard.history.member
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dicoding.membership.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.core.data.source.Resource
+import com.dicoding.membership.databinding.FragmentHistoryMemberBinding
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
+import com.dicoding.membership.view.dashboard.member.detailmember.DetailMemberActivity
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HistoryMemberFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class HistoryMemberFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentHistoryMemberBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val viewModel: HistoryMemberViewModel by viewModels()
+    private lateinit var adapter: HistoryMemberAdapter
+
+    private var isLoading = false
+    private var hasMorePages = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHistoryMemberBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setupObservers()
+
+        viewModel.getAllUsers(isRefresh = true)
+    }
+
+    private fun setupRecyclerView() {
+        adapter = HistoryMemberAdapter().apply {
+            setOnLoadMoreListener {
+                if (!isLoading && hasMorePages) {
+                    viewModel.loadNextPage()
+                }
+            }
+            setOnItemClickListener { userId ->
+                val intent = Intent(requireContext(), HistoryDetailRiwayatActivity::class.java).apply {
+                    putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
+                }
+                startActivity(intent)
+            }
+        }
+
+        binding.recyclerViewHistoryMember.apply {
+            adapter = this@HistoryMemberFragment.adapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history_member, container, false)
+    private fun setupObservers() {
+        viewModel.userList.observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    isLoading = true
+                    if (viewModel.currentPage == 1) {
+                        showLoading(true)
+                        binding.tvTidakAdaRiwayat.visibility = View.GONE
+                    }
+                }
+                is Resource.Success -> {
+                    isLoading = false
+                    showLoading(false)
+                    resource.data?.let { userList ->
+                        hasMorePages = viewModel.currentPage < userList.totalPages
+
+                        binding.tvTidakAdaRiwayat.visibility =
+                            if (userList.data.isEmpty() && viewModel.currentPage == 1) View.VISIBLE else View.GONE
+
+                        adapter.submitList(
+                            userList.data,
+                            isRefresh = viewModel.currentPage == 1
+                        )
+                    }
+                }
+                is Resource.Error -> {
+                    isLoading = false
+                    showLoading(false)
+                    if (viewModel.currentPage == 1) {
+                        binding.tvTidakAdaRiwayat.visibility = View.VISIBLE
+                        binding.recyclerViewHistoryMember.visibility = View.GONE
+                    }
+                    // You might want to show an error message here
+                }
+
+                else -> {}
+            }
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MemberFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HistoryMemberFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun showLoading(boolean: Boolean){
+        binding.loadingOverlay.visibility = if(boolean) View.VISIBLE else View.GONE
+        binding.recyclerViewHistoryMember.visibility = if(!boolean) View.VISIBLE else View.GONE
+
     }
 }

@@ -18,7 +18,6 @@ import java.util.TimeZone
 @AndroidEntryPoint
 class HistoryDetailPoinActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryDetailPoinBinding
-    private val viewModel: HistoryDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,37 +29,9 @@ class HistoryDetailPoinActivity : AppCompatActivity() {
 
         pointHistory?.let { history ->
             setupUI(history, isReceiving)
-            setupObserver(history, isReceiving)
-            viewModel.getOtherUserData(history, isReceiving)
         }
 
         binding.btnClose.setOnClickListener { finish() }
-    }
-
-    private fun setupObserver(history: PointHistory, isReceiving: Boolean) {
-        lifecycleScope.launch {
-            viewModel.userData.collect { resource ->
-                when (resource) {
-                    is Resource.Loading -> {
-                        // You could add loading state for email and phone
-                        binding.tvDataEmail.text = "Loading..."
-                        binding.tvDataPhone.text = "Loading..."
-                    }
-                    is Resource.Success -> {
-                        resource.data?.let { user ->
-                            binding.tvDataEmail.text = user.email
-                            binding.tvDataPhone.text = user.phone ?: "-"
-                        }
-                    }
-                    is Resource.Error -> {
-                        // Handle error state
-                        binding.tvDataEmail.text = "empty@gmail.com"
-                        binding.tvDataPhone.text = "08000000000"
-                    }
-                    else -> {}
-                }
-            }
-        }
     }
 
     private fun setupUI(history: PointHistory, isReceiving: Boolean) {
@@ -104,7 +75,8 @@ class HistoryDetailPoinActivity : AppCompatActivity() {
 
             tvDataUser.text = if (isReceiving) "Pemberi:" else "Penerima:"
             tvDataUserData.text = if (isReceiving) history.from.name else history.to.name
-
+            tvDataEmail.text = if (isReceiving) history.from.email else history.to.email
+            tvDataPhone.text = if (isReceiving) history.from.phone else history.to.phone
             tvDataNotes.text = history.notes
         }
     }

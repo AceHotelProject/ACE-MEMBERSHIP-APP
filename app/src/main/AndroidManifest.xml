@@ -35,6 +35,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity
+            android:name=".view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity"
             android:exported="false" />
         <activity

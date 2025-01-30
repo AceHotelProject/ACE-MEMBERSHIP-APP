@@ -31,8 +31,8 @@ object PointsDataMapper {
 
     fun mapPointTransferResponseToDomain(input: PointHistoryResponseItem): PointHistory = PointHistory(
         type = input.type,
-        from = PointsHistoryData(input.from.name!!, input.from.id!!),
-        to = PointsHistoryData(input.to.name!!, input.to.id!!),
+        from = PointsHistoryData(input.from.name!!,input.from.email!!, input.from.phone!!, input.from.id!!),
+        to = PointsHistoryData(input.to.name!!, input.to.email!!, input.to.phone!!, input.to.id!!),
         amount = input.amount,
         notes = input.notes,
         createdAt = input.createdAt,

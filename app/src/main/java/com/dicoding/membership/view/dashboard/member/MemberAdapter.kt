@@ -8,7 +8,11 @@ import com.dicoding.membership.databinding.ItemCardMemberBinding
 
 class MemberAdapter : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
     private var userList = ArrayList<User>()
+    private var onItemClickListener: ((String) -> Unit)? = null
 
+    fun setOnItemClickListener(listener: (String) -> Unit) {
+        onItemClickListener = listener
+    }
     fun setData(newList: List<User>) {
         userList.clear()
         userList.addAll(newList)
@@ -43,6 +47,10 @@ class MemberAdapter : RecyclerView.Adapter<MemberAdapter.ViewHolder>() {
                 tvUserName.text = user.name
                 tvUserEmail.text = user.email
                 tvUserPhone.text = user.phone ?: "-"
+
+                root.setOnClickListener {
+                    onItemClickListener?.invoke(user.id)
+                }
             }
         }
     }

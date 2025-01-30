@@ -36,11 +36,12 @@
             android:text="Berdasarkan Tanggal"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/filter_recyclerview1"
+            android:id="@+id/filter_tanggal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
+            tools:itemCount="1"
             tools:listitem="@layout/item_filter_chip"/>
 
         <TextView
@@ -51,11 +52,28 @@
             android:text="Berdasarkan Kategori"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/filter_recyclerview2"
+            android:id="@+id/filter_kategori"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_filter_chip"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/textStyleMedium_14"
+            android:text="Tipe Member"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filter_tipe_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            tools:itemCount="1"
             tools:listitem="@layout/item_filter_chip"/>
     </LinearLayout>
 

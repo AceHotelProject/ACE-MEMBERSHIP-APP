@@ -14,6 +14,8 @@ data class Points(
 @Parcelize
 data class PointsHistoryData(
     val name: String,
+    val email: String,
+    val phone: String,
     val id: String
 ): Parcelable
 

@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/button_dashboard_promo_search"
+        android:id="@+id/btn_search"
         android:layout_width="44sp"
         android:layout_height="44sp"
         android:layout_marginEnd="32sp"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/sv_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -51,12 +51,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_dashboard_promo_search">
+        app:layout_constraintTop_toBottomOf="@id/btn_search">
 
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
-            android:layout_height="620dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
@@ -238,10 +238,12 @@
                 android:id="@+id/list_member_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:scrollingCache="true"
                 android:visibility="visible"
-                tools:itemCount="10"
+                tools:itemCount="4"
                 tools:listitem="@layout/item_card_member" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -261,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="62dp"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 

@@ -3,7 +3,7 @@ package com.dicoding.core.data.source.remote.response.points
 import com.google.gson.annotations.SerializedName
 
 data class PointsResponse(
-    @SerializedName("_id")
+    @SerializedName("id")
     val id: String? = null,
 
     @SerializedName("points")
@@ -23,9 +23,14 @@ data class PointsHistoryResponseItemData(
     @SerializedName("name")
     val name: String? = null,
 
+    @SerializedName("email")
+    val email: String? = null,
+
+    @SerializedName("phone")
+    val phone: String? = null,
+
     @SerializedName("id")
     val id: String? = null
-
 )
 
 data class PointHistoryResponseItem(

@@ -1,198 +1,120 @@
-package com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian
+package com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.points.model.PointHistory
+import com.dicoding.membership.databinding.ActivityPencarianMemberBinding
 import com.dicoding.membership.databinding.ActivityPencarianPoinBinding
+import com.dicoding.membership.databinding.FilterPencarianMemberBinding
 import com.dicoding.membership.databinding.FilterPencarianPoinBinding
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.CategoryFilterAdapter
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.DateFilterAdapter
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.SearchPointHistoryAdapter
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.dataclass.CategoryFilter
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.dataclass.DateFilter
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.MemberTypeFilterAdapter
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.MembershipStatus
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.StatusFilterAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import java.util.TimeZone
 
 @AndroidEntryPoint
-class PencarianPoinActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPencarianPoinBinding
-    private val viewModel: PencarianPoinViewModel by viewModels()
-    private lateinit var historyAdapter: SearchPointHistoryAdapter
+class PencarianMemberActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityPencarianMemberBinding
+    private val viewModel: PencarianMemberViewModel by viewModels()
+    private lateinit var memberAdapter: MemberSearchAdapter
 
+    // Filter states
     private var selectedDateFilter: DateFilter? = null
-    private var selectedCategoryFilter: CategoryFilter? = null
-    private var originalList: List<PointHistory> = listOf()
-    private var currentUserId: String = ""
-    private var searchQuery: String = ""
+    private var selectedStatusFilter: MembershipStatus? = null
+    private var selectedMemberType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPencarianPoinBinding.inflate(layoutInflater)
+        binding = ActivityPencarianMemberBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupRecyclerView()
         setupObservers()
         setupOnClickListener()
         setupSearchView()
+
+        // Initial data load
+        viewModel.loadAllData()
+
     }
 
-    private fun setupSearchView() {
-        binding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    private fun setupRecyclerView() {
+        memberAdapter = MemberSearchAdapter()
+        binding.rvPoin.apply {
+            adapter = memberAdapter
+            layoutManager = LinearLayoutManager(this@PencarianMemberActivity)
+        }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s?.toString()?.trim() ?: ""
-                applyFilters()
+        memberAdapter.setOnItemClickListener { user ->
+            // Start HistoryDetailRiwayatActivity with the selected user's ID
+            val intent = Intent(this, HistoryDetailRiwayatActivity::class.java).apply {
+                putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, user.id)
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            startActivity(intent)
+        }
     }
 
     private fun setupObservers() {
-        viewModel.getUserData()
+        viewModel.userList.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+                is Resource.Success -> {
+                    resource.data?.let { userList ->
+                        memberAdapter.addData(userList.data)
+                    }
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    Toast.makeText(this, resource.message ?: "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
 
-        viewModel.userData.observe(this) { loginDomain ->
-            loginDomain?.let { data ->
-                currentUserId = data.user.id
-                setupRecyclerView(data.user.id)
-                viewModel.getUserHistory(data.user.id)
+                else -> {}
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.userHistory.collect { resource ->
-                when (resource) {
-                    is Resource.Loading -> showLoading(true)
-                    is Resource.Success -> {
-                        showLoading(false)
-                        resource.data?.let { history ->
-                            originalList = history.history
-                            applyFilters()
-                        }
-                    }
-                    is Resource.Error -> showLoading(false)
-                    else -> {}
-                }
+        viewModel.isLoadingComplete.observe(this) { isComplete ->
+            if (isComplete) {
+                showLoading(false)
+                // Enable search and filters
+                binding.searchEditText.isEnabled = true
+                binding.btnFilter.isEnabled = true
             }
         }
     }
 
-    private fun setupRecyclerView(userId: String) {
-        historyAdapter = SearchPointHistoryAdapter(userId)
-        binding.rvPoin.apply {
-            adapter = historyAdapter
-            layoutManager = LinearLayoutManager(this@PencarianPoinActivity)
-        }
-    }
-
-    private fun applyFilters() {
-        var filteredList = originalList
-
-        // Apply search filter
-        if (searchQuery.isNotEmpty()) {
-            filteredList = filteredList.filter { history ->
-                val otherUserName = if (history.from.id == currentUserId) {
-                    history.to.name
-                } else {
-                    history.from.name
-                }
-                otherUserName.contains(searchQuery, ignoreCase = true)
+    private fun setupSearchView() {
+        binding.searchEditText.isEnabled = false // Disable until loading complete
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                applyFilters(s?.toString())
             }
-        }
-
-        // Apply category filter
-        if (selectedCategoryFilter != null) {
-            filteredList = filteredList.filter { history ->
-                when (selectedCategoryFilter) {
-                    CategoryFilter.TRANSFER -> history.from.id == currentUserId
-                    CategoryFilter.RECEIVE -> history.to.id == currentUserId
-                    null -> true
-                }
-            }
-        }
-
-        // Apply date filter
-        if (selectedDateFilter != null) {
-            val calendar = Calendar.getInstance()
-
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
-
-            filteredList = filteredList.filter { history ->
-                val transactionDate = inputFormat.parse(history.createdAt) ?: return@filter false
-                val transactionCalendar = Calendar.getInstance().apply { time = transactionDate }
-
-                when (selectedDateFilter) {
-                    DateFilter.TODAY -> {
-                        calendar.get(Calendar.YEAR) == transactionCalendar.get(Calendar.YEAR) &&
-                                calendar.get(Calendar.DAY_OF_YEAR) == transactionCalendar.get(Calendar.DAY_OF_YEAR)
-                    }
-                    DateFilter.THIS_MONTH -> {
-                        calendar.get(Calendar.YEAR) == transactionCalendar.get(Calendar.YEAR) &&
-                                calendar.get(Calendar.MONTH) == transactionCalendar.get(Calendar.MONTH)
-                    }
-                    DateFilter.THIS_YEAR -> {
-                        calendar.get(Calendar.YEAR) == transactionCalendar.get(Calendar.YEAR)
-                    }
-                    null -> true
-                }
-            }
-        }
-
-        // Update UI based on results
-        if (filteredList.isEmpty()) {
-            binding.tvTidakAdaRiwayat.visibility = View.VISIBLE
-            binding.rvPoin.visibility = View.GONE
-        } else {
-            binding.tvTidakAdaRiwayat.visibility = View.GONE
-            binding.rvPoin.visibility = View.VISIBLE
-            historyAdapter.updateItems(filteredList)
-        }
-    }
-
-    private fun showFilterBottomSheet() {
-        val bottomSheetDialog = BottomSheetDialog(this)
-        val filterBinding = FilterPencarianPoinBinding.inflate(LayoutInflater.from(this))
-        bottomSheetDialog.setContentView(filterBinding.root)
-
-        // Setup date filter with current selection
-        val dateFilterAdapter = DateFilterAdapter(
-            selectedFilter = selectedDateFilter
-        ) { dateFilter ->
-            selectedDateFilter = if (selectedDateFilter == dateFilter) null else dateFilter
-            applyFilters()
-        }
-        filterBinding.filterRecyclerview1.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = dateFilterAdapter
-        }
-
-        // Setup category filter with current selection
-        val categoryFilterAdapter = CategoryFilterAdapter(
-            selectedFilter = selectedCategoryFilter
-        ) { categoryFilter ->
-            selectedCategoryFilter = if (selectedCategoryFilter == categoryFilter) null else categoryFilter
-            applyFilters()
-        }
-        filterBinding.filterRecyclerview2.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = categoryFilterAdapter
-        }
-
-        bottomSheetDialog.show()
+        })
     }
 
     private fun setupOnClickListener() {
@@ -203,6 +125,91 @@ class PencarianPoinActivity : AppCompatActivity() {
         binding.btnFilter.setOnClickListener {
             showFilterBottomSheet()
         }
+    }
+
+    private fun showFilterBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val filterBinding = FilterPencarianMemberBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(filterBinding.root)
+
+        // Setup date filter
+        val dateFilterAdapter = DateFilterAdapter(
+            selectedFilter = selectedDateFilter
+        ) { dateFilter ->
+            selectedDateFilter = if (selectedDateFilter == dateFilter) null else dateFilter
+            applyFilters()
+        }
+        filterBinding.filterTanggal.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = dateFilterAdapter
+        }
+
+        // Setup status filter
+        val statusFilterAdapter = StatusFilterAdapter(
+            selectedFilter = selectedStatusFilter
+        ) { statusFilter ->
+            selectedStatusFilter = if (selectedStatusFilter == statusFilter) null else statusFilter
+            applyFilters()
+        }
+        filterBinding.filterKategori.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = statusFilterAdapter
+        }
+
+        // Setup member type filter
+        val memberTypeAdapter = MemberTypeFilterAdapter(
+            selectedFilter = selectedMemberType
+        ) { memberType ->
+            selectedMemberType = if (selectedMemberType == memberType) null else memberType
+            applyFilters()
+        }
+        filterBinding.filterTipeMember.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = memberTypeAdapter
+        }
+
+        // Set member types data from ViewModel
+        viewModel.membershipTypes.value?.let { types ->
+            memberTypeAdapter.setData(types)
+        }
+
+        bottomSheetDialog.show()
+    }
+
+    private fun applyFilters(searchQuery: String? = null) {
+        memberAdapter.applyFilter { user ->
+            var matches = true
+
+            // Apply search
+            searchQuery?.let { query ->
+                if (query.isNotEmpty()) {
+                    matches = matches && (
+                            user.name.contains(query, ignoreCase = true) ||
+                                    user.email.contains(query, ignoreCase = true) ||
+                                    (user.phone?.contains(query, ignoreCase = true) ?: false)
+                            )
+                }
+            }
+
+            // Apply other filters
+            selectedDateFilter?.let { dateFilter ->
+                // Your date filter logic
+            }
+
+            selectedStatusFilter?.let { statusFilter ->
+                // Your status filter logic
+            }
+
+            selectedMemberType?.let { memberType ->
+                matches = matches && user.memberType == memberType
+            }
+
+            matches
+        }
+
+        // Show/hide empty state
+        binding.tvTidakAdaRiwayat.visibility =
+            if (memberAdapter.itemCount == 0) View.VISIBLE else View.GONE
     }
 
     private fun showLoading(isLoading: Boolean) {

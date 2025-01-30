@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,8 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMemberBinding
 import com.dicoding.membership.databinding.FragmentMitraBinding
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
+import com.dicoding.membership.view.dashboard.member.detailmember.DetailMemberActivity
 import com.dicoding.membership.view.dashboard.member.listeditmember.ListEditMemberActivity
 import com.dicoding.membership.view.dashboard.mitra.MitraViewModel
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -75,23 +78,35 @@ class MemberFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        memberAdapter = MemberAdapter()
+        memberAdapter = MemberAdapter().apply {
+            // Add click listener implementation
+            setOnItemClickListener { userId ->
+                val intent = Intent(requireContext(), DetailMemberActivity::class.java).apply {
+                    putExtra(DetailMemberActivity.EXTRA_USER_ID, userId)
+                }
+                startActivity(intent)
+            }
+        }
         binding.listMemberRecyclerview.apply {
-            setHasFixedSize(true)
+            setHasFixedSize(false)
             setItemViewCacheSize(20)
             drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context).apply {
+                isAutoMeasureEnabled = true
+            }
             adapter = memberAdapter
-
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (!recyclerView.canScrollVertically(1) && dy > 0) {
-                        memberViewModel.loadMoreUsers()
-                    }
-                }
-            })
         }
+
+        // Modified scroll listener with threshold
+        binding.svBody.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
+            // Check if scrolling down and near bottom
+            if (scrollY > oldScrollY) { // Scrolling down
+                val bottomReached = scrollY + v.height >= v.getChildAt(0).height - 150 // 150dp threshold
+                if (bottomReached) {
+                    memberViewModel.loadMoreUsers()
+                }
+            }
+        })
     }
 
     private fun validateToken() {
@@ -105,6 +120,10 @@ class MemberFragment : Fragment() {
     private fun handleMenuButton() {
         binding.layoutEditMembership.setOnClickListener {
             val intent = Intent(requireActivity(), ListEditMemberActivity::class.java)
+            startActivity(intent)
+        }
+        binding.btnSearch.setOnClickListener {
+            val intent = Intent(requireActivity(), PencarianMemberActivity::class.java)
             startActivity(intent)
         }
     }
