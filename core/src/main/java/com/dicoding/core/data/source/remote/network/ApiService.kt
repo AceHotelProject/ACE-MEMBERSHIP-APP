@@ -8,7 +8,6 @@ import com.dicoding.core.data.source.remote.response.membership.MembershipRespon
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse

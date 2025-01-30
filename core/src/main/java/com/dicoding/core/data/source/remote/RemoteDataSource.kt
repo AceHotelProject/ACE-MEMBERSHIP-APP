@@ -8,7 +8,6 @@ import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
 import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
