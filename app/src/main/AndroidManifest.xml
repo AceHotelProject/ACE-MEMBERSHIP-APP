@@ -90,16 +90,7 @@
             android:name=".view.dashboard.member.detailmember.DetailMemberActivity"
             android:exported="false" />
         <activity
-            android:name=".view.dashboard.admin.addpromo.addpromostatus.AddPromoStatusActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.dashboard.floatingpromo.StaffAddPromoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.dashboard.profile.membershipku.statusupgrademembership.StatusUpgradeMembershipActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.dashboard.profile.membershipku.statusextendmembership.StatusExtendMembershipActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.profile.membershipku.upgrademembership.UpgradeMambershipActivity"
@@ -119,9 +110,6 @@
             android:exported="false" />
         <activity
             android:name=".view.verification.VerificationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.dashboard.home.member.mstatus.HomeMemberStatusActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.home.member.mregister.HomeMemberRegisterActivity"
