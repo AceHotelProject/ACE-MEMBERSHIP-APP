@@ -13,6 +13,7 @@ import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantReq
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -85,11 +87,11 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    suspend fun login(email: String, password: String): Flow<ApiResponse<LoginResponse>> {
+    suspend fun login(email: String, password: String, androidId: String): Flow<ApiResponse<LoginResponse>> {
         return flow {
             try {
                 Log.d(TAG, "Login attempt for email: $email")
-                val response = apiService.login(email, password)
+                val response = apiService.login(email, password, androidId)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 Log.e(TAG, "Login failed: ${e.message}", e)
@@ -98,11 +100,11 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun register(email: String, password: String): Flow<ApiResponse<RegisterResponse>> {
+    suspend fun register(email: String, password: String, androidId: String): Flow<ApiResponse<RegisterResponse>> {
         return flow {
             try {
                 Log.d(TAG, "Register attempt for email: $email")
-                val response = apiService.register(email, password)
+                val response = apiService.register(email, password, androidId)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 Log.e(TAG, "Register failed: ${e.message}", e)
@@ -647,7 +649,12 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 val response = apiService.createMerchant(request)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val errorResponse = e.response()?.errorBody()?.string()
+                    emit(ApiResponse.Error(errorResponse ?: e.toString()))
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
                 Log.e(TAG, "Create merchant error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
@@ -677,13 +684,18 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun updateMerchant(id: String, request: CreateMerchantRequest): Flow<ApiResponse<UpdateMerchantResponse>> {
+    suspend fun updateMerchant(id: String, request: MerchantData): Flow<ApiResponse<UpdateMerchantResponse>> {
         return flow {
             try {
                 val response = apiService.updateMerchant(id, request)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val errorResponse = e.response()?.errorBody()?.string()
+                    emit(ApiResponse.Error(errorResponse ?: e.toString()))
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
                 Log.e(TAG, "Update merchant error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)

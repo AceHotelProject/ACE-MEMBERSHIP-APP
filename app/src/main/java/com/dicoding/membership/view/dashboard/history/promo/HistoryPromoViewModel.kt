@@ -18,7 +18,10 @@ class HistoryPromoViewModel @Inject constructor(
     private val promoUseCase: PromoUseCase
 //    private val storyUseCase: StoryUseCaseTester
 ) : ViewModel() {
+
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
+
+    fun getUser() = authUseCase.getUser().asLiveData()
 
     private val _selectedCategory = MutableStateFlow("")
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()

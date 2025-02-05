@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthUseCase {
 
-    fun register(email: String, password: String): Flow<Resource<RegisterDomain>>
+    fun register(email: String, password: String, androidId: String): Flow<Resource<RegisterDomain>>
 
-    fun login(email: String, password: String): Flow<Resource<LoginDomain>>
+    fun login(email: String, password: String, androidId: String): Flow<Resource<LoginDomain>>
 
     fun getUser(): Flow<LoginDomain>
 

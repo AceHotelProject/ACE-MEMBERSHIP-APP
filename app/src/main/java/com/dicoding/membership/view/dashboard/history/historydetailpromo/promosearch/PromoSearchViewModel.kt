@@ -74,14 +74,28 @@ class PromoSearchViewModel @Inject constructor(
         }
     }.cachedIn(viewModelScope)
 
+    private fun getStatusByUserRole(role: String): String {
+        return when (role) {
+            "ADMIN", "MITRA" -> "valid"
+            "RECEPTIONIST" -> "draft"
+            "MEMBER" -> "redeemed"
+            else -> ""
+        }
+    }
+
     // History flow that combines category and search
     val promoHistory: Flow<PagingData<PromoHistoryDomain>> = combine(
         _selectedCategory,
-        _selectedStatus,
         _selectedDate,
-        _searchQuery
-    ) { category, status, date, query ->
-        FilterParams(category, status, date, query)
+        _searchQuery,
+        authUseCase.getUser()
+    ) { category, date, query, loginDomain ->
+        FilterParams(
+            category = category,
+            status = getStatusByUserRole(loginDomain.user.role),
+            date = date,
+            query = query
+        )
     }.flatMapLatest { params ->
         promoUseCase.getPromoHistory(
             promoName = params.query,
@@ -111,7 +125,6 @@ class PromoSearchViewModel @Inject constructor(
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
-
 
 //    Add Time Category
     private fun isWithinSelectedDateRange(dateString: String, filterType: String): Boolean {

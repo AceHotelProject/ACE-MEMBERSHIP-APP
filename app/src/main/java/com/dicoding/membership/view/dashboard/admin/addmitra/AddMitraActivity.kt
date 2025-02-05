@@ -2,6 +2,7 @@ package com.dicoding.membership.view.dashboard.admin.addmitra
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,12 +25,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
-import com.dicoding.core.utils.ImageUtils
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityAddMitraBinding
 import com.dicoding.membership.view.dashboard.admin.addmitra.addpegawai.AddPegawaiActivity
-import com.dicoding.membership.view.popup.token.TokenExpiredDialog
+import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
+import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
+import com.dicoding.membership.view.status.StatusTemplate
+import com.dicoding.membership.view.status.StatusTemplateActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -55,25 +58,17 @@ class AddMitraActivity : AppCompatActivity() {
         _binding = ActivityAddMitraBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        validateToken()
+        checkAndRequestPermissions()
+
+        setupRecyclerView()
 
         setupMode()
 
         setupImagePicker()
 
-        setupRecyclerView()
-
         setupMerchantTypeDropdown()
 
         handleEditText()
-    }
-
-    private fun validateToken() {
-        viewModel.getRefreshToken().observe(this) { token ->
-            if (token.isEmpty() || token == "") {
-                TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
-            }
-        }
     }
 
     private fun setupMode() {
@@ -90,58 +85,129 @@ class AddMitraActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupImagePicker() {
-        binding.ivMerchant.setOnClickListener {
-            checkAndRequestPermissions()
-        }
-    }
-
     private fun checkAndRequestPermissions() {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                // Android 14 and above
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    openImagePicker()  // Tambahkan ini
-                } else {
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
-                        PERMISSION_REQUEST_CODE
+                        com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity.PERMISSION_REQUEST_CODE
                     )
                 }
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                // Android 13
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_MEDIA_IMAGES
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    openImagePicker()  // Tambahkan ini
-                } else {
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
-                        PERMISSION_REQUEST_CODE
+                        com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity.PERMISSION_REQUEST_CODE
                     )
                 }
             }
             else -> {
+                // Android 12 and below
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    openImagePicker()  // Tambahkan ini
-                } else {
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_CODE
+                        com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity.PERMISSION_REQUEST_CODE
                     )
                 }
+            }
+        }
+    }
+
+    private fun setupImagePicker() {
+        binding.ivMerchant.setOnClickListener {
+            checkAndRequestStoragePermission()
+        }
+    }
+
+    private fun checkAndRequestStoragePermission() {
+        when {
+            // Check if permission is already granted
+            ContextCompat.checkSelfPermission(
+                this,
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    else -> Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission is already granted, proceed with image selection
+                openImagePicker()
+            }
+            // Should we show explanation?
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE ->
+                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    else -> Manifest.permission.READ_EXTERNAL_STORAGE
+                }
+            ) -> {
+                // Show explanation to user
+                AlertDialog.Builder(this)
+                    .setTitle("Izin Diperlukan")
+                    .setMessage("Aplikasi memerlukan izin untuk mengakses foto")
+                    .setPositiveButton("OK") { _, _ ->
+                        // Request permission
+                        requestPermission()
+                    }
+                    .setNegativeButton("Batal") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+            }
+            else -> {
+                // No explanation needed, request the permission
+                requestPermission()
+            }
+        }
+    }
+
+    private fun requestPermission() {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+                    StaffAddPromoActivity.PERMISSION_REQUEST_CODE
+                )
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                    StaffAddPromoActivity.PERMISSION_REQUEST_CODE
+                )
+            }
+            else -> {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    StaffAddPromoActivity.PERMISSION_REQUEST_CODE
+                )
             }
         }
     }
@@ -331,7 +397,9 @@ class AddMitraActivity : AppCompatActivity() {
             addMitraDeskripsiMitra.setText(merchant.detail)
 
             // Handle images
+            Log.d("AddMitra", "Pictures count: ${merchant.picturesUrl.size}")
             if (merchant.picturesUrl.isNotEmpty()) {
+                Log.d("AddMitra", "Setting up images...")
                 isImageSelected = true
                 ivMerchant.visibility = View.GONE
                 rvMerchantSelected.visibility = View.VISIBLE
@@ -340,13 +408,20 @@ class AddMitraActivity : AppCompatActivity() {
                 selectedImages.clear()
                 merchant.picturesUrl.forEach { imageUrl ->
                     try {
+                        Log.d("AddMitra", "Processing image URL: $imageUrl")
                         val uri = Uri.parse(imageUrl)
                         selectedImages.add(uri)
                         merchantImagesAdapter.addImage(uri)
+                        Log.d("AddMitra", "Image added successfully")
                     } catch (e: Exception) {
-                        Log.e("MerchantEdit", "Error parsing image URL: $e")
+                        Log.e("AddMitra", "Error parsing image URL: $imageUrl", e)
                     }
                 }
+
+                // Notify adapter after adding all images
+                merchantImagesAdapter.notifyDataSetChanged()
+
+                Log.d("AddMitra", "Setting up dot indicators")
                 setupDotIndicators()
             }
         }
@@ -380,18 +455,75 @@ class AddMitraActivity : AppCompatActivity() {
                     )
 
                     val intent = Intent(this@AddMitraActivity, AddPegawaiActivity::class.java).apply {
-                        putExtra(AddPegawaiActivity.EXTRA_IS_EDIT, isEditMode)
                         putExtra(AddPegawaiActivity.EXTRA_MERCHANT_DATA, merchantData)
-                        if (isEditMode) {
-                            putExtra(AddPegawaiActivity.EXTRA_MERCHANT_ID, this@AddMitraActivity.merchantData?.id)
-                        }
                     }
-                    startActivity(intent)
+                    if (isEditMode) {
+                        showUpdateConfirmationDialog(merchantData)
+                    } else {
+                        startActivity(intent)
+                    }
                 } else {
                     showToast("Mohon lengkapi semua form")
                 }
             }
         }
+    }
+
+    private fun showUpdateConfirmationDialog(merchantData: MerchantData) {
+        val dialog = GlobalTwoButtonDialog().apply {
+            setDialogTitle("Konfirmasi Update")
+            setDialogMessage("Apakah Anda yakin ingin mengupdate data merchant?")
+            setOnYesClickListener {
+                handleMerchantUpdate(merchantData)
+            }
+        }
+        dialog.show(supportFragmentManager, "UpdateConfirmationDialog")
+    }
+
+    private fun handleMerchantUpdate(merchantData: MerchantData) {
+        this@AddMitraActivity.merchantData?.id?.let { merchantId ->
+            viewModel.updateMerchant(
+                id = merchantId,
+                merchantData = merchantData
+            ).observe(this) { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        hideLoading()
+                        navigateToStatus(
+                            "Update Berhasil",
+                            "Data merchant berhasil diperbarui"
+                        )
+                    }
+                    is Resource.Error -> {
+                        hideLoading()
+                        showToast(result.message ?: "Terjadi kesalahan")
+                    }
+                    is Resource.Loading -> showLoading()
+                    else -> hideLoading()
+                }
+            }
+        }
+    }
+
+    private fun navigateToStatus(
+        title: String,
+        description: String,
+    ) {
+        val statusTemplate = StatusTemplate(
+            title = title,
+            description = description,
+            showCoupon = false,
+            buttonText = "Selesai",
+            promoCode = "",
+            expiryTime = ""
+        )
+
+        val intent = Intent(this, StatusTemplateActivity::class.java).apply {
+            putExtra(StatusTemplateActivity.EXTRA_STATUS_TEMPLATE, statusTemplate)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun validateForms(): Boolean {

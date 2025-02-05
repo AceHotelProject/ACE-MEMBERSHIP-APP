@@ -9,5 +9,18 @@ data class UserDomain(
     val name: String,
     val email: String,
     val role: String,
-    val isEmailVerified: Boolean
+    val isValidated: Boolean,
+    val isEmailVerified: Boolean,
+    val phone: String?,
+    val isPhoneVerified: Boolean,
+    val address: String?,
+    val citizenNumber: String?,
+    val pathKTP: String?,
+    val androidId: String?,
+    val merchantId: String?,
+    val couponUsed: List<String>,
+    val point: Int,
+    val refferalPoint: Int,
+    val isNumberVerified: Boolean,
+    val createdAt: String
 ) : Parcelable

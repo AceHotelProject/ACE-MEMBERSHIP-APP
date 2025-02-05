@@ -9,6 +9,7 @@ import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantReq
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
@@ -75,14 +76,16 @@ interface ApiService {
     @POST("v1/auth/login")
     suspend fun login(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("androidId") androidId: String
     ): LoginResponse
 
     @FormUrlEncoded
     @POST("v1/auth/register")
     suspend fun register(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("androidId") androidId: String
     ): RegisterResponse
 
     @POST("v1/auth/send-otp")
@@ -300,7 +303,7 @@ interface ApiService {
     @PATCH("v1/merchants/{id}")
     suspend fun updateMerchant(
         @Path("id") id: String,
-        @Body request: CreateMerchantRequest
+        @Body request: MerchantData
     ): UpdateMerchantResponse
 
     @DELETE("v1/merchants/{id}")

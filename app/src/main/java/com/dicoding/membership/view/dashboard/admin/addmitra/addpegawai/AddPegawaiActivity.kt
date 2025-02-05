@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.admin.addmitra.addpegawai
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -7,14 +8,16 @@ import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UserData
-import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityAddPegawaiBinding
+import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.status.StatusTemplate
 import com.dicoding.membership.view.status.StatusTemplateActivity
@@ -26,7 +29,6 @@ class AddPegawaiActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private val viewModel: AddPegawaiViewModel by viewModels()
 
-    private var isEditMode = false
     private lateinit var merchantData: MerchantData
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +38,7 @@ class AddPegawaiActivity : AppCompatActivity() {
 
         validateToken()
 
-        setupMode()
+        setupInitialData()
 
         handleEditText()
 
@@ -51,11 +53,9 @@ class AddPegawaiActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupMode() {
-        isEditMode = intent.getBooleanExtra(EXTRA_IS_EDIT, false)
+    private fun setupInitialData() {
         merchantData = intent.getParcelableExtra(EXTRA_MERCHANT_DATA)!!
-
-        binding.tvTitle.text = if (isEditMode) "Edit Pegawai" else "Tambah Pegawai"
+        binding.tvTitle.text = "Tambah Pegawai"
     }
 
     private fun handleEditText() {
@@ -172,51 +172,46 @@ class AddPegawaiActivity : AppCompatActivity() {
 
     private fun setupSubmitButton() {
         binding.addMitraLanjutkanBtn.setOnClickListener {
-            val request = createMerchantRequest()
+            if (binding.addMitraLanjutkanBtn.isEnabled) {
+                // Sembunyikan keyboard
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                currentFocus?.let { view ->
+                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+                }
 
-            Log.d("AddPegawai", "Request: $request")
-
-            if (isEditMode) {
-                val merchantId = intent.getStringExtra(EXTRA_MERCHANT_ID)
-                if (merchantId != null) {
-                    viewModel.updateMerchant(
-                        id = merchantId,
-                        merchantData = request.merchantData,
-                        ownerData = request.ownerData,
-                        receptionistData = request.receptionistData
-                    ).observe(this) { result ->
-                        handleResource(result,
-                            onSuccess = {
-                                navigateToStatus(
-                                    "Update Berhasil",
-                                    "Data mitra dan pegawai berhasil diperbarui"
-                                )
-                            },
-                            onMessage = {
-                                showToast(it ?: "Informasi tidak tersedia")
-                            }
-                        )
+                val dialog = GlobalTwoButtonDialog().apply {
+                    setDialogTitle("Konfirmasi Tambah Mitra")
+                    setDialogMessage("Apakah Anda yakin ingin menambahkan mitra baru?")
+                    setOnYesClickListener {
+                        handleCreateMerchant()
                     }
                 }
-            } else {
-                viewModel.createMerchant(
-                    merchantData = request.merchantData,
-                    ownerData = request.ownerData,
-                    receptionistData = request.receptionistData
-                ).observe(this) { result ->
-                    handleResource(result,
-                        onSuccess = {
-                            navigateToStatus(
-                                "Tambah Berhasil",
-                                "Mitra baru berhasil ditambahkan"
-                            )
-                        },
-                        onMessage = {
-                            showToast(it ?: "Informasi tidak tersedia")
-                        }
-                    )
-                }
+                dialog.show(supportFragmentManager, "CreateMerchantDialog")
             }
+        }
+    }
+
+    private fun handleCreateMerchant() {
+        val request = createMerchantRequest()
+
+        Log.d("AddPegawai", "Request: $request")
+
+        viewModel.createMerchant(
+            merchantData = request.merchantData,
+            ownerData = request.ownerData,
+            receptionistData = request.receptionistData
+        ).observe(this) { result ->
+            handleResource(result,
+                onSuccess = {
+                    navigateToStatus(
+                        "Tambah Berhasil",
+                        "Mitra baru berhasil ditambahkan"
+                    )
+                },
+                onMessage = {
+                    showToast(it ?: "Informasi tidak tersedia")
+                }
+            )
         }
     }
 
@@ -299,6 +294,10 @@ class AddPegawaiActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

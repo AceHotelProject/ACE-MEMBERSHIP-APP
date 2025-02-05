@@ -34,18 +34,25 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <ImageView
-                android:id="@+id/iv_mitra"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_mitra_selected"
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/custom_background_light_grey"
-                android:clipToOutline="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/image_dummy"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvAMGreeting" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_multiple_image_upload_2" />
+
+            <LinearLayout
+                android:id="@+id/layoutDots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/rv_promo_selected" />
 
             <TextView
                 android:id="@+id/tvMitraType"

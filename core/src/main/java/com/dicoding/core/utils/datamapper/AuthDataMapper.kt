@@ -37,7 +37,20 @@ object AuthDataMapper {
                 name = response.user?.name.orEmpty(),
                 email = response.user?.email.orEmpty(),
                 role = response.user?.role.orEmpty(),
-                isEmailVerified = response.user?.isEmailVerified ?: false
+                isValidated = response.user?.isValidated ?: false,
+                isEmailVerified = response.user?.isEmailVerified ?: false,
+                phone = response.user?.phone,
+                isPhoneVerified = response.user?.isPhoneVerified ?: false,
+                address = response.user?.address,
+                citizenNumber = response.user?.citizenNumber,
+                pathKTP = response.user?.pathKTP,
+                androidId = response.user?.androidId,
+                merchantId = response.user?.merchantId,
+                couponUsed = response.user?.couponUsed ?: listOf(),
+                point = response.user?.point ?: 0,
+                refferalPoint = response.user?.refferalPoint ?: 0,
+                isNumberVerified = response.user?.isNumberVerified ?: false,
+                createdAt = response.user?.createdAt.orEmpty()
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -59,7 +72,20 @@ object AuthDataMapper {
                 name = response.user?.name.orEmpty(),
                 email = response.user?.email.orEmpty(),
                 role = response.user?.role.orEmpty(),
-                isEmailVerified = response.user?.isEmailVerified ?: false
+                isValidated = response.user?.isValidated ?: false,
+                isEmailVerified = response.user?.isEmailVerified ?: false,
+                phone = response.user?.phone,
+                isPhoneVerified = response.user?.isPhoneVerified ?: false,
+                address = response.user?.address,
+                citizenNumber = response.user?.citizenNumber,
+                pathKTP = response.user?.pathKTP,
+                androidId = response.user?.androidId,
+                merchantId = response.user?.merchantId,
+                couponUsed = response.user?.couponUsed ?: listOf(),
+                point = response.user?.point ?: 0,
+                refferalPoint = response.user?.refferalPoint ?: 0,
+                isNumberVerified = response.user?.isNumberVerified ?: false,
+                createdAt = response.user?.createdAt.orEmpty()
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -82,7 +108,20 @@ object AuthDataMapper {
                     name = it.username.orEmpty(),
                     email = it.email.orEmpty(),
                     role = it.role.orEmpty(),
-                    isEmailVerified = false
+                    isValidated = false,
+                    isEmailVerified = false,
+                    phone = null,
+                    isPhoneVerified = false,
+                    address = null,
+                    citizenNumber = null,
+                    pathKTP = null,
+                    androidId = null,
+                    merchantId = null,
+                    couponUsed = listOf(),
+                    point = 0,
+                    refferalPoint = 0,
+                    isNumberVerified = false,
+                    createdAt = ""
                 ),
                 tokens = TokensDomain(
                     accessToken = TokensFormat(
@@ -101,7 +140,20 @@ object AuthDataMapper {
                 name = "",
                 email = "",
                 role = "",
-                isEmailVerified = false
+                isValidated = false,
+                isEmailVerified = false,
+                phone = null,
+                isPhoneVerified = false,
+                address = null,
+                citizenNumber = null,
+                pathKTP = null,
+                androidId = null,
+                merchantId = null,
+                couponUsed = listOf(),
+                point = 0,
+                refferalPoint = 0,
+                isNumberVerified = false,
+                createdAt = ""
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(token = null, expires = null),

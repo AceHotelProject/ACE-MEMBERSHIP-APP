@@ -83,7 +83,7 @@ class  MainActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
             //            Testing
-            val mockUserRole = UserRole.MEMBER
+            val mockUserRole = UserRole.ADMIN
             //            3C8F61
 
             // Setup navigation graph
@@ -92,12 +92,11 @@ class  MainActivity : AppCompatActivity() {
             val navController = navHostFragment.navController
             val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
 
-
             // Set start destination berdasarkan role
             navGraph.setStartDestination(
                 when (mockUserRole) { // Ganti dengan userRole untuk production
                     UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> R.id.mitraFragment
-                    UserRole.MEMBER, UserRole.NONMEMBER -> R.id.homeFragment
+                    UserRole.USER -> R.id.homeFragment
                     else -> R.id.homeFragment
                 }
             )
@@ -125,7 +124,7 @@ class  MainActivity : AppCompatActivity() {
                 binding.promoBanner.visibility = View.GONE
                 binding.bottomNavbar.visibility = View.VISIBLE
             }
-            UserRole.MEMBER, UserRole.NONMEMBER -> {
+            UserRole.USER -> {
                 binding.lnFab1.visibility = View.GONE
                 binding.bottomNavbar.visibility = View.VISIBLE
 
@@ -205,7 +204,7 @@ class  MainActivity : AppCompatActivity() {
                 setupStaffNavigation(navView, navViewController)
                 Log.d("BottomNav", "Inflated staff menu")
             }
-            UserRole.MEMBER, UserRole.NONMEMBER -> {
+            UserRole.USER -> {
                 navView.visibility = View.VISIBLE  // Pastikan visibility diset
                 navView.inflateMenu(R.menu.customer_bottom_nav_menu)
                 setupCustomerNavigation(navView, navViewController)

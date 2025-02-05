@@ -31,7 +31,6 @@ class PromoViewModel @Inject constructor(
     private val _selectedCategory = MutableStateFlow("")
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
-    // Buat flow baru yang menggabungkan category dan promos
     val promos: Flow<PagingData<PromoDomain>> = _selectedCategory
         .flatMapLatest { category ->
             getPromos(

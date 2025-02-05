@@ -1,8 +1,11 @@
 package com.dicoding.membership.view.register
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
@@ -14,13 +17,15 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.core.data.source.Resource
-import com.dicoding.membership.R
 import com.dicoding.core.utils.isInternetAvailable
+import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityRegisterBinding
 import com.dicoding.membership.view.login.LoginActivity
-import com.dicoding.membership.view.verification.VerificationActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.UUID
 
 @AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
@@ -33,6 +38,8 @@ class RegisterActivity : AppCompatActivity() {
 
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        logDeviceInfo()
 
         isButtonEnabled(false)
         handleEditText()
@@ -152,8 +159,9 @@ class RegisterActivity : AppCompatActivity() {
 
             val email = binding.edRegisterEmail.text.toString()
             val password = binding.edRegisterPass.text.toString()
+            val androidId = getDeviceIdentifier(this)
 
-            registerViewModel.register(email, password).observe(this) { result ->
+            registerViewModel.register(email, password, androidId).observe(this) { result ->
                 when (result) {
                     is Resource.Error -> {
                         hideLoading()
@@ -190,6 +198,43 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    @SuppressLint("HardwareIds")
+    private fun getDeviceIdentifier(context: Context): String {
+        val androidId = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.ANDROID_ID
+        )
+
+        val deviceInfo = StringBuilder().apply {
+            append(androidId)
+            append(Build.BOARD)
+            append(Build.BRAND)
+            append(Build.DEVICE)
+            append(Build.MANUFACTURER)
+            append(Build.MODEL)
+            append(Build.PRODUCT)
+        }.toString()
+
+        return try {
+            val digest = MessageDigest.getInstance("SHA-256")
+            val hash = digest.digest(deviceInfo.toByteArray(StandardCharsets.UTF_8))
+            hash.fold("") { str, it -> str + "%02x".format(it) }
+        } catch (e: Exception) {
+            UUID.randomUUID().toString()
+        }
+    }
+
+    private fun logDeviceInfo() {
+        Log.d("DeviceInfo", "Board: ${Build.BOARD}")
+        Log.d("DeviceInfo", "Brand: ${Build.BRAND}")
+        Log.d("DeviceInfo", "Device: ${Build.DEVICE}")
+        Log.d("DeviceInfo", "Hardware: ${Build.HARDWARE}")
+        Log.d("DeviceInfo", "Manufacturer: ${Build.MANUFACTURER}")
+        Log.d("DeviceInfo", "Model: ${Build.MODEL}")
+        Log.d("DeviceInfo", "Product: ${Build.PRODUCT}")
+        Log.d("DeviceInfo", "Device ID: ${getDeviceIdentifier(this)}")
     }
 
     private fun navigateToLoginActivity() {

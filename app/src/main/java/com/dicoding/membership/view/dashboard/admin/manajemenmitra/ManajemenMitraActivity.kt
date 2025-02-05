@@ -89,8 +89,7 @@ class ManajemenMitraActivity : AppCompatActivity() {
                                 true
                             }
                             R.id.menu_detail_merchant -> {
-                                val intent = Intent(this@ManajemenMitraActivity, DetailMitraActivity::class.java).apply {
-                                    putExtra(DetailMitraActivity.EXTRA_MERCHANT_DATA, data)
+                                val intent = Intent(this@ManajemenMitraActivity, MainActivity::class.java).apply {
                                 }
                                 startActivity(intent)
                                 true
@@ -125,6 +124,7 @@ class ManajemenMitraActivity : AppCompatActivity() {
             val intent = Intent(this, AddMitraActivity::class.java)
             startActivity(intent)
         }
+
         binding.btnClose.setOnClickListener {
             finish()
         }

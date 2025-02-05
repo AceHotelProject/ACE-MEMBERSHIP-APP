@@ -58,6 +58,24 @@ class MerchantPagingAdapter : PagingDataAdapter<MerchantResultDomain, MerchantPa
                 // Set merchant type/category
                 tvPromoLabel.text = data.merchantType
 
+                // Set owner description (email - phone)
+                val ownerInfo = data.userId.firstOrNull()
+                manajemenMitraOwnerDescription.text = if (ownerInfo != null) {
+                    "${ownerInfo.email} - ${ownerInfo.phone}"
+                } else {
+                    "-"
+                }
+
+                // Set staff description (email - phone)
+                val staffInfo = if (data.userId.size > 1) {
+                    data.userId.drop(1).joinToString("\n") { user ->
+                        "${user.email} - ${user.phone}"
+                    }
+                } else {
+                    "-"
+                }
+                manajemenMitraStaffDescription.text = staffInfo
+
                 // Set background based on selection
                 root.setBackgroundResource(
                     if (adapterPosition == selectedPosition) {

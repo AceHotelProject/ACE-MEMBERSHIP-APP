@@ -29,10 +29,14 @@ class TokenExpiredDialog : DialogFragment() {
                 tokenExpiredViewModel.deleteToken()
 
                 val intentToLogin = Intent(requireContext(), LoginActivity::class.java)
-                intentToLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intentToLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intentToLogin)
 
                 dismiss()
+
+                activity?.finish()
             }
 
             builder.create()

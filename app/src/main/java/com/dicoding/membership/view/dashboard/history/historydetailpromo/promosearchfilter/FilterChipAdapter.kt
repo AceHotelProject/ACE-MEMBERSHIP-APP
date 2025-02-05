@@ -23,7 +23,7 @@ class FilterChipAdapter(
             notifyItemChanged(previousSelected)
             notifyItemChanged(selectedPosition)
             // Trigger callback dengan item yang sesuai
-            onItemSelected(if (items[position] == "All") "" else items[position])
+            onItemSelected(if (items[position] == "Semua") "" else items[position])
         }
     }
 
@@ -56,7 +56,7 @@ class FilterChipAdapter(
                     selectedPosition = position
                     notifyItemChanged(previousSelected)
                     notifyItemChanged(selectedPosition)
-                    onItemSelected(if (item == "All") "" else item)
+                    onItemSelected(if (item == "Semua") "" else item)
                 }
             }
         }

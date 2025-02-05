@@ -9,6 +9,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
+import com.dicoding.core.data.source.remote.response.merchants.UserData
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import com.dicoding.core.domain.file.model.FileDeleteDomain
 import com.dicoding.core.domain.file.model.FileUploadDomain
@@ -33,6 +36,14 @@ class AddMitraViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
+
+    fun updateMerchant(
+        id: String,
+        merchantData: MerchantData,
+    ) = merchantUseCase.updateMerchant(
+        id = id,
+        request = merchantData
+    ).asLiveData()
 
     fun uploadFile(uri: Uri, context: Context): Flow<Resource<FileUploadDomain>> {
         return flow {

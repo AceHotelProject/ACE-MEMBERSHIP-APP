@@ -11,6 +11,7 @@ import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.domain.merchants.model.CreateMerchantDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
@@ -61,7 +62,7 @@ class MerchantRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun updateMerchant(id: String, request: CreateMerchantRequest): Flow<Resource<UpdateMerchantDomain>> {
+    override fun updateMerchant(id: String, request: MerchantData): Flow<Resource<UpdateMerchantDomain>> {
         return object : NetworkBoundResource<UpdateMerchantDomain, UpdateMerchantResponse>() {
             override suspend fun fetchFromApi(response: UpdateMerchantResponse): UpdateMerchantDomain {
                 return MerchantDataMapper.mapUpdateMerchantResponseToDomain(response)

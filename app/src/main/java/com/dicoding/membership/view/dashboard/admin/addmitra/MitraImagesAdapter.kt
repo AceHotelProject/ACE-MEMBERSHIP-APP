@@ -1,6 +1,7 @@
 package com.dicoding.membership.view.dashboard.admin.addmitra
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,9 @@ class MitraImagesAdapter : RecyclerView.Adapter<MitraImagesAdapter.ImageViewHold
         }
 
         fun bind(uri: Uri) {
+            Log.d("MitraAdapter", "Binding image with URI: $uri")
+            Log.d("MitraAdapter", "URI scheme: ${uri.scheme}")
+
             when {
                 uri.scheme == "content" || uri.scheme == "file" -> {
                     Glide.with(itemView.context)

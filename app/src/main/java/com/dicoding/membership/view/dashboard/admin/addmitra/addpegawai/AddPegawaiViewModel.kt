@@ -20,20 +20,6 @@ class AddPegawaiViewModel @Inject constructor(
 
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
-    fun updateMerchant(
-        id: String,
-        merchantData: MerchantData,
-        ownerData: UserData,
-        receptionistData: UserData
-    ) = merchantUseCase.updateMerchant(
-        id = id,
-        request = CreateMerchantRequest(
-            merchantData = merchantData,
-            ownerData = ownerData,
-            receptionistData = receptionistData
-        )
-    ).asLiveData()
-
     fun createMerchant(
         merchantData: MerchantData,
         ownerData: UserData,

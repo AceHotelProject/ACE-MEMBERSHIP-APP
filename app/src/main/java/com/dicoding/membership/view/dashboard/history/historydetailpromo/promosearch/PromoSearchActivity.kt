@@ -2,6 +2,7 @@ package com.dicoding.membership.view.dashboard.history.historydetailpromo.promos
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,17 +13,22 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivitySearchPromoBinding
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearchfilter.PromoFilterBottomSheet
 import com.dicoding.membership.view.dashboard.history.promo.PromoHistoryAdapter
 import com.dicoding.membership.view.dashboard.promo.PromoAdapter
+import com.dicoding.membership.view.dashboard.promo.PromoFragment
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,6 +43,7 @@ class PromoSearchActivity : AppCompatActivity() {
     private lateinit var promoAdapter: PromoAdapter
     private lateinit var historyAdapter: PromoHistoryAdapter
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchPromoBinding.inflate(layoutInflater)
@@ -44,29 +51,85 @@ class PromoSearchActivity : AppCompatActivity() {
 
         isFromHistory = intent.getBooleanExtra(EXTRA_FROM_HISTORY, false)
 
-        setupViews()
+        checkUserRole()
 
-        setupAdapters()
+//        setupViews()
+//
+//        setupAdapters()
+//
+//        setupRecyclerView()
+//
+//        setupSearchInput()
+//
+//        setupSwipeRefresh()
+//
+//        validateToken()
+//
+//        observeData()
+    }
 
-        setupRecyclerView()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        viewModel.getUser().observe(this) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
 
-        setupSearchInput()
+//            Testing
+            val mockUserRole = UserRole.MEMBER
+            setupUserVisibility(mockUserRole)
 
-        setupSwipeRefresh()
+            setupViews()
 
-        validateToken()
+            setupAdapters(mockUserRole)
 
-        observeData()
+            setupRecyclerView()
+
+            setupSearchInput()
+
+            setupSwipeRefresh()
+
+            when (mockUserRole) {
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                    validateToken()
+                    observeData()
+                }
+                else -> {
+                    Log.d("PromoSearchActivity", "Unauthorized role: ${mockUserRole.name}, skipping data load")
+                }
+            }
+
+            Log.d("HistoryPromoFragment", "Current User Role: ${mockUserRole.name}")
+        }
+    }
+
+    private fun setupUserVisibility(userRole: UserRole) {
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.USER, UserRole.MEMBER -> {
+                binding.apply {
+                    swipeRefresh.visibility = View.VISIBLE
+                    layoutNonMember.visibility = View.GONE
+                }
+            }
+            UserRole.NONMEMBER -> {
+                binding.apply {
+                    swipeRefresh.visibility = View.GONE
+                    layoutNonMember.visibility = View.VISIBLE
+                }
+            }
+            else -> {
+                binding.apply {
+                    swipeRefresh.visibility = View.GONE
+                    layoutNonMember.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.apply {
             setOnRefreshListener {
-                // Reset search query
                 binding.edSearchBar.setText("")
                 viewModel.setSearchQuery("")
 
-                // Refresh adapter
                 if (isFromHistory) {
                     historyAdapter.refresh()
                 } else {
@@ -78,20 +141,38 @@ class PromoSearchActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        // Setup close button
         binding.btnClose.setOnClickListener {
             onBackPressed()
         }
 
-        // Setup filter button
-        binding.btnFilter.setOnClickListener {
-            // Implement filter logic here
-            showFilterBottomSheet()
+        viewModel.getUser().observe(this) { loginDomain ->
+//            val userRole = mapToUserRole(loginDomain.user.role)
+
+            val userRole = UserRole.MEMBER
+
+            binding.btnFilter.setOnClickListener {
+                when (userRole) {
+                    UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                        showFilterBottomSheet()
+                    }
+                    else -> {
+                        Toast.makeText(
+                            this,
+                            "Silakan daftar membership terlebih dahulu",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
     private fun showFilterBottomSheet() {
         val filterBottomSheet = PromoFilterBottomSheet().apply {
+
+            arguments = Bundle().apply {
+                putBoolean("isFromHistory", isFromHistory)
+            }
 
             setOnFilterSelectedListener { filterType, selectedValue ->
                 when (filterType) {
@@ -121,9 +202,26 @@ class PromoSearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAdapters() {
+    private fun setupAdapters(userRole: UserRole) {
         if (isFromHistory) {
-            historyAdapter = PromoHistoryAdapter()
+            historyAdapter = PromoHistoryAdapter().apply {
+                onItemClickCallback = object : PromoHistoryAdapter.OnItemClickCallback {
+                    override fun onItemClicked(history: PromoHistoryDomain) {
+                        when (userRole) {
+                            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER,UserRole.USER -> {
+                                navigateToDetailActivity(history)
+                            }
+                            else -> {
+                                Toast.makeText(
+                                    this@PromoSearchActivity,
+                                    "Silakan daftar membership terlebih dahulu",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            }
             binding.apply {
                 rvPromo.visibility = View.GONE
                 rvPromoHistory.visibility = View.VISIBLE
@@ -131,11 +229,23 @@ class PromoSearchActivity : AppCompatActivity() {
         } else {
             promoAdapter = PromoAdapter().apply {
                 setOnItemClickCallback(object : PromoAdapter.OnItemClickCallback {
-                    override fun onItemClicked(data: PromoDomain) {
-                        val intent = Intent(this@PromoSearchActivity, PromoDetailActivity::class.java).apply {
-                            putExtra(PromoDetailActivity.EXTRA_PROMO, data)
+                    override fun onItemClicked(promo: PromoDomain) {
+                        when (userRole) {
+                            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                                val intent = Intent(this@PromoSearchActivity, PromoDetailActivity::class.java).apply {
+                                    putExtra(PromoDetailActivity.EXTRA_PROMO, promo)
+                                    putExtra(PromoDetailActivity.EXTRA_SOURCE, PromoFragment.PROMO_SOURCE_MITRA)
+                                }
+                                startActivity(intent)
+                            }
+                            else -> {
+                                Toast.makeText(
+                                    this@PromoSearchActivity,
+                                    "Silakan daftar membership terlebih dahulu",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
-                        startActivity(intent)
                     }
                 })
             }
@@ -144,6 +254,13 @@ class PromoSearchActivity : AppCompatActivity() {
                 rvPromoHistory.visibility = View.GONE
             }
         }
+    }
+
+    private fun navigateToDetailActivity(history: PromoHistoryDomain) {
+        val intent = Intent(this, HistoryDetailPromoActivity::class.java).apply {
+            putExtra("PROMO_HISTORY", history)
+        }
+        startActivity(intent)
     }
 
     private fun setupRecyclerView() {
@@ -162,38 +279,80 @@ class PromoSearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearchInput() {
-        binding.edSearchBar.apply {
-            setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    hint = ""
-                } else if (text.isNullOrEmpty()) {
-                    hint = "Masukan pencarian"
-                }
-            }
+        viewModel.getUser().observe(this) { loginDomain ->
+//            val userRole = mapToUserRole(loginDomain.user.role)
 
-            setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                    actionId == EditorInfo.IME_ACTION_DONE ||
-                    event?.action == KeyEvent.ACTION_DOWN &&
-                    event.keyCode == KeyEvent.KEYCODE_ENTER
-                ) {
-                    // Sembunyikan keyboard
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(v.windowToken, 0)
-                    v.clearFocus()
-                    return@setOnEditorActionListener true
-                }
-                false
-            }
+            val userRole = UserRole.MEMBER
 
-            addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: Editable?) {
-                    // Set query dan refresh data
-                    viewModel.setSearchQuery(s?.toString() ?: "")
+            binding.edSearchBar.apply {
+                setOnFocusChangeListener { _, hasFocus ->
+                    if (hasFocus) {
+                        when (userRole) {
+                            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                                hint = ""
+                            }
+                            else -> {
+                                clearFocus()
+                                Toast.makeText(
+                                    this@PromoSearchActivity,
+                                    "Silakan daftar membership terlebih dahulu",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else if (text.isNullOrEmpty()) {
+                        hint = "Masukan pencarian"
+                    }
                 }
-            })
+
+                setOnEditorActionListener { v, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE ||
+                        event?.action == KeyEvent.ACTION_DOWN &&
+                        event.keyCode == KeyEvent.KEYCODE_ENTER
+                    ) {
+                        when (userRole) {
+                            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.hideSoftInputFromWindow(v.windowToken, 0)
+                                v.clearFocus()
+                            }
+                            else -> {
+                                Toast.makeText(
+                                    this@PromoSearchActivity,
+                                    "Silakan daftar membership terlebih dahulu",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        return@setOnEditorActionListener true
+                    }
+                    false
+                }
+
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        when (userRole) {
+                            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
+                                viewModel.setSearchQuery(s?.toString() ?: "")
+                            }
+                            else -> {
+                                if (!s.isNullOrEmpty()) {
+                                    Toast.makeText(
+                                        this@PromoSearchActivity,
+                                        "Silakan daftar membership terlebih dahulu",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    setText("") // Clear text for non-member
+                                    clearFocus()
+                                }
+                            }
+                        }
+                    }
+                })
+            }
         }
     }
 
@@ -216,21 +375,18 @@ class PromoSearchActivity : AppCompatActivity() {
                             }
                         }
 
-                        // Tambahkan observer untuk filter status
                         launch {
                             viewModel.selectedStatus.collect { status ->
                                 historyAdapter.refresh()
                             }
                         }
 
-                        // Tambahkan observer untuk filter kategori
                         launch {
                             viewModel.selectedCategory.collect { category ->
                                 historyAdapter.refresh()
                             }
                         }
 
-                        // Tambahkan observer untuk filter tanggal
                         launch {
                             viewModel.selectedDate.collect { date ->
                                 historyAdapter.refresh()
@@ -241,7 +397,6 @@ class PromoSearchActivity : AppCompatActivity() {
                             Log.d("PromoSearch", "LoadState: ${loadState.refresh}")
                             Log.d("PromoSearch", "ItemCount: ${historyAdapter.itemCount}")
 
-                            // Immediately set swipeRefresh to false
                             binding.swipeRefresh.isRefreshing = false
 
                             when (loadState.refresh) {
@@ -275,21 +430,18 @@ class PromoSearchActivity : AppCompatActivity() {
                             }
                         }
 
-                        // Tambahkan observer untuk filter status
                         launch {
                             viewModel.selectedStatus.collect { status ->
                                 promoAdapter.refresh()
                             }
                         }
 
-                        // Tambahkan observer untuk filter kategori
                         launch {
                             viewModel.selectedCategory.collect { category ->
                                 promoAdapter.refresh()
                             }
                         }
 
-                        // Tambahkan observer untuk filter tanggal
                         launch {
                             viewModel.selectedDate.collect { date ->
                                 promoAdapter.refresh()
@@ -300,7 +452,6 @@ class PromoSearchActivity : AppCompatActivity() {
                             Log.d("PromoSearch", "LoadState: ${loadState.refresh}")
                             Log.d("PromoSearch", "ItemCount: ${promoAdapter.itemCount}")
 
-                            // Immediately set swipeRefresh to false
                             binding.swipeRefresh.isRefreshing = false
 
                             when (loadState.refresh) {
@@ -335,55 +486,20 @@ class PromoSearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleLoadState(loadState: CombinedLoadStates) {
-        // Debug logs
-        println("LoadState: ${loadState.refresh}")
-        println("ItemCount: ${if (isFromHistory) historyAdapter.itemCount else promoAdapter.itemCount}")
-        println("State: ${loadState.refresh::class.simpleName}")
-
-        when (loadState.refresh) {
-            is LoadState.Loading -> {
-                showLoading(true)
-                showEmptyState(false)
-            }
-            is LoadState.Error -> {
-                showLoading(false)
-                binding.swipeRefresh.isRefreshing = false
-                showError((loadState.refresh as LoadState.Error).error.message)
-
-                val adapter = if (isFromHistory) historyAdapter else promoAdapter
-                showEmptyState(adapter.itemCount == 0)
-            }
-            is LoadState.NotLoading -> {
-                showLoading(false)
-                binding.swipeRefresh.isRefreshing = false
-
-                // Cek empty state berdasarkan endOfPaginationReached dan itemCount
-                val adapter = if (isFromHistory) historyAdapter else promoAdapter
-                val isEmpty = adapter.itemCount == 0 &&
-                        (loadState.refresh as LoadState.NotLoading).endOfPaginationReached
-
-                println("Showing empty state: $isEmpty")
-                showEmptyState(isEmpty)
-            }
-        }
-    }
-
     private fun showEmptyState(show: Boolean) {
         binding.apply {
             tvTidakAdaRiwayat.visibility = if (show) View.VISIBLE else View.GONE
 
             if (isFromHistory) {
                 rvPromoHistory.visibility = if (show) View.GONE else View.VISIBLE
-                // Pastikan rv_promo selalu GONE
+
                 rvPromo.visibility = View.GONE
             } else {
                 rvPromo.visibility = if (show) View.GONE else View.VISIBLE
-                // Pastikan rv_promo_history selalu GONE
+
                 rvPromoHistory.visibility = View.GONE
             }
 
-            // Set text sesuai dengan jenis data
             if (show) {
                 tvTidakAdaRiwayat.text = if (isFromHistory) {
                     "Tidak Ada Riwayat"
@@ -396,14 +512,12 @@ class PromoSearchActivity : AppCompatActivity() {
 
     private fun showLoading(show: Boolean) {
         binding.apply {
-            // Tampilkan progress bar hanya jika tidak dalam swipe refresh
             if (!swipeRefresh.isRefreshing) {
                 progressBar.visibility = if (show) View.VISIBLE else View.GONE
             } else {
                 progressBar.visibility = View.GONE
             }
 
-            // Atur visibility RecyclerView
             if (isFromHistory) {
                 if (!show && !swipeRefresh.isRefreshing) {
                     rvPromoHistory.visibility = View.VISIBLE

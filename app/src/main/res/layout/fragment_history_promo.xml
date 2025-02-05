@@ -6,8 +6,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.dashboard.history.promo.HistoryPromoFragment">
 
+<!--    ADMIN, MITRA, RECEPTIONITS, MEMBER HISTORY-->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ScrollView
@@ -16,26 +18,35 @@
             android:layout_marginTop="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:visibility="visible"
             android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPromo"
+                android:id="@+id/rvPromoHistory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/item_promo" />
         </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <!--    Non Member History -->
+    <!--    NONMEMBER History -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_non_member"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_gravity="center"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_daftar_membership"
@@ -51,33 +62,31 @@
                 style="@style/textStyleRegular_12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="40dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="40dp"
-                android:textColor="@color/dark_grey"
+                android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
                 android:textAlignment="center"
-                android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"/>
+                android:textColor="@color/dark_grey" />
 
             <Button
                 android:id="@+id/btn_daftar_sekarang"
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
                 android:background="@drawable/custom_button"
                 android:elevation="0dp"
                 android:padding="10dp"
-                android:text="Daftar Sekarang"/>
+                android:text="Daftar Sekarang" />
         </LinearLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <!--    Tidak Memiliki riwayat-->
         <TextView
             android:id="@+id/tv_tidak_ada_riwayat"
@@ -88,10 +97,10 @@
             android:layout_gravity="center"
             android:text="Tidak Memiliki Riwayat"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <View
             android:id="@+id/loadingOverlay"

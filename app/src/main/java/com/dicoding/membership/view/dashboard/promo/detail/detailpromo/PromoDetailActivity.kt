@@ -6,15 +6,20 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.core.utils.ImageUtils.reduceFileImage
 import com.dicoding.core.utils.ImageUtils.uriToFile
 import com.dicoding.core.utils.constants.UserRole
@@ -23,6 +28,7 @@ import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.DateUtils
 import com.dicoding.membership.databinding.ActivityPromoDetailBinding
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity.Companion.PROMO_SOURCE_HISTORY
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -37,6 +43,9 @@ class PromoDetailActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private val viewModel: PromoDetailViewModel by viewModels()
 
+    private lateinit var dots: Array<ImageView>
+    private lateinit var imageAdapter: PromoImageAdapter
+
     companion object {
         const val EXTRA_PROMO = "extra_promo"
         const val EXTRA_SOURCE = "extra_source"
@@ -48,20 +57,31 @@ class PromoDetailActivity : AppCompatActivity() {
         _binding = ActivityPromoDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val promo = intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO)
-        val source = intent.getStringExtra(EXTRA_SOURCE)
-
-        setupView(promo, source)
-
-        validateToken()
-
-        promo?.let { checkUserRole(it) }
+        when (val source = intent.getStringExtra(EXTRA_SOURCE)) {
+            PROMO_SOURCE_HISTORY -> {
+                val promoHistory = intent.getParcelableExtra<PromoHistoryDomain>(EXTRA_PROMO)
+                if (promoHistory != null) {
+                    setupHistoryView(promoHistory)
+                } else {
+                    finish()
+                }
+            }
+            else -> {
+                val promoDomain = intent.getParcelableExtra<PromoDomain>(EXTRA_PROMO)
+                if (promoDomain != null) {
+                    setupView(promoDomain, source)
+                    validateToken()
+                    checkUserRole(promoDomain)
+                } else {
+                    finish()
+                }
+            }
+        }
     }
 
     private fun validateToken() {
         viewModel.getRefreshToken().observe(this) { token ->
             if (token.isEmpty()) {
-                // Since we're in an Activity, we need to use supportFragmentManager
                 TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
             }
         }
@@ -96,7 +116,7 @@ class PromoDetailActivity : AppCompatActivity() {
                 binding.btnSetuju.visibility = View.GONE
                 binding.btnTolak.visibility = View.GONE
             }
-            UserRole.MEMBER -> {
+            UserRole.USER -> {
                 if (!promo?.token.isNullOrEmpty()) {
                     // Token tersedia, tampilkan layout dan isi token
                     binding.layoutItemDetailPromo.visibility = View.VISIBLE
@@ -147,59 +167,104 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindDataToLayout(promo: PromoDomain?, source: String?) {
+    private fun setupHistoryView(history: PromoHistoryDomain) {
         binding.apply {
-            // Menampilkan gambar promo jika ada
-            if (promo?.pictures?.isNotEmpty() == true) {
-                try {
-                    val imageUrl = promo.pictures[0] // Ambil gambar pertama
+            // Setup RecyclerView with PagerSnapHelper for horizontal snap scrolling
+            imageAdapter = PromoImageAdapter(this@PromoDetailActivity)
+            rvPromoSelected.adapter = imageAdapter
 
-                    if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://")) {
-                        // Jika masih dalam bentuk content URI atau file URI
-                        val file = uriToFile(Uri.parse(imageUrl), this@PromoDetailActivity)
-                        val compressedFile = reduceFileImage(file)
+            // Add PagerSnapHelper for snapping behavior
+            val snapHelper = PagerSnapHelper()
+            snapHelper.attachToRecyclerView(rvPromoSelected)
 
-                        Glide.with(this@PromoDetailActivity)
-                            .load(compressedFile)
-                            .placeholder(R.drawable.image_empty)
-                            .error(R.drawable.image_empty)
-                            .into(ivImage)
-                    } else {
-                        // Jika sudah dalam bentuk URL remote
-                        Glide.with(this@PromoDetailActivity)
-                            .load(imageUrl)
-                            .placeholder(R.drawable.image_empty)
-                            .error(R.drawable.image_empty)
-                            .into(ivImage)
+            // Add scroll listener for dot indicator updates
+            rvPromoSelected.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val position = layoutManager.findFirstCompletelyVisibleItemPosition()
+                    if (position != -1) {
+                        updateDotIndicator(position)
                     }
-                } catch (e: Exception) {
-                    Log.e("PromoDetail", "Error loading image: ${e.message}")
-                    ivImage.setImageResource(R.drawable.image_empty)
                 }
-            } else {
-                ivImage.setImageResource(R.drawable.image_empty) // Gambar default jika tidak ada
+            })
+
+            // Submit images and setup dots if available
+            if (history.promoPictures.isNotEmpty()) {
+                imageAdapter.submitList(history.promoPictures)
+                setupDotIndicators(history.promoPictures.size)
             }
 
-            // Menampilkan kategori promo
+            // Bind text data
+            tvDetailCategory.text = history.promoCategory
+            tvPromoName.text = history.promoName
+            tvOleh.text = "oleh ${history.merchantName}"
+            tvDeskripsi.text = history.promoDetail
+            tvPromoTitle.text = "Detail Riwayat Promo"
+
+            // Setup TnC
+            if (!history.promoTnc.isNullOrEmpty()) {
+                rvSyaratDanKetentuan.layoutManager = LinearLayoutManager(this@PromoDetailActivity)
+                rvSyaratDanKetentuan.adapter = SyaratDanKetentuanAdapter(history.promoTnc)
+            }
+
+            // Setup visibility untuk history view
+            btnSetuju.visibility = View.GONE
+            btnTolak.visibility = View.GONE
+            btnPakai.visibility = View.GONE
+            btnMenu.visibility = View.GONE
+
+            // Tampilkan token jika ada
+            if (!history.tokenCode.isNullOrEmpty()) {
+                layoutItemDetailPromo.visibility = View.VISIBLE
+                tvPromoCode.text = history.tokenCode
+            } else {
+                layoutItemDetailPromo.visibility = View.GONE
+            }
+        }
+
+        binding.btnClose.setOnClickListener {
+            handleBackNavigation()
+        }
+    }
+
+    private fun bindDataToLayout(promo: PromoDomain?, source: String?) {
+        binding.apply {
+            // Setup RecyclerView with PagerSnapHelper
+            imageAdapter = PromoImageAdapter(this@PromoDetailActivity)
+            rvPromoSelected.adapter = imageAdapter
+            val snapHelper = PagerSnapHelper()
+            snapHelper.attachToRecyclerView(rvPromoSelected)
+
+            // Add scroll listener
+            rvPromoSelected.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val position = layoutManager.findFirstCompletelyVisibleItemPosition()
+                    if (position != -1) {
+                        updateDotIndicator(position)
+                    }
+                }
+            })
+
+            // Submit images and setup dots
+            if (promo?.pictures?.isNotEmpty() == true) {
+                imageAdapter.submitList(promo.pictures)
+                setupDotIndicators(promo.pictures.size)
+            }
+
             tvDetailCategory.text = promo?.category ?: "Kategori Tidak Tersedia"
-
-            // Menampilkan detail promo
             tvPromoName.text = promo?.name ?: "Nama Promo Tidak Tersedia"
-
-            // Menampilkan siapa yang membuat promo
             tvOleh.text = "oleh ${promo?.category ?: "Admin"}"
-
-            // Menampilkan detail promo
             tvDeskripsi.text = promo?.detail ?: "Deskripsi Tidak Tersedia"
 
-            // Menampilkan syarat dan ketentuan, bisa menggunakan RecyclerView atau TextView biasa
             Log.d("PromoDetail", "TnC List: ${promo?.tnc}")
             Log.d("PromoDetail", "TnC is null? ${promo?.tnc == null}")
             Log.d("PromoDetail", "TnC is empty? ${promo?.tnc?.isEmpty()}")
 
             if (!promo?.tnc.isNullOrEmpty()) {
                 Log.d("PromoDetail", "Setting up TnC adapter with ${promo?.tnc?.size} items")
-                // Pastikan RecyclerView memiliki LayoutManager
                 rvSyaratDanKetentuan.layoutManager = LinearLayoutManager(this@PromoDetailActivity)
                 rvSyaratDanKetentuan.adapter = SyaratDanKetentuanAdapter(promo?.tnc ?: emptyList()).also {
                     Log.d("PromoDetail", "Adapter created and set")
@@ -210,18 +275,44 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupDotIndicators(count: Int) {
+        binding.layoutDots.removeAllViews()
+        dots = Array(count) { _ ->
+            ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(8, 0, 8, 0)
+                }
+                setImageResource(R.drawable.icons_dot_inactive)
+                binding.layoutDots.addView(this)
+            }
+        }
+        if (dots.isNotEmpty()) {
+            dots[0].setImageResource(R.drawable.icons_dot_active)
+        }
+    }
+
+    private fun updateDotIndicator(position: Int) {
+        dots.forEachIndexed { index, dot ->
+            dot.setImageResource(
+                if (index == position) R.drawable.icons_dot_active
+                else R.drawable.icons_dot_inactive
+            )
+        }
+    }
+
     private fun setupAjuanPromoView(promo: PromoDomain?) {
         with(binding) {
-//            // Visibility settings for Ajuan Promo
+//
             btnSetuju.visibility = View.VISIBLE
             btnTolak.visibility = View.VISIBLE
             btnPakai.visibility = View.GONE
             btnMenu.visibility = View.GONE
 
-            // Setup UI elements
             tvPromoTitle.text = "Ajuan Promo"
 
-            // PLEASE CHANGE IF THE ENDPOINT AJUKAN PROMO READY
             btnSetuju.setOnClickListener {
                 promo?.id?.let { promoId ->
                     showConfirmationDialog(
@@ -232,7 +323,6 @@ class PromoDetailActivity : AppCompatActivity() {
                 }
             }
 
-            // PLEASE CHANGE IF THE ENDPOINT TOLAK PROMO READY
             btnTolak.setOnClickListener {
                 promo?.id?.let { promoId ->
                     showConfirmationDialog(
@@ -393,13 +483,12 @@ class PromoDetailActivity : AppCompatActivity() {
 
     private fun setupPromoMitraView(promo: PromoDomain?) {
         with(binding) {
-            // Visibility settings for Promo Mitra
+
             btnSetuju.visibility = View.GONE
             btnTolak.visibility = View.GONE
             btnPakai.visibility = View.VISIBLE
             btnMenu.visibility = View.VISIBLE
 
-            // Setup UI elements
             tvPromoTitle.text = "Detail Promo"
 
             btnPakai.setOnClickListener {

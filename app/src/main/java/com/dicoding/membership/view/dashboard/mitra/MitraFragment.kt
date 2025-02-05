@@ -7,12 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.dicoding.core.data.source.Resource
+import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMitraBinding
 import com.dicoding.membership.view.dashboard.admin.addmitra.AddMitraActivity
 import com.dicoding.membership.view.dashboard.admin.manajemenmitra.MerchantPagingAdapter
@@ -26,6 +29,9 @@ class MitraFragment : Fragment() {
     private var _binding: FragmentMitraBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MitraViewModel by viewModels()
+
+    private lateinit var dots: Array<ImageView>
+    private lateinit var imageAdapter: MitraImageAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +49,7 @@ class MitraFragment : Fragment() {
 
         handleMenuButton()
 
-        checkSavedMerchant()
+//        checkSavedMerchant()
     }
 
     private fun validateToken() {
@@ -84,18 +90,18 @@ class MitraFragment : Fragment() {
                     Log.d("MitraFragment", "Load state: ${loadState.refresh}")
                     when (loadState.refresh) {
                         is LoadState.NotLoading -> {
-                            val firstMerchant = tempAdapter.snapshot().firstOrNull()
-                            if (firstMerchant != null) {
-                                isDataEmpty = false
-                                Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
-                                viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
-                                    if (saved) loadMerchantData(firstMerchant.id)
-                                }
-                            } else {
-                                // No merchant data found, navigate to AddMitraActivity
-                                Log.d("MitraFragment", "No merchant data found, navigating to AddMitraActivity")
-                                navigateToAddMitra()
-                            }
+//                            val firstMerchant = tempAdapter.snapshot().firstOrNull()
+//                            if (firstMerchant != null) {
+//                                isDataEmpty = false
+//                                Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
+//                                viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
+//                                    if (saved) loadMerchantData(firstMerchant.id)
+//                                }
+//                            } else {
+//                                // No merchant data found, navigate to AddMitraActivity
+//                                Log.d("MitraFragment", "No merchant data found, navigating to AddMitraActivity")
+//                                navigateToAddMitra()
+//                            }
                         }
                         is LoadState.Error -> {
                             // Handle error state if needed
@@ -135,16 +141,18 @@ class MitraFragment : Fragment() {
                     result.data?.let { merchant ->
                         binding.apply {
                             Log.d("MitraFragment", "Successfully loaded merchant: ${result.data?.name}")
-//                            ivMitra
-//                            tvMitraOwner.text = merchant
+                            if (merchant.picturesUrl.isNotEmpty()) {
+                                imageAdapter.submitList(merchant.picturesUrl)
+                                setupDotIndicators(merchant.picturesUrl.size)
+                            }
                             tvMitraType.text = merchant.merchantType
                             tvMitraName.text = merchant.name
 //                            tvMitraPromo.text = merchant
 //                            tvMitraPromoUse.text = merchant
-//                            tvMitraPoin.text = merchant
+//                            tvMitraPoin.text = merchant.point
 //                            tvMitraPoinTerima.text = merchant
 //                            tvMitraPoinTransfer.text = merchant
-//                            tvMitraDescription.text = merchant.detail
+                            tvMitraDescription.text = merchant.detail
                             // Update other UI elements
                         }
                     }
@@ -156,6 +164,34 @@ class MitraFragment : Fragment() {
                 }
                 else -> { }
             }
+        }
+    }
+
+    private fun setupDotIndicators(count: Int) {
+        binding.layoutDots.removeAllViews()
+        dots = Array(count) { _ ->
+            ImageView(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(8, 0, 8, 0)
+                }
+                setImageResource(R.drawable.icons_dot_inactive)
+                binding.layoutDots.addView(this)
+            }
+        }
+        if (dots.isNotEmpty()) {
+            dots[0].setImageResource(R.drawable.icons_dot_active)
+        }
+    }
+
+    private fun updateDotIndicator(position: Int) {
+        dots.forEachIndexed { index, dot ->
+            dot.setImageResource(
+                if (index == position) R.drawable.icons_dot_active
+                else R.drawable.icons_dot_inactive
+            )
         }
     }
 

@@ -3,9 +3,9 @@ package com.dicoding.core.domain.merchants.interactor
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.domain.merchants.model.CreateMerchantDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
-import com.dicoding.core.domain.merchants.model.GetMerchantsDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
 import com.dicoding.core.domain.merchants.model.UpdateMerchantDomain
 import com.dicoding.core.domain.merchants.repository.IMerchantRepository
@@ -25,7 +25,7 @@ class MerchantInteractor @Inject constructor(
     override fun getMerchantById(id: String): Flow<Resource<GetMerchantByIdDomain>> =
         merchantRepository.getMerchantById(id)
 
-    override fun updateMerchant(id: String, request: CreateMerchantRequest): Flow<Resource<UpdateMerchantDomain>> =
+    override fun updateMerchant(id: String, request: MerchantData): Flow<Resource<UpdateMerchantDomain>> =
         merchantRepository.updateMerchant(id, request)
 
     override fun deleteMerchant(id: String): Flow<Resource<Unit>> =

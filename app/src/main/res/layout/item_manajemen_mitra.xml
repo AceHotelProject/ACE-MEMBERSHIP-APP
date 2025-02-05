@@ -78,19 +78,19 @@
         android:text="Akun Mitra"/>
 
     <TextView
-        android:fontFamily="@font/poppinsblack"
-        android:id="@+id/manajemen_mitra_owner_email"
+        android:id="@+id/manajemen_mitra_owner_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
         android:layout_marginTop="6dp"
-        android:textSize="12sp"
-        android:text="mitraaston@gmail.com - 082289241000"/>
+        android:layout_marginEnd="12dp"
+        android:fontFamily="@font/poppinsblack"
+        android:text="mitraaston@gmail.com - 082289241000"
+        android:textSize="12sp" />
 
     <TextView
         style="@style/textStyleMedium_14"
-        android:id='@+id/manajemen_mitra_pegawai_title'
+        android:id='@+id/manajemen_mitra_staff_title'
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -100,7 +100,7 @@
 
     <TextView
         android:fontFamily="@font/poppinsblack"
-        android:id="@+id/manajemen_mitra_pegawai_deskripsi"
+        android:id="@+id/manajemen_mitra_staff_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"

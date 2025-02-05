@@ -20,6 +20,6 @@ class RegisterViewModel @Inject constructor(
     private val authUseCase: AuthUseCase
 ) : ViewModel() {
 
-    fun register( email: String, password: String) =
-        authUseCase.register(email, password).asLiveData()
+    fun register( email: String, password: String, androidId: String) =
+        authUseCase.register(email, password, androidId).asLiveData()
 }

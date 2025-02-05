@@ -1,17 +1,24 @@
 package com.dicoding.membership.view.dashboard.history.promo
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,6 +44,7 @@ class HistoryPromoFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        Dicoding Test Pager
@@ -47,13 +55,69 @@ class HistoryPromoFragment : Fragment() {
 //            }
 //        }
 
-        setupRecyclerView()
+        checkUserRole()
 
-        setupSwipeRefresh()
+//        setupRecyclerView()
+//
+//        setupSwipeRefresh()
+//
+//        validateToken()
+//
+//        loadPromoHistory()
+    }
 
-        validateToken()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
 
-        loadPromoHistory()
+//            Testing
+            val mockUserRole = UserRole.MEMBER
+            setupUserVisibility(mockUserRole)
+
+            // Only load promo history for authorized roles
+            when (mockUserRole) {
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                    setupRecyclerView()
+                    setupSwipeRefresh()
+                    validateToken()
+                    loadPromoHistory()
+                }
+                else -> {
+                    // Don't load data for unauthorized roles
+                    Log.d("HistoryPromoFragment", "Unauthorized role: ${mockUserRole.name}, skipping data load")
+                }
+            }
+
+            Log.d("HistoryPromoFragment", "Current User Role: ${mockUserRole.name}")
+        }
+    }
+
+    private fun setupUserVisibility(userRole: UserRole) {
+        when (userRole) {
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.USER, UserRole.MEMBER -> {
+                binding.apply {
+                    swipeRefresh.visibility = View.VISIBLE
+                    layoutNonMember.visibility = View.GONE
+                }
+            }
+           UserRole.NONMEMBER -> {
+               binding.apply {
+                   swipeRefresh.visibility = View.GONE
+                   layoutNonMember.visibility = View.VISIBLE
+                   rvPromoHistory.visibility = View.GONE
+                   tvTidakAdaRiwayat.visibility = View.GONE
+               }
+            }
+            else -> {
+                binding.apply {
+                    swipeRefresh.visibility = View.GONE
+                    layoutNonMember.visibility = View.GONE
+                    rvPromoHistory.visibility = View.GONE
+                    tvTidakAdaRiwayat.visibility = View.GONE
+                }
+            }
+        }
     }
 
 //    private fun setupRecyclerView() {
@@ -77,12 +141,29 @@ class HistoryPromoFragment : Fragment() {
 //    }
 
     private fun setupRecyclerView() {
-        historyAdapter = PromoHistoryAdapter()
-        binding.rvPromo.apply {
+        historyAdapter = PromoHistoryAdapter().apply {
+            // Set the onItemClickCallback
+            onItemClickCallback = object : PromoHistoryAdapter.OnItemClickCallback {
+                override fun onItemClicked(history: PromoHistoryDomain) {
+                    // Handle item click here
+                    navigateToDetailActivity(history)
+                }
+            }
+        }
+
+        binding.rvPromoHistory.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
+
         Log.d("PromoHistoryFragment", "RecyclerView setup completed")
+    }
+
+    private fun navigateToDetailActivity(history: PromoHistoryDomain) {
+        val intent = Intent(requireContext(), HistoryDetailPromoActivity::class.java).apply {
+            putExtra("PROMO_HISTORY", history)
+        }
+        startActivity(intent)
     }
 
     private fun setupSwipeRefresh() {
@@ -152,7 +233,7 @@ class HistoryPromoFragment : Fragment() {
 
     private fun showEmptyState() {
         binding.apply {
-            rvPromo.visibility = View.GONE
+            rvPromoHistory.visibility = View.GONE
             tvTidakAdaRiwayat.visibility = View.VISIBLE
         }
     }
@@ -160,7 +241,7 @@ class HistoryPromoFragment : Fragment() {
     private fun hideEmptyState() {
         Log.d("PromoHistoryFragment", "RecyclerView visibility set to VISIBLE")
         binding.apply {
-            rvPromo.visibility = View.VISIBLE
+            rvPromoHistory.visibility = View.VISIBLE
             tvTidakAdaRiwayat.visibility = View.GONE
         }
     }

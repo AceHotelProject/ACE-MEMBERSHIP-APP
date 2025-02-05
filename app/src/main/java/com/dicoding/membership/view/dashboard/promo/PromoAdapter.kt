@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.core.domain.promo.model.PromoDomain
+import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.core.utils.ImageUtils
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.membership.R
@@ -21,12 +22,14 @@ import com.dicoding.membership.databinding.ItemDashboardPromoBinding
 class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder>(DIFF_CALLBACK) {
     private var onItemClickCallback: OnItemClickCallback? = null
 
-    private val listPromos = mutableListOf<PromoDomain>()
+    private val listPromos = mutableListOf<Any>()
 
     private var isPaging = true
 
     // Default
-    private var userRole: UserRole = UserRole.NONMEMBER
+    private var userRole: UserRole = UserRole.MEMBER
+
+    private var isHistoryMode = false
 
     @SuppressLint("NotifyDataSetChanged")
     fun setUserRole(role: UserRole) {
@@ -53,6 +56,16 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
         Log.d("PromoAdapter", "List updated, new size: ${listPromos.size}")
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitHistoryList(promos: List<PromoHistoryDomain>) {
+        Log.d("PromoAdapter", "Submitting PromoHistoryDomain list with size: ${promos.size}")
+        isPaging = false
+        isHistoryMode = true
+        listPromos.clear()
+        listPromos.addAll(promos)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PromoViewHolder {
         val binding = ItemDashboardPromoBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -71,8 +84,10 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
         } else {
             if (position < listPromos.size) {
                 val item = listPromos[position]
-                Log.d("PromoAdapter", "Non-paging item at position $position - Name: ${item.name}, isActive: ${item.isActive}")
-                holder.bind(item)
+                when (item) {
+                    is PromoDomain -> holder.bind(item)
+                    is PromoHistoryDomain -> holder.bindHistory(item)
+                }
             }
         }
     }
@@ -137,6 +152,37 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                 }
             }
         }
+        fun bindHistory(data: PromoHistoryDomain) {
+            with(binding) {
+                detailPromoTitle.text = data.promoName
+                detailPromoDescription.text = data.promoDetail
+                detailPromoCategory.text = data.promoCategory
+                itemDashboardPromoCode.text = data.tokenCode
+
+                if (data.promoPictures.isNotEmpty()) {
+                    loadImage(
+                        imageUrl = data.promoPictures[0],
+                        imageView = itemDashboardPromoImageView,
+                        context = itemView.context
+                    )
+                } else {
+                    itemDashboardPromoImageView.setImageResource(R.drawable.image_empty)
+                }
+
+                // For history, always show the user layout with token
+                if (!data.tokenCode.isNullOrEmpty()) {
+                    layoutUser.visibility = View.VISIBLE
+                    itemDashboardPromoCode.text = data.tokenCode
+                    itemDashboardPromoExpiryTime.text = data.activationDate
+                } else {
+                    layoutUser.visibility = View.GONE
+                }
+
+                root.setOnClickListener {
+                    onItemClickCallback?.onItemClickedHistory(data)
+                }
+            }
+        }
     }
 
     fun loadImage(imageUrl: String, imageView: ImageView, context: Context) {
@@ -168,7 +214,8 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(data: PromoDomain)
+        fun onItemClicked(data: PromoDomain){}
+        fun onItemClickedHistory(data: PromoHistoryDomain) {}
     }
 
     companion object {

@@ -79,4 +79,5 @@
             tools:listitem="@layout/item_filter_chip" />
     </LinearLayout>
 
+
 </LinearLayout>

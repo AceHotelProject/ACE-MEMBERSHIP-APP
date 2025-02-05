@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.BottomSheetFilterBinding
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PromoFilterBottomSheet : BottomSheetDialogFragment() {
@@ -28,14 +30,16 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private lateinit var statusAdapter: FilterChipAdapter
     private lateinit var categoryAdapter: FilterChipAdapter
 
-    private val dates = listOf("All", "Hari Ini", "Bulan Ini", "Tahun Ini")
-    private val statuses = listOf("All", "active", "redeemed")
+    private val dates = listOf("Semua", "Hari Ini", "Bulan Ini", "Tahun Ini")
+    private val statuses = listOf("Semua", "active", "redeemed")
     private val categories = listOf(
-        "All", "Hotel", "Penginapan", "Market", "Restoran",
+        "Semua", "Hotel", "Penginapan", "Market", "Restoran",
         "Hiburan", "Sekolah", "Kesehatan", "Pariwisata", "Gym"
     )
 
     private var onFilterSelected: ((FilterType, String) -> Unit)? = null
+
+    private var isFromHistory = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +47,7 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetFilterBinding.inflate(inflater, container, false)
+        isFromHistory = arguments?.getBoolean("isFromHistory") ?: false
         return binding.root
     }
 
@@ -63,50 +68,109 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupFiltersByRole(userRole: UserRole) {
         when (userRole) {
-            UserRole.ADMIN, UserRole.RECEPTIONIST, UserRole.MITRA -> {
-                // Show all filters for staff roles
+            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
                 binding.apply {
-                    // Show date filter section
-                    tvDateFilter.visibility = View.VISIBLE
-                    filterRecyclerviewDate.visibility = View.VISIBLE
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
 
-                    // Show status filter section
-                    tvStatusFilter.visibility = View.VISIBLE
-                    filterRecyclerviewStatus.visibility = View.VISIBLE
+                        // valid (Admin, Mitra) & draft (Receptionist)
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
 
-                    // Show category filter section
-                    tvCategoryFilter.visibility = View.VISIBLE
-                    filterRecyclerviewCategory.visibility = View.VISIBLE
+                        tvCategoryFilter.visibility = View.GONE
+                        filterRecyclerviewCategory.visibility = View.GONE
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+
+                        // Status valid
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    }
                 }
                 setupRecyclerViews(showStatusFilter = true)
             }
 
             UserRole.MEMBER, UserRole.NONMEMBER -> {
-                // Show limited filters for non-staff roles
                 binding.apply {
-                    // Show date filter section
-                    tvDateFilter.visibility = View.VISIBLE
-                    filterRecyclerviewDate.visibility = View.VISIBLE
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
 
-                    // Hide status filter section
-                    tvStatusFilter.visibility = View.GONE
-                    filterRecyclerviewStatus.visibility = View.GONE
+                        // redeemed (member) & no status (nonmember)
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
 
-                    // Show category filter section
-                    tvCategoryFilter.visibility = View.VISIBLE
-                    filterRecyclerviewCategory.visibility = View.VISIBLE
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+
+                        // Status valid
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    }
                 }
                 setupRecyclerViews(showStatusFilter = false)
             }
             UserRole.UNDEFINED -> {
-                // Handle undefined role - bisa menggunakan default behavior seperti NONMEMBER
+                // Same as Member & NonMember
                 binding.apply {
-                    tvDateFilter.visibility = View.GONE
-                    filterRecyclerviewDate.visibility = View.GONE
-                    tvStatusFilter.visibility = View.GONE
-                    filterRecyclerviewStatus.visibility = View.GONE
-                    tvCategoryFilter.visibility = View.GONE
-                    filterRecyclerviewCategory.visibility = View.GONE
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
+
+                        // redeemed (member) & no status (nonmember)
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+
+                        // Status valid
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    }
+                }
+                setupRecyclerViews(showStatusFilter = false)
+            }
+            UserRole.USER -> {
+                binding.apply {
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
+
+                        // redeemed (member) & no status (nonmember)
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+
+                        // Status valid
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    }
                 }
                 setupRecyclerViews(showStatusFilter = false)
             }
@@ -125,16 +189,17 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private fun setupDateFilter() {
         dateAdapter = FilterChipAdapter { selectedDate ->
             onFilterSelected?.invoke(FilterType.DATE, selectedDate)
-            // Simpan posisi saat item dipilih
             viewModel.setDatePosition(dateAdapter.getSelectedPosition())
         }
         binding.filterRecyclerviewDate.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+                justifyContent = JustifyContent.FLEX_START
+            }
             adapter = dateAdapter
             dateAdapter.submitList(dates)
         }
-
-        // Terapkan posisi yang tersimpan setelah list di-submit
         viewModel.selectedDatePosition.value.let { position ->
             dateAdapter.setSelectedPosition(position)
         }
@@ -143,16 +208,17 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private fun setupStatusFilter() {
         statusAdapter = FilterChipAdapter { selectedStatus ->
             onFilterSelected?.invoke(FilterType.STATUS, selectedStatus)
-            // Simpan posisi saat item dipilih
             viewModel.setStatusPosition(statusAdapter.getSelectedPosition())
         }
         binding.filterRecyclerviewStatus.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+                justifyContent = JustifyContent.FLEX_START
+            }
             adapter = statusAdapter
             statusAdapter.submitList(statuses)
         }
-
-        // Terapkan posisi yang tersimpan setelah list di-submit
         viewModel.selectedStatusPosition.value.let { position ->
             statusAdapter.setSelectedPosition(position)
         }
@@ -161,16 +227,17 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private fun setupCategoryFilter() {
         categoryAdapter = FilterChipAdapter { selectedCategory ->
             onFilterSelected?.invoke(FilterType.CATEGORY, selectedCategory)
-            // Simpan posisi saat item dipilih
             viewModel.setCategoryPosition(categoryAdapter.getSelectedPosition())
         }
         binding.filterRecyclerviewCategory.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+                justifyContent = JustifyContent.FLEX_START
+            }
             adapter = categoryAdapter
             categoryAdapter.submitList(categories)
         }
-
-        // Terapkan posisi yang tersimpan setelah list di-submit
         viewModel.selectedCategoryPosition.value.let { position ->
             categoryAdapter.setSelectedPosition(position)
         }
