@@ -25,13 +25,7 @@ import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdR
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
-import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
-import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
-import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest

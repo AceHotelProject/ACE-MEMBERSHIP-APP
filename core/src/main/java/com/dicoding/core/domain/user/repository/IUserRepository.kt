@@ -28,18 +28,15 @@ interface IUserRepository {
         name: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null,
-        memberType: String? = null
+        address: String? = null
     ): Flow<Resource<User>>
 
     fun completeUserData(
         id: String,
-        name: String? = null,
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null,
-        memberType: String? = null
+        address: String? = null
     ): Flow<Resource<User>>
 
     fun getUserByPhone(phone: String): Flow<Resource<User>>

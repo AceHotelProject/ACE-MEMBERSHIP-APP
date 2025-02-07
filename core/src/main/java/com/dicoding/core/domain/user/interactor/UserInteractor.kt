@@ -54,8 +54,7 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
             name = name,
             citizenNumber = citizenNumber,
             phone = phone,
-            address = address,
-            memberType = memberType
+            address = address
         )
     }
 
@@ -70,12 +69,10 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
     ): Flow<Resource<User>> {
         return userRepository.completeUserData(
             id = id,
-            name = name,
             pathKTP = pathKTP,
             citizenNumber = citizenNumber,
             phone = phone,
-            address = address,
-            memberType = memberType
+            address = address
         )
     }
 

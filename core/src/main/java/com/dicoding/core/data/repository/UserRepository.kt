@@ -81,8 +81,7 @@ class UserRepository @Inject constructor(
         name: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?,
-        memberType: String?
+        address: String?
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
@@ -96,8 +95,7 @@ class UserRepository @Inject constructor(
                     name = name,
                     citizenNumber = citizenNumber,
                     phone = phone,
-                    address = address,
-                    memberType = memberType
+                    address = address
                 )
             }
         }.asFlow()
@@ -105,12 +103,10 @@ class UserRepository @Inject constructor(
 
     override fun completeUserData(
         id: String,
-        name: String?,
         pathKTP: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?,
-        memberType: String?
+        address: String?
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
@@ -120,12 +116,10 @@ class UserRepository @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
                 return remoteDataSource.completeUserData(
                     id = id,
-                    name = name,
                     pathKTP = pathKTP,
                     citizenNumber = citizenNumber,
                     phone = phone,
-                    address = address,
-                    memberType = memberType
+                    address = address
                 )
             }
         }.asFlow()
