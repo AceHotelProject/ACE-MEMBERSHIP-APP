@@ -12,6 +12,7 @@ import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantReq
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
+import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
@@ -26,17 +27,22 @@ import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.HTTP
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ApiService {
 
@@ -73,14 +79,16 @@ interface ApiService {
     @POST("v1/auth/login")
     suspend fun login(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("androidId") androidId: String
     ): LoginResponse
 
     @FormUrlEncoded
     @POST("v1/auth/register")
     suspend fun register(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("androidId") androidId: String
     ): RegisterResponse
 
     @POST("v1/auth/send-otp")
@@ -172,20 +180,17 @@ interface ApiService {
         @Field("name") name: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null,
-        @Field("memberType") memberType: String? = null
+        @Field("address") address: String? = null
     ): UserResponse
 
     @PATCH("v1/users/{id}/complete-data")
     @FormUrlEncoded
     suspend fun completeUserData(
         @Path("id") id: String,
-        @Field("name") name: String? = null,
         @Field("pathKTP") pathKTP: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null,
-        @Field("memberType") memberType: String? = null
+        @Field("address") address: String? = null
     ): UserResponse
 
     @DELETE("v1/users/{id}")
@@ -233,39 +238,32 @@ interface ApiService {
         @Path("id") id: String
     ): Unit
 
-    // Promo
+    ////////////////////////////////////////////// Promo
     @FormUrlEncoded
     @POST("v1/promos")
     suspend fun createPromo(
         @Field("name") name: String,
-        @Field("token") token: String,
         @Field("category") category: String,
         @Field("detail") detail: String,
-        @Field("pictures") pictures: List<String>,
-        @Field("tnc") tnc: List<String>,
+        @Field("pictures[]") pictures: List<String>?,
+        @Field("tnc[]") tnc: List<String>,
         @Field("start_date") startDate: String,
         @Field("end_date") endDate: String,
         @Field("member_type") memberType: String,
-        @Field("merchant") merchant: String,
         @Field("maximal_use") maximalUse: Int,
-        @Field("used") used: Int,
-        @Field("is_active") isActive: Boolean
     ): CreatePromoResponse
-
-    @GET("v1/promos")
-    suspend fun getPromos(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10
-    ): GetPromoResponse
-
-    @GET("v1/promos")
-    suspend fun getProposalPromos(): GetPromoResponse
 
     @PATCH("v1/promos/manage/{id}")
     suspend fun editPromo(
         @Path("id") id: String,
         @Body request: EditPromoRequest
     ): EditPromoResponse
+
+    @GET("v1/promos")
+    suspend fun getPromos(@QueryMap queryMap: Map<String, String>): GetPromoResponse
+
+    @GET("v1/promos")
+    suspend fun getProposalPromos(): GetPromoResponse
 
     @DELETE("v1/promos/manage/{id}")
     suspend fun deletePromo(
@@ -288,12 +286,9 @@ interface ApiService {
     ): Response<Unit>
 
     @GET("v1/promos/history")
-    suspend fun getPromoHistory(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
-    ): GetPromoHistoryResponse
+    suspend fun getPromoHistory(@QueryMap queryMap: Map<String, String>): GetPromoHistoryResponse
 
-    // Merchants
+    ////////////////////////////////////////////// Merchants
     @POST("v1/merchants")
     suspend fun createMerchant(
         @Body request: CreateMerchantRequest
@@ -313,7 +308,7 @@ interface ApiService {
     @PATCH("v1/merchants/{id}")
     suspend fun updateMerchant(
         @Path("id") id: String,
-        @Body request: CreateMerchantRequest
+        @Body request: MerchantData
     ): UpdateMerchantResponse
 
     @DELETE("v1/merchants/{id}")
@@ -321,7 +316,12 @@ interface ApiService {
         @Path("id") id: String
     ): Response<Unit>
 
-    // Mitra
+    ////////////////////////////////////////////// File
+    @Multipart
+    @POST("v1/files/upload")
+    suspend fun uploadFile(
+        @Part file: MultipartBody.Part
+    ): Response<List<String>>
 
     // Discount and Promotion
 
@@ -335,6 +335,9 @@ interface ApiService {
         @Field("amount") amount: Int,
         @Field("notes") notes: String
     ): PointHistoryResponseItem
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "v1/files/delete", hasBody = true)
+    suspend fun deleteFile(@Field("fileId") fileId: String): Response<Unit>
 
     @GET("v1/points/{userId}")
     suspend fun getUserPoints(

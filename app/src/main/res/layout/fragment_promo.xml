@@ -49,7 +49,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_promo"
@@ -66,67 +66,95 @@
         app:layout_constraintTop_toBottomOf="@+id/rv_promo_category" />
 
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView2"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_promo_category">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:orientation="vertical">
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/promo_view_pager"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="24dp"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:visibility="visible"/>
-            <TextView
-                android:id="@+id/tv_ajuan_promo"
-                style="@style/textStyleMedium_16"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="Ajuan Promo"
-                android:layout_marginBottom="8dp"/>
+                android:orientation="vertical">
+                <!-- Content remains the same -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/promo_view_pager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:visibility="visible"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_ajuan_promo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_dashboard_promo" />
+                <TextView
+                    android:id="@+id/tv_ajuan_promo"
+                    style="@style/textStyleMedium_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:text="Ajuan Promo"
+                    android:layout_marginBottom="8dp"/>
 
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/tv_promo_mitra"
-                style="@style/textStyleMedium_16"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Promo Mitra"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="8dp"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_ajuan_promo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/item_dashboard_promo" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_promo_mitra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                tools:itemCount="4"
-                android:orientation="vertical"
-                tools:listitem="@layout/item_dashboard_promo"/>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/tv_tidak_ada_riwayat_ajuan"
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:text="Tidak Ada Promo"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:visibility="visible"
+                    android:id="@+id/tv_promo_mitra"
+                    style="@style/textStyleMedium_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Promo Mitra"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_promo_mitra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:itemCount="1"
+                    android:orientation="vertical"
+                    tools:listitem="@layout/item_dashboard_promo"/>
+
+                <TextView
+                    android:id="@+id/tv_tidak_ada_riwayat_mitra"
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:text="Tidak Ada Promo"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -138,4 +166,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

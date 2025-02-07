@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 interface IPromoRepository {
     fun createPromo(
         name: String,
-        token: String,
         category: String,
         detail: String,
         pictures: List<String>,
@@ -21,13 +20,14 @@ interface IPromoRepository {
         startDate: String,
         endDate: String,
         memberType: String,
-        merchantId: String,
         maximalUse: Int,
-        used: Int,
-        isActive: Boolean
     ): Flow<Resource<PromoDomain>>
 
-    fun getPromos(): Flow<PagingData<PromoDomain>>
+    fun getPromos(
+        category: String,
+        status: String,
+        name: String
+    ): Flow<PagingData<PromoDomain>>
 
     fun getProposalPromos(): Flow<Resource<GetPromosDomain>>
 
@@ -53,5 +53,9 @@ interface IPromoRepository {
 
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 
-    fun getPromoHistory(): Flow<PagingData<PromoHistoryDomain>>
+    fun getPromoHistory(
+        promoName: String,
+        promoCategory: String,
+        status: String
+    ): Flow<PagingData<PromoHistoryDomain>>
 }

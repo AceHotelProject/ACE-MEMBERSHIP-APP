@@ -5,8 +5,22 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class GetMerchantsByIdResponse(
+data class User(
+	@field:SerializedName("name")
+	val name: String? = null,
 
+	@field:SerializedName("email")
+	val email: String? = null,
+
+	@field:SerializedName("phone")
+	val phone: String? = null,
+
+	@field:SerializedName("id")
+	val id: String? = null
+) : Parcelable
+
+@Parcelize
+data class GetMerchantsByIdResponse(
 	@field:SerializedName("createdAt")
 	val createdAt: String? = null,
 
@@ -23,7 +37,7 @@ data class GetMerchantsByIdResponse(
 	val id: String? = null,
 
 	@field:SerializedName("userId")
-	val userId: List<String?>? = null,
+	val userId: List<User?>? = null,
 
 	@field:SerializedName("merchantType")
 	val merchantType: String? = null,

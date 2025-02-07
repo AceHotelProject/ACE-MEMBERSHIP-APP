@@ -41,8 +41,8 @@ class LoginViewModel @Inject constructor(
 
     fun getUser() = authUseCase.getUser().asLiveData()
 
-    fun login(email: String, password: String) =
-        authUseCase.login(email, password).asLiveData()
+    fun login(email: String, password: String, androidId: String) =
+        authUseCase.login(email, password, androidId).asLiveData()
 
     fun insertCacheUser(user: LoginDomain) = viewModelScope.launch {
         authUseCase.insertCacheUser(user)

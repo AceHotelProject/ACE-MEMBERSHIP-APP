@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/add_pegawai_title"
+        android:id="@+id/tv_title"
         style="@style/textStyleMedium_20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_pegawai_title">
+        app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,6 +110,44 @@
                     android:ems="10"
                     android:hint="Masukkan email owner"
                     android:inputType="text"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- No Telepon Owner -->
+            <TextView
+                android:id="@+id/add_pegawai_telepon_owner_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No Telepon Owner" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_telepon_owner"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_telepon_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nomor Owner"
+                    android:inputType="number"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"
                     android:textSize="14sp" />
@@ -273,6 +311,44 @@
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Nomor Telepon Resepsionis -->
+            <TextView
+                android:id="@+id/add_pegawai_telepon_resepsionis_title"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No Telepon Resepsionis" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_telepon_resepsionis"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:endIconTint="@color/dark_grey"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null"
+                app:errorIconTint="@color/red"
+                app:errorTextColor="@color/red"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_pegawai_telepon_resepsionis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edit_text"
+                    android:drawablePadding="12sp"
+                    android:ems="10"
+                    android:hint="Masukkan nomor Resepsionis"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:textColorHint="@color/dark_grey"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Kata Sandi Resepsionis -->
             <TextView
                 android:id="@+id/add_pegawai_kata_sandi_resepsionis_title"
@@ -371,6 +447,24 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <View
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/orange_100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

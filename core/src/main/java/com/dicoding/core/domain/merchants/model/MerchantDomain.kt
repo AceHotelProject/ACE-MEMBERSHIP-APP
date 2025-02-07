@@ -89,10 +89,18 @@ data class MerchantResultDomain(
     val picturesUrl: List<String>,
     val detail: String,
     val id: String,
-    val userId: List<String>,
+    val userId: List<UserIdDomain>,
     val merchantType: String,
     val point: Int,
     val refferalPoint: Int
+) : Parcelable
+
+@Parcelize
+data class UserIdDomain(
+    val phone: String,
+    val name: String,
+    val id: String,
+    val email: String
 ) : Parcelable
 
 @Parcelize
@@ -102,11 +110,19 @@ data class GetMerchantByIdDomain(
     val picturesUrl: List<String>,
     val detail: String,
     val id: String,
-    val userId: List<String>,
+    val userId: List<MerchantUser>, // Diubah dari List<String>
     val merchantType: String,
     val point: Int,
     val refferalPoint: Int
 ) : Parcelable
+
+@Parcelize
+data class MerchantUser(
+    val name: String,
+    val email: String,
+    val phone: String,
+    val id: String
+): Parcelable
 
 @Parcelize
 data class UpdateMerchantDomain(
@@ -115,7 +131,7 @@ data class UpdateMerchantDomain(
     val picturesUrl: List<String>,
     val detail: String,
     val id: String,
-    val userId: List<String>,
+    val userId: List<MerchantUser>,
     val merchantType: String,
     val point: Int,
     val refferalPoint: Int

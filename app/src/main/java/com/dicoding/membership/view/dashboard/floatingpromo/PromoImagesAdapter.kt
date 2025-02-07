@@ -12,9 +12,19 @@ import com.dicoding.membership.databinding.ItemMultipleImageUploadBinding
 class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHolder>() {
     private val images = mutableListOf<Uri>()
 
+    fun getCurrentImages(): List<Uri> = images.toList()
+
     fun addImage(uri: Uri) {
         images.add(uri)
         notifyItemInserted(images.size - 1)
+    }
+
+    fun removeImage(position: Int) {
+        if (position in 0 until images.size) {
+            images.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, images.size)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -33,9 +43,12 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
     inner class ImageViewHolder(private val binding: ItemMultipleImageUploadBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private fun String.decodeUrl(): String {
+            return this.replace("\\u003d", "=").replace("\\u0026", "&")
+        }
+
         fun bind(uri: Uri) {
             when {
-                // Handle content:// atau file:// URI
                 uri.scheme == "content" || uri.scheme == "file" -> {
                     Glide.with(itemView.context)
                         .load(uri)
@@ -43,7 +56,6 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
                         .error(R.drawable.image_empty)
                         .into(binding.ivPromo)
                 }
-                // Handle remote URL (http:// atau https://)
                 uri.toString().startsWith("http") -> {
                     Glide.with(itemView.context)
                         .load(uri.toString())
@@ -51,7 +63,6 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
                         .error(R.drawable.image_empty)
                         .into(binding.ivPromo)
                 }
-                // Fallback untuk kasus lainnya
                 else -> {
                     Glide.with(itemView.context)
                         .load(uri)
@@ -64,13 +75,26 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
             binding.tvRemove.setOnClickListener {
                 val pos = adapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
-                    images.removeAt(pos)
-                    notifyItemRemoved(pos)
-                    if (images.isEmpty()) {
-                        (itemView.context as? StaffAddPromoActivity)?.onImagesEmpty()
+                    val imageUri = images[pos]
+                    if (imageUri.toString().startsWith("https://firebasestorage.googleapis.com")) {
+                        (itemView.context as? StaffAddPromoActivity)?.let { activity ->
+                            activity.deleteImage(imageUri.toString().decodeUrl(), pos)
+                        }
                     } else {
-                        (itemView.context as? StaffAddPromoActivity)?.updateDotsAfterDeletion()
+                        removeImage(pos)
+                        handleEmptyState()
                     }
+                }
+            }
+        }
+        private fun handleEmptyState() {
+            (itemView.context as? StaffAddPromoActivity)?.let { activity ->
+                if (images.isEmpty()) {
+                    activity.onImagesEmpty()
+                } else {
+                    activity.selectedImages.clear()
+                    activity.selectedImages.addAll(images)
+                    activity.updateDotsAfterDeletion()
                 }
             }
         }

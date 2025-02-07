@@ -5,7 +5,6 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
-import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -14,11 +13,11 @@ class AuthInteractor @Inject constructor(
     private val authRepository: AuthRepository
 ) : AuthUseCase {
 
-    override fun register(email: String, password: String): Flow<Resource<RegisterDomain>> =
-        authRepository.register(email, password)
+    override fun register(email: String, password: String, androidId: String): Flow<Resource<RegisterDomain>> =
+        authRepository.register(email, password, androidId)
 
-    override fun login(email: String, password: String): Flow<Resource<LoginDomain>> =
-        authRepository.login(email, password)
+    override fun login(email: String, password: String, androidId: String): Flow<Resource<LoginDomain>> =
+        authRepository.login(email, password, androidId)
 
     override fun getUser(): Flow<LoginDomain> = authRepository.getUser()
 
@@ -32,9 +31,15 @@ class AuthInteractor @Inject constructor(
     override fun saveRefreshToken(token: String): Flow<Boolean> =
         authRepository.saveRefreshToken(token)
 
+    override fun saveMerchantId(id: String): Flow<Boolean> =
+        authRepository.saveMerchantId(id)
+
+
     override fun getAccessToken(): Flow<String> = authRepository.getAccessToken()
 
     override fun getRefreshToken(): Flow<String> = authRepository.getRefreshToken()
+
+    override fun getMerchantId(): Flow<String> = authRepository.getMerchantId()
 
     override suspend fun deleteAllData() = authRepository.deleteAllData()
 

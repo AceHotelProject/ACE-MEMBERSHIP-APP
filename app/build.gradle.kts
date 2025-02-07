@@ -102,6 +102,9 @@ dependencies {
     // Swipe
     implementation(libs.androidx.swiperefreshlayout)
 
+    // Chip
+    implementation(libs.flexbox)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

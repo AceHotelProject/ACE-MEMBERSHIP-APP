@@ -31,6 +31,7 @@ featureDeliveryKtx = "2.1.0"
 timber = "5.0.1"
 swiperefreshlayout = "1.1.0"
 threetenabp = "1.4.4"
+flexbox = "3.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -74,7 +75,7 @@ floating-action-button = { group = "com.github.clans", name = "fab", version = "
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threetenabp" }
-
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

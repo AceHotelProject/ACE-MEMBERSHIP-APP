@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class PromoHistoryPagingSource @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val promoName: String = "",
+    private val promoCategory: String = "",
+    private val status: String = ""
 ) : PagingSource<Int, PromoHistoryDomain>() {
 
     override fun getRefreshKey(state: PagingState<Int, PromoHistoryDomain>): Int? {
@@ -24,9 +27,18 @@ class PromoHistoryPagingSource @Inject constructor(
         return try {
             val position = params.key ?: START_PAGE_INDEX
 
+            val filterParams = mutableMapOf<String, String>().apply {
+                promoName.takeIf { it.isNotEmpty() }?.let { this["promo_name"] = it }
+                promoCategory.takeIf { it.isNotEmpty() }?.let { this["promo_category"] = it }
+                status.takeIf { it.isNotEmpty() }?.let { this["status"] = it }
+            }
+
             val response = remoteDataSource.getPromoHistory(
                 page = position,
-                limit = params.loadSize
+                limit = params.loadSize,
+                promoName = filterParams["promo_name"] ?: "",
+                promoCategory = filterParams["promo_category"] ?: "",
+                status = filterParams["status"] ?: ""
             ).first()
 
             when (response) {

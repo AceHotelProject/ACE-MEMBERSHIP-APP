@@ -25,11 +25,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
-import com.dicoding.core.utils.ImageUtils
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityAdminAddPromoBinding
 import com.dicoding.membership.view.dashboard.MainActivity
@@ -38,6 +38,9 @@ import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.status.StatusTemplate
 import com.dicoding.membership.view.status.StatusTemplateActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -55,7 +58,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
     private lateinit var promoImagesAdapter: PromoImagesAdapter
 
-    private val selectedImages = mutableListOf<Uri>()
+    val selectedImages = mutableListOf<Uri>()
 
     private var isEditMode = false
 
@@ -237,7 +240,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
     }
 
     private fun setupCategoryPromoDropdown() {
-        val categoryPromoOptions = arrayOf("Discount", "Buy One Get One", "Cashback", "Flash Sale", "Bundle Offer")
+        val categoryPromoOptions = arrayOf("Hotel", "Penginapan", "Market", "Restoran", "Hiburan", "Sekolah", "Kesehatan", "Pariwisata", "Gym")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categoryPromoOptions)
         binding.acCategoryPromo.setAdapter(adapter)
     }
@@ -469,7 +472,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             if (syaratketentuan.isEmpty()) {
                 edSyaratKetentuan.error = "Syarat ketentuan tidak boleh kosong"
-            } else if (tncCount < 2) { // Pindahkan pengecekan ini ke urutan kedua
+            } else if (tncCount < 1) { // Pindahkan pengecekan ini ke urutan kedua
                 edSyaratKetentuan.error = "Minimal 2 syarat ketentuan (pisahkan dengan ;)"
             } else if (syaratketentuan.length > 200) {
                 edSyaratKetentuan.error = "Syarat ketentuan maksimal 200 karakter"
@@ -584,7 +587,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         deskripsipromo.length <= 200 &&
                         syaratketentuan.isNotEmpty() &&
                         syaratketentuan.length <= 200 &&
-                        tncCount >= 2 && // Tambahkan ini
+                        tncCount >= 1 && // Tambahkan ini
                         maxuse.isNotEmpty() &&
                         startDate.isNotEmpty() &&
                         endDate.isNotEmpty() &&
@@ -597,36 +600,87 @@ class StaffAddPromoActivity : AppCompatActivity() {
     }
 
 //    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-        if (data?.clipData != null) {
-            // Handle multiple images
-            val count = data.clipData!!.itemCount
-            for (i in 0 until count) {
-                val sourceUri = data.clipData!!.getItemAt(i).uri
-                val destinationUri = ImageUtils.copyImageToUri(this, sourceUri)
-                if (destinationUri != null) {
-                    selectedImages.add(destinationUri)
-                    promoImagesAdapter.addImage(destinationUri)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let { intent ->
+                if (intent.clipData != null) {
+                    val count = intent.clipData!!.itemCount
+                    for (i in 0 until count) {
+                        val uri = intent.clipData!!.getItemAt(i).uri
+                        handleImageUpload(uri)
+                    }
+                } else if (intent.data != null) {
+                    handleImageUpload(intent.data!!)
                 }
             }
-            isImageSelected = selectedImages.isNotEmpty()
-            updateImageViews()
-        } else if (data?.data != null) {
-            // Handle single image
-            val sourceUri = data.data!!
-            val destinationUri = ImageUtils.copyImageToUri(this, sourceUri)
-            if (destinationUri != null) {
-                selectedImages.add(destinationUri)
-                promoImagesAdapter.addImage(destinationUri)
-                isImageSelected = true
-                updateImageViews()
-            }
         }
-        checkForms()
     }
-}
+
+    private fun handleImageUpload(uri: Uri) {
+        lifecycleScope.launch {
+            staffAddPromoViewModel.uploadFile(uri, this@StaffAddPromoActivity)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let { upload ->
+                                selectedImages.add(Uri.parse(upload.fileUrl))
+                                promoImagesAdapter.addImage(Uri.parse(upload.fileUrl))
+                                isImageSelected = true
+                                updateImageViews()
+                                checkForms()
+                            }
+                            hideLoading()
+                        }
+                        is Resource.Loading -> showLoading()
+                        is Resource.Error -> {
+                            hideLoading()
+                            showToast("Upload failed: ${result.message}")
+                        }
+                        else -> hideLoading()
+                    }
+                }
+        }
+    }
+
+    private fun String.normalizeUrl(): String {
+        return this.replace("\\u003d", "=").replace("\\u0026", "&")
+    }
+
+    fun deleteImage(fileUrl: String, position: Int) {
+        val normalizedUrl = fileUrl.normalizeUrl()
+        staffAddPromoViewModel.deleteFile(normalizedUrl).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Log.d("ImageDelete", "Delete successful")
+                    promoImagesAdapter.removeImage(position)
+                    selectedImages.removeAt(position) // Add this line
+
+                    Log.d("ImageDelete", "Selected images count: ${selectedImages.size}")
+                    Log.d("ImageDelete", "Adapter images count: ${promoImagesAdapter.getCurrentImages().size}")
+
+                    if (selectedImages.isEmpty()) {
+                        Log.d("ImageDelete", "No images left, showing placeholder")
+                        onImagesEmpty()
+                    } else {
+                        Log.d("ImageDelete", "Images remaining, updating dots")
+                        updateDotsAfterDeletion()
+                    }
+                    hideLoading()
+                }
+                is Resource.Loading -> {
+                    Log.d("ImageDelete", "Delete in progress...")
+                    showLoading()
+                }
+                is Resource.Error -> {
+                    Log.e("ImageDelete", "Delete failed: ${result.message}")
+                    hideLoading()
+                    showToast("Failed to delete image: ${result.message}")
+                }
+                else -> hideLoading()
+            }
+        }.launchIn(lifecycleScope)
+    }
 
     private fun updateImageViews() {
         binding.apply {
@@ -697,16 +751,13 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                 isoFormat.format(it)
             } ?: throw Exception("Invalid end date")
 
-            val imageUris = selectedImages.mapNotNull { sourceUri ->
-                ImageUtils.copyImageToUri(this, sourceUri)?.toString()
-            }
+            val imageUris = selectedImages.mapNotNull { it.toString() }
 
             // Get token and create promo
             staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
                 if (token.isNotEmpty()) {
                     staffAddPromoViewModel.createPromo(
                         name = name,
-                        token = "647f4a1e8a5c3f9b9fef5678", // Will be set by backend
                         category = category,
                         detail = description,
                         pictures = imageUris, // Will be handled separately
@@ -714,10 +765,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                         startDate = startDate,
                         endDate = endDate,
                         memberType = memberType,
-                        merchantId = "648f5a2b9a6d4e0c9bef6789", // Will be set by backend
                         maximalUse = maxUse,
-                        used = 0, // Will be set by backend
-                        isActive = false // Will be set by backend
                     ).observe(this) { result ->
                         when(result) {
                             is Resource.Success -> {
@@ -838,7 +886,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                             if (tncInput.isNotEmpty()) 1 else 0
                         }
 
-                        if (tncCount < 2) {
+                        if (tncCount < 1) {
                             message += "\n- Minimal harus ada 2 syarat dan ketentuan (pisahkan dengan ;)"
                         }
 
@@ -886,7 +934,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
     private fun hideLoading() {
         binding.apply {
-            btnSimpan.isEnabled = true
+            btnSimpan.isEnabled = false
+            progressBar.visibility = View.GONE
+            loadingOverlay.visibility = View.GONE
             // Add progress bar visibility if you have one
             // progressBar.visibility = View.GONE
         }
@@ -986,14 +1036,6 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         }
     }
 
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 123
-        private const val IMAGE_PICK_CODE = 1000
-        const val EXTRA_IS_EDIT = "extra_is_edit"
-        const val EXTRA_PROMO_ID = "extra_promo_id"
-        const val EXTRA_PROMO_DATA = "extra_promo_data"
-    }
-
     private fun loadExistingPromoData(promo: PromoDomain) {
         binding.apply {
             // Text inputs
@@ -1014,7 +1056,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
             }
 
             // Setup category dropdown dengan nilai default
-            val categoryPromoOptions = arrayOf("Discount", "Buy One Get One", "Cashback", "Flash Sale", "Bundle Offer")
+            val categoryPromoOptions = arrayOf("Hotel", "Penginapan", "Market", "Restoran", "Hiburan", "Sekolah", "Kesehatan", "Pariwisata", "Gym")
             val categoryAdapter = ArrayAdapter(this@StaffAddPromoActivity,
                 android.R.layout.simple_dropdown_item_1line, categoryPromoOptions)
             acCategoryPromo.apply {
@@ -1052,19 +1094,6 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                 }
                 setupDotIndicators()
             }
-        }
-    }
-
-    private fun setupDateBinding(dateStr: String, editText: EditText) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val displayFormat = SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault())
-        try {
-            val date = dateFormat.parse(dateStr)
-            date?.let {
-                editText.setText(displayFormat.format(it))
-            }
-        } catch (e: Exception) {
-            Log.e("PromoEdit", "Error parsing date: $e")
         }
     }
 
@@ -1159,5 +1188,13 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
             showToast("Format tanggal tidak valid: ${e.message}")
             Log.e("EditPromo", "Date format error: ${e.message}")
         }
+    }
+
+    companion object {
+        const val PERMISSION_REQUEST_CODE = 123
+        private const val IMAGE_PICK_CODE = 1000
+        const val EXTRA_IS_EDIT = "extra_is_edit"
+        const val EXTRA_PROMO_ID = "extra_promo_id"
+        const val EXTRA_PROMO_DATA = "extra_promo_data"
     }
 }

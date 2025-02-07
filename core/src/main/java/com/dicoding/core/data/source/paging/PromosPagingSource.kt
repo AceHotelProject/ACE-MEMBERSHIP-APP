@@ -1,18 +1,20 @@
 package com.dicoding.core.data.source.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
-import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.datamapper.PromoDataMapper
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class PromosPagingSource @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val category: String = "",
+    private val status: String = "",
+    private val name: String = ""
 ) : PagingSource<Int, PromoDomain>() {
 
     override fun getRefreshKey(state: PagingState<Int, PromoDomain>): Int? {
@@ -26,10 +28,15 @@ class PromosPagingSource @Inject constructor(
         return try {
             val position = params.key ?: START_PAGE_INDEX
 
+            Log.d("PromosPagingSource", "Loading with category: $category")
+
             val response = remoteDataSource.getPromos(
                 page = position,
-                limit = params.loadSize
-            ).first() // Mengambil nilai pertama dari Flow
+                limit = params.loadSize,
+                category = category,
+                status = status,
+                name = name
+            ).first()
 
             when (response) {
                 is ApiResponse.Success -> {

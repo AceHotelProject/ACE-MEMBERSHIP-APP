@@ -59,26 +59,26 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    override fun register(email: String, password: String): Flow<Resource<RegisterDomain>> {
+    override fun register(email: String, password: String, androidId: String): Flow<Resource<RegisterDomain>> {
         return object : NetworkBoundResource<RegisterDomain, RegisterResponse>() {
             override suspend fun fetchFromApi(response: RegisterResponse): RegisterDomain {
                 return AuthDataMapper.mapRegisterResponseToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<RegisterResponse>> {
-                return remoteDataSource.register(email, password)
+                return remoteDataSource.register(email, password, androidId)
             }
         }.asFlow()
     }
 
-    override fun login(email: String, password: String): Flow<Resource<LoginDomain>> {
+    override fun login(email: String, password: String, androidId: String): Flow<Resource<LoginDomain>> {
         return object : NetworkBoundResource<LoginDomain, LoginResponse>() {
             override suspend fun fetchFromApi(response: LoginResponse): LoginDomain {
                 return AuthDataMapper.mapLoginResponseToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<LoginResponse>> {
-                return remoteDataSource.login(email, password)
+                return remoteDataSource.login(email, password, androidId)
             }
         }.asFlow()
     }
@@ -91,12 +91,20 @@ class AuthRepository @Inject constructor(
         return datastoreManager.saveRefreshToken(token)
     }
 
+    override fun saveMerchantId(id: String): Flow<Boolean> {
+        return datastoreManager.saveMerchantId(id)
+    }
+
     override fun getAccessToken(): Flow<String> {
         return datastoreManager.getAccessToken()
     }
 
     override fun getRefreshToken(): Flow<String> {
         return datastoreManager.getRefreshToken()
+    }
+
+    override fun getMerchantId(): Flow<String> {
+        return datastoreManager.getMerchantId()
     }
 
     override suspend fun deleteAllData() {

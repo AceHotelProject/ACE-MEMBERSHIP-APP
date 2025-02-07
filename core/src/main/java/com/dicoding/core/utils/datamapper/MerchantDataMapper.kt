@@ -12,9 +12,11 @@ import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantsDomain
 import com.dicoding.core.domain.merchants.model.MerchantDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
+import com.dicoding.core.domain.merchants.model.MerchantUser
 import com.dicoding.core.domain.merchants.model.OwnerDomain
 import com.dicoding.core.domain.merchants.model.ReceptionistDomain
 import com.dicoding.core.domain.merchants.model.UpdateMerchantDomain
+import com.dicoding.core.domain.merchants.model.UserIdDomain
 
 object MerchantDataMapper {
     fun mapCreateMerchantResponseToDomain(response: CreateMerchantResponse): CreateMerchantDomain {
@@ -29,24 +31,24 @@ object MerchantDataMapper {
         return OwnerDomain(
             role = owner?.role.orEmpty(),
             isPhoneVerified = owner?.isPhoneVerified ?: false,
-            address = owner?.address?.toString(),
-            subscriptionEndDate = owner?.subscriptionEndDate?.toString(),
+            address = owner?.address,
+            subscriptionEndDate = owner?.subscriptionEndDate,
             isNumberVerified = owner?.isNumberVerified ?: false,
             isEmailVerified = owner?.isEmailVerified ?: false,
             point = owner?.point ?: 0,
-            pathKTP = owner?.pathKTP?.toString(),
+            pathKTP = owner?.pathKTP,
             createdAt = owner?.createdAt.orEmpty(),
             isValidated = owner?.isValidated ?: false,
-            phone = owner?.phone?.toString(),
+            phone = owner?.phone,
             merchantId = owner?.merchantId.orEmpty(),
-            couponUsed = owner?.couponUsed?.filterNotNull()?.map { it.toString() } ?: emptyList(),
-            citizenNumber = owner?.citizenNumber?.toString(),
+            couponUsed = owner?.couponUsed?.map { it } ?: emptyList(),
+            citizenNumber = owner?.citizenNumber,
             name = owner?.name.orEmpty(),
-            memberType = owner?.memberType?.toString(),
+            memberType = owner?.memberType,
             id = owner?.id.orEmpty(),
-            subscriptionStartDate = owner?.subscriptionStartDate?.toString(),
+            subscriptionStartDate = owner?.subscriptionStartDate,
             email = owner?.email.orEmpty(),
-            androidId = owner?.androidId?.toString(),
+            androidId = owner?.androidId,
             refferalPoint = owner?.refferalPoint ?: 0
         )
     }
@@ -55,24 +57,24 @@ object MerchantDataMapper {
         return ReceptionistDomain(
             role = receptionist?.role.orEmpty(),
             isPhoneVerified = receptionist?.isPhoneVerified ?: false,
-            address = receptionist?.address?.toString(),
-            subscriptionEndDate = receptionist?.subscriptionEndDate?.toString(),
+            address = receptionist?.address,
+            subscriptionEndDate = receptionist?.subscriptionEndDate,
             isNumberVerified = receptionist?.isNumberVerified ?: false,
             isEmailVerified = receptionist?.isEmailVerified ?: false,
             point = receptionist?.point ?: 0,
-            pathKTP = receptionist?.pathKTP?.toString(),
+            pathKTP = receptionist?.pathKTP,
             createdAt = receptionist?.createdAt.orEmpty(),
             isValidated = receptionist?.isValidated ?: false,
-            phone = receptionist?.phone?.toString(),
+            phone = receptionist?.phone,
             merchantId = receptionist?.merchantId.orEmpty(),
-            couponUsed = receptionist?.couponUsed?.filterNotNull()?.map { it.toString() } ?: emptyList(),
-            citizenNumber = receptionist?.citizenNumber?.toString(),
+            couponUsed = receptionist?.couponUsed?.map { it } ?: emptyList(),
+            citizenNumber = receptionist?.citizenNumber,
             name = receptionist?.name.orEmpty(),
-            memberType = receptionist?.memberType?.toString(),
+            memberType = receptionist?.memberType,
             id = receptionist?.id.orEmpty(),
-            subscriptionStartDate = receptionist?.subscriptionStartDate?.toString(),
+            subscriptionStartDate = receptionist?.subscriptionStartDate,
             email = receptionist?.email.orEmpty(),
-            androidId = receptionist?.androidId?.toString(),
+            androidId = receptionist?.androidId,
             refferalPoint = receptionist?.refferalPoint ?: 0
         )
     }
@@ -81,10 +83,10 @@ object MerchantDataMapper {
         return MerchantDomain(
             createdAt = merchant?.createdAt.orEmpty(),
             name = merchant?.name.orEmpty(),
-            picturesUrl = merchant?.picturesUrl?.filterNotNull()?.map { it.toString() } ?: emptyList(),
+            picturesUrl = merchant?.picturesUrl?.map { it } ?: emptyList(),
             detail = merchant?.detail.orEmpty(),
             id = merchant?.id.orEmpty(),
-            userId = merchant?.userId?.filterNotNull() ?: emptyList(),
+            userId = merchant?.userId ?: emptyList(),
             merchantType = merchant?.merchantType.orEmpty(),
             point = merchant?.point ?: 0,
             refferalPoint = merchant?.refferalPoint ?: 0
@@ -101,10 +103,17 @@ object MerchantDataMapper {
                 MerchantResultDomain(
                     createdAt = result.createdAt.orEmpty(),
                     name = result.name.orEmpty(),
-                    picturesUrl = result.picturesUrl?.filterNotNull()?.map { it.toString() } ?: emptyList(),
+                    picturesUrl = result.picturesUrl?.filterNotNull()?.map { it } ?: emptyList(),
                     detail = result.detail.orEmpty(),
                     id = result.id.orEmpty(),
-                    userId = result.userId?.filterNotNull() ?: emptyList(),
+                    userId = result.userId?.filterNotNull()?.map { userId ->
+                        UserIdDomain(
+                            phone = userId.phone.orEmpty(),
+                            name = userId.name.orEmpty(),
+                            id = userId.id.orEmpty(),
+                            email = userId.email.orEmpty()
+                        )
+                    } ?: emptyList(),
                     merchantType = result.merchantType.orEmpty(),
                     point = result.point ?: 0,
                     refferalPoint = result.refferalPoint ?: 0
@@ -120,7 +129,14 @@ object MerchantDataMapper {
             picturesUrl = response.picturesUrl?.filterNotNull() ?: emptyList(),
             detail = response.detail.orEmpty(),
             id = response.id.orEmpty(),
-            userId = response.userId?.filterNotNull() ?: emptyList(),
+            userId = response.userId?.filterNotNull()?.map { user ->
+                MerchantUser(
+                    name = user.name.orEmpty(),
+                    email = user.email.orEmpty(),
+                    phone = user.phone.orEmpty(),
+                    id = user.id.orEmpty()
+                )
+            } ?: emptyList(),
             merchantType = response.merchantType.orEmpty(),
             point = response.point ?: 0,
             refferalPoint = response.refferalPoint ?: 0
@@ -131,10 +147,17 @@ object MerchantDataMapper {
         return UpdateMerchantDomain(
             createdAt = response.createdAt.orEmpty(),
             name = response.name.orEmpty(),
-            picturesUrl = response.picturesUrl?.filterNotNull()?.map { it.toString() } ?: emptyList(),
+            picturesUrl = response.picturesUrl?.filterNotNull()?.map { it } ?: emptyList(),
             detail = response.detail.orEmpty(),
             id = response.id.orEmpty(),
-            userId = response.userId?.filterNotNull() ?: emptyList(),
+            userId = response.userId?.filterNotNull()?.map { userIdItem ->
+                MerchantUser(
+                    phone = userIdItem.phone.orEmpty(),
+                    name = userIdItem.name.orEmpty(),
+                    id = userIdItem.id.orEmpty(),
+                    email = userIdItem.email.orEmpty()
+                )
+            } ?: emptyList(),
             merchantType = response.merchantType.orEmpty(),
             point = response.point ?: 0,
             refferalPoint = response.refferalPoint ?: 0

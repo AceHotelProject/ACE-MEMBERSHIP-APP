@@ -13,19 +13,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentPromoBinding
-import com.dicoding.membership.view.dashboard.history.historysearch.HistorySearchActivity
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,6 +33,8 @@ class PromoFragment : Fragment() {
 
     private lateinit var ajuanPromoAdapter: PromoAdapter
     private lateinit var promoMitraAdapter: PromoAdapter
+
+    private lateinit var promoCategoryAdapter: PromoCategoryAdapter
 
     private val promoViewModel: PromoViewModel by viewModels()
 //    private lateinit var storyPagingAdapter: StoryPagingAdapter
@@ -53,6 +51,8 @@ class PromoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupSwipeRefresh()
+
         validateToken()
 
         checkUserRole()
@@ -68,6 +68,14 @@ class PromoFragment : Fragment() {
 //                storyPagingAdapter.submitData(pagingData)
 //            }
 //        }
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+            ajuanPromoAdapter.refresh()
+            promoMitraAdapter.refresh()
+        }
     }
 
     private fun setupRecyclerViews() {
@@ -105,8 +113,23 @@ class PromoFragment : Fragment() {
         }
 
         binding.buttonDashboardPromoSearch.setOnClickListener {
-            val intent = Intent(requireActivity(), HistorySearchActivity::class.java)
+            val intent = Intent(requireActivity(), PromoSearchActivity::class.java)
             startActivity(intent)
+        }
+
+        promoCategoryAdapter = PromoCategoryAdapter { category ->
+            Log.d("PromoFragment", "Category selected: $category")
+            viewModel.setCategory(category)
+            promoMitraAdapter.refresh()
+        }
+
+        binding.rvPromoCategory.apply {
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = promoCategoryAdapter
         }
     }
 
@@ -120,84 +143,95 @@ class PromoFragment : Fragment() {
 
     private fun observePromos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // Menjalankan dua proses asinkron secara paralel
-            val proposalPromosDeferred = async {
-                viewModel.getProposalPromos().observe(viewLifecycleOwner) { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            hideLoading()
-                            result.data?.results?.let { promos ->
-                                Log.d("PromoFragment", "Original Proposal Promos size: ${promos.size}")
-                                promos.forEach { promo ->
-                                    Log.d("PromoFragment", "Promo: ${promo.name}, isActive: ${promo.isActive}")
-                                }
-
-                                // Filter hanya yang non-active
-                                val filteredPromos = promos.filter { it.status == "draft" }
-                                Log.d("PromoFragment", "Filtered Proposal Promos (non-active) size: ${filteredPromos.size}")
-                                filteredPromos.forEach { promo ->
-                                    Log.d("PromoFragment", "Filtered Promo: ${promo.name}, isActive: ${promo.isActive}")
-                                }
-
-                                ajuanPromoAdapter.submitList(filteredPromos)
-                                Log.d("PromoFragment", "Filtered list submitted to ajuan adapter")
-                            } ?: Log.d("PromoFragment", "Proposal Promos is null")
-                        }
-                        is Resource.Loading -> {
+            // LoadState observers
+            launch {
+                ajuanPromoAdapter.loadStateFlow.collect { loadState ->
+                    when (loadState.refresh) {
+                        is LoadState.Loading -> {
                             showLoading()
-                            Log.d("PromoFragment", "Proposal Promos Loading")
+                            binding.scrollView2.visibility = View.GONE
+                            binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                            Log.d("PromoFragment", "Ajuan Promo Loading")
                         }
-                        is Resource.Error -> {
+                        is LoadState.NotLoading -> {
                             hideLoading()
-                            showError(result.message)
-                            Log.e("PromoFragment", "Error: ${result.message}")
+                            binding.scrollView2.visibility = View.VISIBLE
+                            Log.d("PromoFragment", "Ajuan Promo Ready")
+
+                            // Check if adapter is empty
+                            if (ajuanPromoAdapter.itemCount == 0) {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.VISIBLE
+                                binding.rvPromoMitra.visibility = View.GONE
+                            } else {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                                binding.rvPromoMitra.visibility = View.VISIBLE
+                            }
+
+                            Log.d("PromoFragment", "Promo Ajuan Ready with ${ajuanPromoAdapter.itemCount} items")
                         }
-                        else -> {
+                        is LoadState.Error -> {
                             hideLoading()
-                            showError("Terjadi kesalahan")
-                            Log.e("PromoFragment", "Unknown error")
+                            binding.scrollView2.visibility = View.VISIBLE
+                            binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                            showError((loadState.refresh as LoadState.Error).error.message)
                         }
                     }
                 }
             }
 
-            val promosDeferred = async {
-                viewModel.getPromos().collectLatest { pagingData ->
-                    Log.d("PromoFragment", "Received paging data")
-                    // Filter paging data
-                    val filteredPagingData = pagingData.filter {
-                        Log.d("PromoFragment", "Checking promo: ${it.name}, isActive: ${it.isActive}")
-                        it.status == "active"
-                    }
-                    Log.d("PromoFragment", "Submitting filtered paging data to mitra adapter")
-                    promoMitraAdapter.submitData(filteredPagingData)
-                    // You can also observe the paging state here
-                    promoMitraAdapter.addLoadStateListener { loadState ->
-                        when (loadState.refresh) {
-                            is LoadState.Loading -> {
-                                showLoading() // Show loading spinner
-                                Log.d("PromoFragment", "Paging Loading")
+            launch {
+                promoMitraAdapter.loadStateFlow.collect { loadState ->
+                    when (loadState.refresh) {
+                        is LoadState.Loading -> {
+                            showLoading()
+                            binding.scrollView2.visibility = View.GONE
+                            binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+                            Log.d("PromoFragment", "Promo Mitra Loading")
+                        }
+                        is LoadState.NotLoading -> {
+                            hideLoading()
+                            binding.scrollView2.visibility = View.VISIBLE
+                            Log.d("PromoFragment", "Promo Mitra Ready")
+
+                            if (promoMitraAdapter.itemCount == 0) {
+                                binding.tvTidakAdaRiwayatMitra.visibility = View.VISIBLE
+                                binding.rvPromoMitra.visibility = View.GONE
+                            } else {
+                                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                                binding.rvPromoMitra.visibility = View.VISIBLE
                             }
-                            is LoadState.Error -> {
-                                hideLoading()
-                                showError((loadState.refresh as LoadState.Error).error.localizedMessage)
-                                Log.e("PromoFragment", "Paging Error")
-                            }
-                            is LoadState.NotLoading -> {
-                                hideLoading()
-                                Log.d("PromoFragment", "Paging Not Loading")
-                            }
+
+                            Log.d("PromoFragment", "Promo Mitra Ready with ${promoMitraAdapter.itemCount} items")
+                        }
+                        is LoadState.Error -> {
+                            hideLoading()
+                            binding.scrollView2.visibility = View.VISIBLE
+                            binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+                            showError((loadState.refresh as LoadState.Error).error.message)
                         }
                     }
                 }
             }
 
-            // Menunggu hingga kedua proses selesai
-            proposalPromosDeferred.await()
-            promosDeferred.await()
+            // Data collectors tetap sama
+            launch {
+                viewModel.getPromos(
+                    category = "", // Kosong untuk ajuan promo
+                    status = "draft", // Filter status draft langsung di API
+                    name = "" // Kosong karena tidak ada pencarian
+                ).collect { pagingData ->
+                    ajuanPromoAdapter.submitData(pagingData)
+                }
+            }
+
+            launch {
+                viewModel.promos.collect { pagingData ->
+                    promoMitraAdapter.submitData(pagingData)
+                }
+            }
+
         }
     }
-
 
     private fun validateToken() {
         promoViewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
@@ -236,6 +270,8 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.VISIBLE
                 binding.tvPromoMitra.visibility = View.VISIBLE
                 binding.rvPromoMitra.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
                 binding.rvPromoCategory.visibility = View.VISIBLE
@@ -243,6 +279,7 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.GONE
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
             }
             else -> {
                 binding.rvPromoCategory.visibility = View.GONE
@@ -250,6 +287,8 @@ class PromoFragment : Fragment() {
                 binding.rvAjuanPromo.visibility = View.GONE
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.GONE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
             }
         }
         setTextVisibilityBasedOnLoading(binding.progressBar.visibility == View.VISIBLE, userRole)

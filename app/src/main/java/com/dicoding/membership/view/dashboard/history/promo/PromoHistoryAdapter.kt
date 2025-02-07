@@ -2,9 +2,9 @@ package com.dicoding.membership.view.dashboard.history.promo
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +16,8 @@ import java.util.Locale
 import java.util.TimeZone
 
 class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAdapter.HistoryViewHolder>(DIFF_CALLBACK) {
+
+    var onItemClickCallback: OnItemClickCallback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val binding = ItemHistoryBinding.inflate(
@@ -32,29 +34,42 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bind(history: PromoHistoryDomain) {
             binding.apply {
                 Log.d("PromoHistoryAdapter", "Binding item: ${history.promoName}")
 
-                // Set promo title
                 tvPromoTitle.text = history.promoName
-
-                // Set category
                 tvRedCategory.apply {
                     text = history.promoCategory.lowercase()
                     setTextColor(ContextCompat.getColor(context, R.color.orange_100))
                     background.setTint(ContextCompat.getColor(context, R.color.orange_accent))
                 }
 
-                // Set member status visibility to GONE since we don't use it
-                tvColourStatus.visibility = View.GONE
+                tvColourStatus.apply {
+                    text = history.status
+                    when (history.status.lowercase()) {
+                        "active" -> {
+                            setTextColor(ContextCompat.getColor(context, R.color.green))
+                            background.setTint(ContextCompat.getColor(context, R.color.green_accent))
+                        }
+                        "redeemed" -> {
+                            setTextColor(ContextCompat.getColor(context, com.dicoding.core.R.color.red))
+                            val redAccentTransparent = ColorUtils.setAlphaComponent(
+                                ContextCompat.getColor(context, R.color.red),
+                                64
+                            )
+                            background.setTint(redAccentTransparent)
+                        }
+                    }
+                }
 
-                // Format and set date
                 tvPromoDate.text = formatDate(history.activationDate)
-
-                // Set redeemBy
                 tvPromoAuthor.text = history.userName
+
+                // Tambahkan onClickListener
+                root.setOnClickListener {
+                    onItemClickCallback?.onItemClicked(history)
+                }
             }
         }
 
@@ -63,7 +78,7 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
                 inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
-                val outputFormat = SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale("id")) // Mengubah 'yy' menjadi 'yyyy'
+                val outputFormat = SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale("id"))
                 outputFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
 
                 val date = inputFormat.parse(isoDate)
@@ -72,6 +87,10 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                 isoDate
             }
         }
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(history: PromoHistoryDomain)
     }
 
     companion object {

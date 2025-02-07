@@ -8,7 +8,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TokenExpiredViewModel @Inject constructor(private val authUseCase: AuthUseCaseTester) :
+class TokenExpiredViewModel @Inject constructor(
+    private val authUseCase: AuthUseCaseTester
+) :
     ViewModel() {
 
     fun deleteToken() = viewModelScope.launch {

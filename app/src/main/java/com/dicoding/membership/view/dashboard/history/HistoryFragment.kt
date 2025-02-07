@@ -17,6 +17,7 @@ import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentHistoryBinding
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -163,22 +164,23 @@ class HistoryFragment : Fragment() {
                         updateButtonStates(binding.btnPromo, binding.btnTransferPoin, binding.btnMember)
                         binding.btnSearch.setOnClickListener {
                             // Navigate to promo search
+                            val intent = Intent(requireContext(), PromoSearchActivity::class.java)
+                            intent.putExtra(PromoSearchActivity.EXTRA_FROM_HISTORY, true)
+                            startActivity(intent)
                         }
                     }
                     1 -> {
                         updateButtonStates(binding.btnTransferPoin, binding.btnPromo, binding.btnMember)
                         binding.btnSearch.setOnClickListener {
                             // Navigate to poin search
-                            val intent = Intent(requireContext(), PencarianPoinActivity::class.java)
-                            startActivity(intent)
+//                            val intent = Intent(requireContext(), PencarianPoinActivity::class.java)
+//                            startActivity(intent)
                         }
                     }
                     2 -> {
                         updateButtonStates(binding.btnMember, binding.btnPromo, binding.btnTransferPoin)
                         binding.btnSearch.setOnClickListener {
                             // Navigate to member search
-                            val intent = Intent(requireActivity(), PencarianMemberActivity::class.java)
-                            startActivity(intent)
                         }
                     }
                 }

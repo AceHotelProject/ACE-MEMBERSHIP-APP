@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IAuthRepository {
 
-    fun register(email: String, password: String): Flow<Resource<RegisterDomain>>
+    fun register(email: String, password: String, androidId: String): Flow<Resource<RegisterDomain>>
 
-    fun login(email: String, password: String): Flow<Resource<LoginDomain>>
+    fun login(email: String, password: String, androidId: String): Flow<Resource<LoginDomain>>
 
     fun getUser(): Flow<LoginDomain>
 
@@ -22,9 +22,13 @@ interface IAuthRepository {
 
     fun saveRefreshToken(token: String): Flow<Boolean>
 
+    fun saveMerchantId(id: String): Flow<Boolean>
+
     fun getAccessToken(): Flow<String>
 
     fun getRefreshToken(): Flow<String>
+
+    fun getMerchantId(): Flow<String>
 
     suspend fun deleteAllData()
 

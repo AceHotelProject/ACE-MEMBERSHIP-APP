@@ -15,6 +15,7 @@ import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentProfileBinding
+import com.dicoding.membership.view.dashboard.admin.manajemenmitra.ManajemenMitraActivity
 import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
 import com.dicoding.membership.view.dashboard.profile.detail.poinku.ProfileDetailPoinkuActivity
@@ -88,6 +89,12 @@ class ProfileFragment : Fragment() {
                 val intent = Intent(requireContext(), ProfileDetailPoinkuActivity::class.java). apply {
                     putExtra(ProfileDetailPoinkuActivity.EXTRA_USER_ID, loginDomain.user.id)
                 }
+                startActivity(intent)
+            }
+        }
+        binding.layoutManajemenMitra.setOnClickListener {
+            viewModel.userData.value?.let {
+                val intent = Intent(requireContext(), ManajemenMitraActivity::class.java)
                 startActivity(intent)
             }
         }

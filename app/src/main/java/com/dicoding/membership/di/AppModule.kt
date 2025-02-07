@@ -3,6 +3,8 @@ package com.dicoding.membership.di
 import com.dicoding.core.data.repository.PromoRepository
 import com.dicoding.core.domain.auth.interactor.AuthInteractor
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
+import com.dicoding.core.domain.file.interactor.FileInteractor
+import com.dicoding.core.domain.file.usecase.FileUseCase
 import com.dicoding.core.domain.membership.interactor.MembershipInteractor
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
 import com.dicoding.core.domain.points.interactor.PointsInteractor
@@ -57,6 +59,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun provideMerchantUseCase(merchantInteractor: MerchantInteractor): MerchantUseCase
+
+    @Binds
+    @Singleton
+    abstract fun provideFIleUseCase(fileInteractor: FileInteractor): FileUseCase
     @Binds
     @Singleton
     abstract fun providePointsUseCase(pointsInteractor: PointsInteractor): PointsUseCase
