@@ -1,7 +1,9 @@
 package com.dicoding.core.utils.datamapper
 
+import com.dicoding.core.data.source.remote.response.user.MerchantIdResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
+import com.dicoding.core.domain.user.model.Merchant
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.model.UserList
 
@@ -23,7 +25,19 @@ object UserDataMapper {
         citizenNumber = input.citizenNumber,
         pathKTP = input.pathKTP,
         role = input.role,
-        merchantId = input.merchantId,
+        merchantId = when (val merchantResponse = input.merchantId) {
+            is MerchantIdResponse.MerchantData -> Merchant(
+                point = merchantResponse.point,
+                refferalPoint = merchantResponse.refferalPoint,
+                id = merchantResponse.id
+            )
+            is MerchantIdResponse.MerchantString -> Merchant(
+                point = 0,
+                refferalPoint = 0,
+                id = merchantResponse.id
+            )
+            null -> null
+        },
         androidId = input.androidId,
         memberType = input.memberType,
         couponUsed = input.couponUsed,

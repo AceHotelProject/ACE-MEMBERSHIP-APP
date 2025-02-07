@@ -4,6 +4,14 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+data class Merchant(
+    val point: Int,
+    val refferalPoint: Int,
+    val id: String
+) : Parcelable
+
+
+@Parcelize
 data class User(
     val id: String,
     val name: String,
@@ -13,7 +21,7 @@ data class User(
     val citizenNumber: String?,
     val pathKTP: String?,
     val role: String,
-    val merchantId: String?,
+    val merchantId: Merchant?,
     val androidId: String?,
     val memberType: String?,
     val couponUsed: List<String>,

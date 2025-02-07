@@ -1,6 +1,30 @@
     package com.dicoding.core.data.source.remote.response.user
 
+    import com.google.gson.Gson
+    import com.google.gson.JsonElement
     import com.google.gson.annotations.SerializedName
+
+    data class MerchantUserResponse(
+        @SerializedName("point")
+        val point: Int = 0,
+        @SerializedName("refferalPoint")
+        val refferalPoint: Int = 0,
+        @SerializedName("id")
+        val id: String = ""
+    )
+
+    sealed class MerchantIdResponse {
+        data class MerchantData(
+            val point: Int = 0,
+            val refferalPoint: Int = 0,
+            val id: String = ""
+        ) : MerchantIdResponse()
+
+        data class MerchantString(
+            val id: String
+        ) : MerchantIdResponse()
+    }
+
 
     data class UserResponse(
         @SerializedName("id")
@@ -40,7 +64,7 @@
         val role: String = "user",
 
         @SerializedName("merchantId")
-        val merchantId: String? = null,
+        private val _merchantId: JsonElement? = null,
 
         @SerializedName("androidId")
         val androidId: String? = null,
@@ -65,7 +89,28 @@
 
         @SerializedName("createdAt")
         val createdAt: String? = null
-    )
+    ){
+        val merchantId: MerchantIdResponse?
+            get() = when {
+                _merchantId == null -> null
+                _merchantId.isJsonObject -> {
+                    try {
+                        val merchantObj = Gson().fromJson(_merchantId, MerchantUserResponse::class.java)
+                        MerchantIdResponse.MerchantData(
+                            point = merchantObj.point,
+                            refferalPoint = merchantObj.refferalPoint,
+                            id = merchantObj.id
+                        )
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+                _merchantId.isJsonPrimitive -> MerchantIdResponse.MerchantString(
+                    id = _merchantId.asString
+                )
+                else -> null
+            }
+    }
 
     data class UserListResponse(
         @SerializedName("results")
