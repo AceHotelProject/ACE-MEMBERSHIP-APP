@@ -20,6 +20,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.paging.LoadState
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
@@ -30,6 +31,7 @@ import com.dicoding.membership.databinding.ActivityMainBinding
 import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.RedeemCouponCodeActivity
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
+import com.dicoding.membership.view.dashboard.promo.PromoAdapter
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitinstall.SplitInstallManager
@@ -52,6 +54,13 @@ class  MainActivity : AppCompatActivity() {
     private lateinit var fabFromAnim: Animation
     private lateinit var fabCloseAnim: Animation
 
+    private var isPromoBannerVisible = true
+    private var shouldShowBannerOnNavigation = true
+
+    private var fragmentScrollStates = mutableMapOf<Int, Boolean>()
+    private var lastFragmentId: Int? = null
+
+    private var currentUserRole: UserRole = UserRole.USER // Default value
 
 //    private var fabMenuState: FabMenuState = FabMenuState.COLLAPSED
 
@@ -60,7 +69,6 @@ class  MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         splitInstallManager = SplitInstallManagerFactory.create(this)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -75,6 +83,77 @@ class  MainActivity : AppCompatActivity() {
         setFabClickListener()
 
         checkNotificationPermission()
+
+        savedInstanceState?.let {
+            isPromoBannerVisible = it.getBoolean(KEY_BANNER_VISIBLE, true)
+            shouldShowBannerOnNavigation = it.getBoolean(KEY_SHOW_ON_NAV, true)
+            if (!isPromoBannerVisible) {
+                binding.promoBanner.visibility = View.GONE
+            }
+        }
+    }
+
+    companion object {
+        private const val KEY_BANNER_VISIBLE = "banner_visible"
+        private const val KEY_SHOW_ON_NAV = "show_on_nav"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_BANNER_VISIBLE, isPromoBannerVisible)
+        outState.putBoolean(KEY_SHOW_ON_NAV, shouldShowBannerOnNavigation)
+    }
+
+    fun handleScrollState(
+        isScrollingDown: Boolean,
+        isAtBottom: Boolean,
+        isNearTop: Boolean,
+        isScrollingUp: Boolean
+    ) {
+        if (isScrollingDown && isAtBottom) {
+            hidePromoBanner()
+            lastFragmentId?.let { fragmentScrollStates[it] = false }
+        } else if (isScrollingUp && isNearTop) {
+            showPromoBanner()
+            lastFragmentId?.let { fragmentScrollStates[it] = true }
+        }
+    }
+
+    private fun hidePromoBanner() {
+        if (isPromoBannerVisible) {
+            val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+
+            binding.promoBanner.animate()
+                .translationX(screenWidth)
+                .alpha(0f)
+                .setDuration(400)
+                .withEndAction {
+                    binding.promoBanner.visibility = View.GONE
+                    isPromoBannerVisible = false
+                }
+                .start()
+        }
+    }
+
+    private fun showPromoBanner(resetNavigation: Boolean = false) {
+
+        if (currentUserRole != UserRole.USER) return
+
+        if (!isPromoBannerVisible || resetNavigation) {
+            val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+
+            binding.promoBanner.visibility = View.VISIBLE
+            binding.promoBanner.translationX = screenWidth
+
+            binding.promoBanner.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(if (resetNavigation) 600 else 400) // Sedikit lebih lambat untuk navigasi
+                .withStartAction {
+                    isPromoBannerVisible = true
+                }
+                .start()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -118,59 +197,75 @@ class  MainActivity : AppCompatActivity() {
     }
 
     private fun setupFabVisibility(userRole: UserRole) {
+        currentUserRole = userRole
+
         when (userRole) {
             UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
                 binding.lnFab1.visibility = View.VISIBLE
                 binding.promoBanner.visibility = View.GONE
                 binding.bottomNavbar.visibility = View.VISIBLE
             }
+
             UserRole.USER -> {
                 binding.lnFab1.visibility = View.GONE
                 binding.bottomNavbar.visibility = View.VISIBLE
 
+                showPromoBanner(resetNavigation = true)
+                isPromoBannerVisible = true
                 // Observe inactive promos
+                val promoAdapter = PromoAdapter()
                 lifecycleScope.launch {
-                    mainViewModel.getProposalPromos().observe(this@MainActivity) { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                result.data?.results?.let { promos ->
-                                    val inactivePromos = promos.filter { it.status == "active" }
-                                    val inactiveCount = inactivePromos.size
+                    mainViewModel.promos.collect { pagingData ->
+                        promoAdapter.submitData(pagingData)
+                    }
+                }
 
+                // Observe adapter load states to update UI
+                lifecycleScope.launch {
+                    promoAdapter.loadStateFlow.collect { loadState ->
+                        when (loadState.refresh) {
+                            is LoadState.Loading -> {
+                                binding.promoBanner.visibility = View.GONE
+                            }
+
+                            is LoadState.NotLoading -> {
+                                val validPromos = promoAdapter.snapshot().items.size
+                                // Check if current role is USER before showing banner
+                                if (currentUserRole == UserRole.USER && validPromos > 0) {
                                     binding.promoBanner.apply {
-                                        if (inactiveCount > 0) {
+                                        visibility = View.VISIBLE
+                                        binding.tvTotalPromo.apply {
+                                            text = String.format("%d Kupon", validPromos)
                                             visibility = View.VISIBLE
-                                            binding.tvTotalPromo.apply {
-                                                text = String.format("%d Kupon", inactiveCount)
-                                                visibility = if (inactiveCount > 0) View.VISIBLE else View.GONE
-                                            }
-                                            animate()
-                                                .alpha(1f)
-                                                .setDuration(100)
-                                                .start()
-                                        } else {
-                                            animate()
-                                                .alpha(0f)
-                                                .setDuration(100)
-                                                .withEndAction {
-                                                    visibility = View.GONE
-                                                }
-                                                .start()
                                         }
+                                        animate()
+                                            .alpha(1f)
+                                            .setDuration(100)
+                                            .start()
                                     }
+                                } else {
+                                    binding.promoBanner.animate()
+                                        .alpha(0f)
+                                        .setDuration(100)
+                                        .withEndAction {
+                                            binding.promoBanner.visibility = View.GONE
+                                        }
+                                        .start()
                                 }
                             }
-                            is Resource.Error -> {
+
+                            is LoadState.Error -> {
                                 binding.promoBanner.visibility = View.GONE
-                                Log.e("MainActivity", "Error getting promos: ${result.message}")
-                            }
-                            else -> {
-                                // Handle other states if needed
+                                Log.e(
+                                    "MainActivity",
+                                    "Error getting promos: ${(loadState.refresh as LoadState.Error).error.message}"
+                                )
                             }
                         }
                     }
                 }
             }
+
             else -> {
                 binding.lnFab1.visibility = View.GONE
                 binding.fbValidMembership.visibility = View.GONE
@@ -180,7 +275,6 @@ class  MainActivity : AppCompatActivity() {
     }
 
     private fun validateToken() {
-        // Validasi token
         mainViewModel.getRefreshToken().observe(this) { token ->
             if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(supportFragmentManager, "Token Expired Dialog")
@@ -219,8 +313,19 @@ class  MainActivity : AppCompatActivity() {
         }
     }
 
+    fun setShouldShowBannerOnNavigation(should: Boolean) {
+        shouldShowBannerOnNavigation = should
+    }
+
     private fun setupNavigationListener(navView: BottomNavigationView, navController: NavController) {
         navView.setOnNavigationItemSelectedListener { item ->
+            val wasPromoBannerVisible = fragmentScrollStates[lastFragmentId] ?: true
+            lastFragmentId = item.itemId
+
+            if (!wasPromoBannerVisible) {
+                showPromoBanner(resetNavigation = true)
+            }
+
             when (item.itemId) {
 //                Dicoding Test
 //                R.id.homeFragment -> {

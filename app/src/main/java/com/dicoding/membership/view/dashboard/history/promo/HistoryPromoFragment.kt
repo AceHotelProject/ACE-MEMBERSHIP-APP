@@ -18,6 +18,7 @@ import com.dicoding.core.domain.promo.model.PromoHistoryDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,6 +58,8 @@ class HistoryPromoFragment : Fragment() {
 
         checkUserRole()
 
+        setupScrollListener()
+
 //        setupRecyclerView()
 //
 //        setupSwipeRefresh()
@@ -72,7 +75,7 @@ class HistoryPromoFragment : Fragment() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.MEMBER
+            val mockUserRole = UserRole.ADMIN
             setupUserVisibility(mockUserRole)
 
             // Only load promo history for authorized roles
@@ -227,6 +230,26 @@ class HistoryPromoFragment : Fragment() {
                 }
             } else {
                 showError("Token kosong, silakan login ulang.")
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setupScrollListener() {
+        binding.scrollView.setOnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
+            val isScrollingDown = scrollY > oldScrollY
+            val isScrollingUp = scrollY < oldScrollY
+            val isAtBottom = !binding.scrollView.canScrollVertically(1)
+            val isNearTop = !binding.scrollView.canScrollVertically(-1)
+
+            (activity as? MainActivity)?.apply {
+                setShouldShowBannerOnNavigation(!isAtBottom)
+                handleScrollState(
+                    isScrollingDown = isScrollingDown,
+                    isAtBottom = isAtBottom,
+                    isNearTop = true,
+                    isScrollingUp = isScrollingUp
+                )
             }
         }
     }

@@ -47,6 +47,7 @@ class PromoViewModel @Inject constructor(
 
     fun getPromos(category: String, status: String, name: String) =
         promoUseCase.getPromos(category, status, name)
+
 //    fun getProposalPromos() = promoUseCase.getProposalPromos().asLiveData()
 
 //    fun getStories(filterDate: String, isFinished: Boolean): Flow<PagingData<StoryDomainTester>> {
