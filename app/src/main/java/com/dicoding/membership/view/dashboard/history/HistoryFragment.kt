@@ -167,6 +167,8 @@ class HistoryFragment : Fragment() {
                             val intent = Intent(requireContext(), PromoSearchActivity::class.java)
                             intent.putExtra(PromoSearchActivity.EXTRA_FROM_HISTORY, true)
                             startActivity(intent)
+                            // Menambahkan animasi transisi
+                            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                         }
                     }
                     1 -> {

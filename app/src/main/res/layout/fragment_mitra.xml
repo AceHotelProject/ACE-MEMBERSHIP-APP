@@ -7,6 +7,7 @@
     tools:context=".view.dashboard.mitra.MitraFragment">
 
     <ScrollView
+        android:id="@+id/layout_Mitra"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
@@ -44,6 +45,8 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="2"
                 tools:listitem="@layout/item_multiple_image_upload_2" />
+
+
 
             <LinearLayout
                 android:id="@+id/layoutDots"

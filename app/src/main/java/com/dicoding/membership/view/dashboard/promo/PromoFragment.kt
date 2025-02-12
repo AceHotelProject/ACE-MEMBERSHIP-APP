@@ -9,15 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
+import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentPromoBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
@@ -115,6 +119,8 @@ class PromoFragment : Fragment() {
         binding.buttonDashboardPromoSearch.setOnClickListener {
             val intent = Intent(requireActivity(), PromoSearchActivity::class.java)
             startActivity(intent)
+            // Tambahkan animasi transisi
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         promoCategoryAdapter = PromoCategoryAdapter { category ->
@@ -131,6 +137,22 @@ class PromoFragment : Fragment() {
             )
             adapter = promoCategoryAdapter
         }
+
+        binding.scrollView2.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
+            val isScrollingDown = scrollY > oldScrollY
+            val isScrollingUp = scrollY < oldScrollY
+            val isAtBottom = scrollY >= (v.getChildAt(0).measuredHeight - v.measuredHeight)
+
+            (activity as? MainActivity)?.apply {
+                setShouldShowBannerOnNavigation(!isAtBottom)
+                handleScrollState(
+                    isScrollingDown = isScrollingDown,
+                    isAtBottom = isAtBottom,
+                    isNearTop = true,  // Selalu true agar banner muncul saat scroll up
+                    isScrollingUp = isScrollingUp
+                )
+            }
+        })
     }
 
     private fun navigateToDetail(data: PromoDomain, source: String) {
@@ -272,6 +294,16 @@ class PromoFragment : Fragment() {
                 binding.rvPromoMitra.visibility = View.VISIBLE
                 binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
                 binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+
+                (activity as? MainActivity)?.apply {
+                    setShouldShowBannerOnNavigation(true)
+                    handleScrollState(
+                        isScrollingDown = false,
+                        isAtBottom = false,
+                        isNearTop = true,
+                        isScrollingUp = false
+                    )
+                }
             }
             UserRole.MEMBER, UserRole.NONMEMBER -> {
                 binding.rvPromoCategory.visibility = View.VISIBLE
@@ -280,6 +312,16 @@ class PromoFragment : Fragment() {
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.VISIBLE
                 binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+
+                (activity as? MainActivity)?.apply {
+                    setShouldShowBannerOnNavigation(true)
+                    handleScrollState(
+                        isScrollingDown = false,
+                        isAtBottom = false,
+                        isNearTop = true,
+                        isScrollingUp = false
+                    )
+                }
             }
             else -> {
                 binding.rvPromoCategory.visibility = View.GONE
@@ -354,7 +396,15 @@ class PromoFragment : Fragment() {
         Toast.makeText(requireContext(), message ?: "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onPause() {
+        super.onPause()
+        // Reset banner control when leaving fragment
+        (activity as? MainActivity)?.setShouldShowBannerOnNavigation(true)
+    }
+
     override fun onDestroyView() {
+        // Reset banner control before destroying view
+        (activity as? MainActivity)?.setShouldShowBannerOnNavigation(true)
         super.onDestroyView()
         _binding = null
     }

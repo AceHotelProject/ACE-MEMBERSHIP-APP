@@ -15,10 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentHomeBinding
+import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.promo.PromoAdapter
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
@@ -68,14 +70,19 @@ class HomeFragment : Fragment() {
 
     private fun setupPromoRecyclerView() {
         promoAdapter = PromoAdapter()
+
+        // Setup untuk member promo recycler view
         binding.rvPromo.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = promoAdapter
+            addOnScrollListener(scrollListener)
         }
 
+        // Setup untuk non-member promo recycler view
         binding.rvNMPromo.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = promoAdapter
+            addOnScrollListener(scrollListener)
         }
 
         // Set click callback untuk navigasi ke detail
@@ -105,6 +112,36 @@ class HomeFragment : Fragment() {
             checkUserRole()
             observePromos()
             binding.swipeRefresh.isRefreshing = false
+        }
+    }
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+            val totalItemCount = layoutManager.itemCount
+            val isAtBottom = lastVisibleItemPosition >= totalItemCount - 1
+            val isScrollingUp = dy < 0
+
+            val activeLayout = if (binding.linearLayoutMember.visibility == View.VISIBLE) {
+                binding.linearLayoutMember
+            } else {
+                binding.linearLayoutNonMember
+            }
+
+            if (activeLayout.visibility == View.VISIBLE) {
+                (activity as? MainActivity)?.apply {
+                    handleScrollState(
+                        isScrollingDown = dy > 0,
+                        isAtBottom = isAtBottom,
+                        isNearTop = true,
+                        isScrollingUp = isScrollingUp
+                    )
+                    setShouldShowBannerOnNavigation(!isAtBottom)
+                }
+            }
         }
     }
 
@@ -166,7 +203,8 @@ class HomeFragment : Fragment() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.NONMEMBER
+            val mockUserRole = UserRole.MEMBER
+
             setupLinearVisibility(mockUserRole)
 
 //            Use This For Real
@@ -182,14 +220,31 @@ class HomeFragment : Fragment() {
                 binding.linearLayoutMember.visibility = View.GONE
                 binding.linearLayoutNonMember.visibility = View.GONE
             }
+
             UserRole.MEMBER -> {
                 binding.linearLayoutMember.visibility = View.VISIBLE
                 binding.linearLayoutNonMember.visibility = View.GONE
+                // Reset scroll state with all parameters
+                (activity as? MainActivity)?.handleScrollState(
+                    isScrollingDown = false,
+                    isAtBottom = false,
+                    isNearTop = true,
+                    isScrollingUp = false
+                )
             }
+
             UserRole.NONMEMBER -> {
                 binding.linearLayoutMember.visibility = View.GONE
                 binding.linearLayoutNonMember.visibility = View.VISIBLE
+                // Reset scroll state with all parameters
+                (activity as? MainActivity)?.handleScrollState(
+                    isScrollingDown = false,
+                    isAtBottom = false,
+                    isNearTop = true,
+                    isScrollingUp = false
+                )
             }
+
             else -> {
                 binding.linearLayoutMember.visibility = View.GONE
                 binding.linearLayoutNonMember.visibility = View.GONE
