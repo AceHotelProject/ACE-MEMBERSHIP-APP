@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-02-01T06:03:39.687242500Z">
+        <DropdownSelection timestamp="2025-02-07T11:17:55.888006300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\ACER\.android\avd\BangkitDevice_API_34.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Sgtsa\.android\avd\Rocket123_-_Pixel_4.avd" />
             </handle>
           </Target>
         </DropdownSelection>
