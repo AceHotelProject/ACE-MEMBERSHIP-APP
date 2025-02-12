@@ -14,6 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMitraBinding
@@ -45,18 +48,34 @@ class MitraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        validateToken()
+        setupImageAdapter()
+
+        validateTokenAndProceed()
 
         handleMenuButton()
-
-//        checkSavedMerchant()
     }
 
-    private fun validateToken() {
-        viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
-            if (token.isEmpty() || token == "") {
-                TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
-            }
+    private fun setupImageAdapter() {
+        imageAdapter = MitraImageAdapter(requireContext())
+
+        binding.apply {
+
+            rvMitraSelected.adapter = imageAdapter
+            rvMitraSelected.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+            val snapHelper = PagerSnapHelper()
+            snapHelper.attachToRecyclerView(rvMitraSelected)
+
+            rvMitraSelected.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val position = layoutManager.findFirstCompletelyVisibleItemPosition()
+                    if (position != -1) {
+                        updateDotIndicator(position)
+                    }
+                }
+            })
         }
     }
 
@@ -67,12 +86,21 @@ class MitraFragment : Fragment() {
         }
     }
 
+    private fun validateTokenAndProceed() {
+        viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
+            if (token.isEmpty() || token == "") {
+                TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
+            } else {
+                checkSavedMerchant()
+            }
+        }
+    }
+
     private fun checkSavedMerchant() {
         viewModel.getMerchantId().observe(viewLifecycleOwner) { savedId ->
             if (savedId.isEmpty()) {
                 getFirstMerchant()
             } else {
-                // Load merchant with saved ID
                 loadMerchantData(savedId)
             }
         }
@@ -90,21 +118,19 @@ class MitraFragment : Fragment() {
                     Log.d("MitraFragment", "Load state: ${loadState.refresh}")
                     when (loadState.refresh) {
                         is LoadState.NotLoading -> {
-//                            val firstMerchant = tempAdapter.snapshot().firstOrNull()
-//                            if (firstMerchant != null) {
-//                                isDataEmpty = false
-//                                Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
-//                                viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
-//                                    if (saved) loadMerchantData(firstMerchant.id)
-//                                }
-//                            } else {
-//                                // No merchant data found, navigate to AddMitraActivity
-//                                Log.d("MitraFragment", "No merchant data found, navigating to AddMitraActivity")
-//                                navigateToAddMitra()
-//                            }
+                            val firstMerchant = tempAdapter.snapshot().firstOrNull()
+                            if (firstMerchant != null) {
+                                isDataEmpty = false
+                                Log.d("MitraFragment", "Found first merchant: ${firstMerchant.id}")
+                                viewModel.saveMerchantId(firstMerchant.id).observe(viewLifecycleOwner) { saved ->
+                                    if (saved) loadMerchantData(firstMerchant.id)
+                                }
+                            } else {
+                                Log.d("MitraFragment", "No merchant data found, navigating to AddMitraActivity")
+                                navigateToAddMitra()
+                            }
                         }
                         is LoadState.Error -> {
-                            // Handle error state if needed
                             Log.e("MitraFragment", "Error loading merchants: ${(loadState.refresh as LoadState.Error).error.message}")
                             if (isDataEmpty) {
                                 navigateToAddMitra()
@@ -198,14 +224,14 @@ class MitraFragment : Fragment() {
     private fun showLoading() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
-            loadingOverlay.visibility = View.VISIBLE
+            layoutMitra.visibility = View.GONE
         }
     }
 
     private fun hideLoading() {
         binding.apply {
             progressBar.visibility = View.GONE
-            loadingOverlay.visibility = View.GONE
+            layoutMitra.visibility = View.VISIBLE
         }
     }
 

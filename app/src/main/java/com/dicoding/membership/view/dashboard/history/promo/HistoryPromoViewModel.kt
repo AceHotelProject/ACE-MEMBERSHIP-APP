@@ -30,8 +30,11 @@ class HistoryPromoViewModel @Inject constructor(
         _selectedCategory.value = category
     }
 
-    fun getPromoHistory(promoName: String = "", promoCategory: String = "", status: String = "") =
-        promoUseCase.getPromoHistory(promoName, promoCategory, status).cachedIn(viewModelScope)
+    fun getPromoHistory(
+        promoName: String = "",
+        promoCategory: String = "",
+        status: String = ""
+    ) = promoUseCase.getPromoHistory(promoName, promoCategory, status).cachedIn(viewModelScope)
 
 //    fun getStories(filterDate: String, isFinished: Boolean): Flow<PagingData<StoryDomainTester>> {
 //        return storyUseCase.getStories(filterDate, isFinished).cachedIn(viewModelScope)
