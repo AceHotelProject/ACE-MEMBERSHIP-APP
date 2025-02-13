@@ -43,7 +43,7 @@ data class ActivatePromoResepsionisResponse(
 	@field:SerializedName("token_code")
 	val tokenCode: String? = null,
 
-	@field:SerializedName("id")
+	@field:SerializedName("_id")
 	val id: String? = null,
 
 	@field:SerializedName("promo_member_type")
