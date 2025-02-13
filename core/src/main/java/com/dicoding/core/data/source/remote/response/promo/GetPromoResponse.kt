@@ -69,7 +69,7 @@ data class ResultsItem(
 	@field:SerializedName("detail")
 	val detail: String? = null,
 
-	@field:SerializedName("id")
+	@field:SerializedName("_id")
 	val id: String? = null,
 
 	@field:SerializedName("category")

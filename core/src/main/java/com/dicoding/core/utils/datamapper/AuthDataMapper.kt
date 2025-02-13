@@ -50,7 +50,8 @@ object AuthDataMapper {
                 point = response.user?.point ?: 0,
                 refferalPoint = response.user?.refferalPoint ?: 0,
                 isNumberVerified = response.user?.isNumberVerified ?: false,
-                createdAt = response.user?.createdAt.orEmpty()
+                createdAt = response.user?.createdAt.orEmpty(),
+                isMember = response.user?.isMember ?: false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -85,7 +86,8 @@ object AuthDataMapper {
                 point = response.user?.point ?: 0,
                 refferalPoint = response.user?.refferalPoint ?: 0,
                 isNumberVerified = response.user?.isNumberVerified ?: false,
-                createdAt = response.user?.createdAt.orEmpty()
+                createdAt = response.user?.createdAt.orEmpty(),
+                isMember = response.user?.isMember ?: false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -121,7 +123,8 @@ object AuthDataMapper {
                     point = 0,
                     refferalPoint = 0,
                     isNumberVerified = false,
-                    createdAt = ""
+                    createdAt = "",
+                    isMember = false
                 ),
                 tokens = TokensDomain(
                     accessToken = TokensFormat(
@@ -153,7 +156,8 @@ object AuthDataMapper {
                 point = 0,
                 refferalPoint = 0,
                 isNumberVerified = false,
-                createdAt = ""
+                createdAt = "",
+                isMember = false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(token = null, expires = null),

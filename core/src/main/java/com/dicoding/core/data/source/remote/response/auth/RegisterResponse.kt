@@ -64,5 +64,8 @@ data class AuthUser(
 	val isNumberVerified: Boolean? = null,
 
 	@field:SerializedName("createdAt")
-	val createdAt: String? = null
+	val createdAt: String? = null,
+
+	@field:SerializedName("isMember")
+	val isMember: Boolean? = null
 ) : Parcelable

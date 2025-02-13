@@ -22,5 +22,6 @@ data class UserDomain(
     val point: Int,
     val refferalPoint: Int,
     val isNumberVerified: Boolean,
-    val createdAt: String
+    val createdAt: String,
+    val isMember: Boolean
 ) : Parcelable
