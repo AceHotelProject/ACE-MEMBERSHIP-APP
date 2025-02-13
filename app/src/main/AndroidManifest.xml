@@ -44,6 +44,18 @@
             android:name=".view.dashboard.admin.addmitra.addpegawai.AddPegawaiActivity"
             android:exported="false" />
         <activity
+            android:name=".view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.history.poin.detail.HistoryDetailPoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.status.StatusTemplateActivity"
             android:exported="false" />
         <activity

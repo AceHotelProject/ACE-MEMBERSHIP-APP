@@ -1,6 +1,7 @@
 package com.dicoding.core.domain.membership.repository
 
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,7 @@ interface IMembershipRepository {
         tnc: List<String>
     ): Flow<Resource<Membership>>
 
-    fun getAllMemberships(): Flow<Resource<List<Membership>>>
+    fun getAllMemberships(): Flow<Resource<MembershipListResponse>>
 
     fun getMembershipById(id: String): Flow<Resource<Membership>>
 

@@ -1,83 +1,105 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="20dp"
-    android:background="@drawable/item_background_white"
-    android:clipToPadding="false">
-
-    <TextView
-        style="@style/textStyleMedium_14"
-        android:id="@+id/tvPromoLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Silver"
-        android:textColor="@color/orange_100"
-        android:background="@drawable/chip_category"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textSize="12sp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center" />
-
-    <TextView
-        style="@style/textStyleSemIBold_16"
-        android:id="@+id/tvPromoTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="I Putu Krisna Erlangga"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey_stroke"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/icon_email" />
+        android:padding="16dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/item_background_white">
 
         <TextView
-            style="@style/textStyleMedium_12"
-            android:id="@+id/tvPromoDate"
+            android:id="@+id/label_membership_type"
+            style="@style/textStyleMedium_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="krisnaerlg@gmail.com"
-            android:textColor="@color/dark_grey"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="16dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/icon_telephone" />
+            android:background="@drawable/chip_category_orange"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="Silver"
+            android:textColor="@color/orange_100"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/label_period_type"
             style="@style/textStyleMedium_14"
-            android:id="@+id/tvPromoAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/chip_category_green"
+            android:padding="5dp"
+            android:text="Active"
+            android:textColor="@color/green"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/label_membership_type"
+            app:layout_constraintTop_toTopOf="@id/label_membership_type" />
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            style="@style/textStyleSemIBold_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="I Putu Krisna Erlangga"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_membership_type" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/grey_stroke"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
+
+        <ImageView
+            android:id="@+id/ic_email"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/icon_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <TextView
+            android:id="@+id/tv_user_email"
+            style="@style/textStyleMedium_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="krisnaerlg@gmail.com"
+            android:textColor="@color/dark_grey"
+            app:layout_constraintBottom_toBottomOf="@id/ic_email"
+            app:layout_constraintStart_toEndOf="@id/ic_email"
+            app:layout_constraintTop_toTopOf="@id/ic_email" />
+
+        <ImageView
+            android:id="@+id/ic_phone"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/icon_telephone"
+            app:layout_constraintEnd_toStartOf="@+id/tv_user_phone"
+            app:layout_constraintTop_toTopOf="@id/ic_email" />
+
+        <TextView
+            android:id="@+id/tv_user_phone"
+            style="@style/textStyleMedium_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="081338665678"
             android:textColor="@color/dark_grey"
             android:textSize="12sp"
-            android:layout_marginStart="6dp" />
-    </LinearLayout>
-</LinearLayout>
+            app:layout_constraintBottom_toBottomOf="@id/ic_phone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ic_phone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

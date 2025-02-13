@@ -97,6 +97,7 @@ class ProfileDetailActivity : AppCompatActivity(){
                 "admin", "merchant", "receptionist" -> {
                     profileDetailLayoutNonuser.visibility = View.VISIBLE
                     profileDetailLayoutUser.visibility = View.GONE
+                    btnEdit.visibility = View.GONE
 
                     detailProfilTipePengguna.text = user.role
                     detailProfilEmail1.text = user.email
@@ -111,7 +112,7 @@ class ProfileDetailActivity : AppCompatActivity(){
                     detailProfilEmail.text = user.email
                     detailProfilAlamat.text = user.address
 
-                    displayUserImage(user.idPicturePath)
+                    displayUserImage(user.pathKTP)
                 }
             }
         }
@@ -134,9 +135,7 @@ class ProfileDetailActivity : AppCompatActivity(){
 
     private fun showLoading(isLoading: Boolean) {
         binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.btnClose.visibility = if (isLoading) View.GONE else View.VISIBLE
         binding.detailLayoutSv.visibility = if (isLoading) View.GONE else View.VISIBLE
-        binding.detailProfilTitle.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 
     private fun showToast(message: String) {

@@ -50,490 +50,72 @@
             android:textColor="@color/dark_grey"/>
     </LinearLayout>
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/list_member"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/custom_background_history"
         android:orientation="vertical"
-        android:clipToPadding="false"
+        android:background="@drawable/custom_background_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ProgressBar
+            android:id="@+id/loading_overlay"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Membership Packages Silver -->
-            <LinearLayout
-                android:id="@+id/layout_package_silver"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/custom_background_level_member_non_selected"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:padding="16dp">
+        <!-- Memberships -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_memberships"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="72dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_membership_category" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/tv_package_title_1"
-                    style="@style/textStyleSemIBold_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:text="Paket Ace Silver" />
+    <Button
+        android:id="@+id/btn_continue"
+        style="@style/textStyleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/custom_button"
+        android:elevation="0dp"
+        android:padding="4dp"
+        android:text="Lanjutkan"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/icons_clock" />
-
-                    <TextView
-                        android:id="@+id/tvPromoDate"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="16dp"
-                        android:text="Berlaku 3 Bulan"
-                        android:textColor="@color/dark_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp">
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_1_1"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_1_2"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_1_3"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-                </TableLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/light_grey_100" />
-
-                <LinearLayout
-                    android:id="@+id/price_container_silver"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/custom_background_light_grey"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:id="@+id/tv_package_price_label_1"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Harga"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tv_package_price_1"
-                        style="@style/textStyleSemIBold_20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 300.000"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Membership Packages Gold - Selected -->
-            <LinearLayout
-                android:id="@+id/layout_package_gold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/custom_background_level_member_non_selected"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tv_package_title_2"
-                    style="@style/textStyleSemIBold_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Paket Ace Gold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/icons_clock" />
-
-                    <TextView
-                        android:id="@+id/tvPromoDate_2"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="16dp"
-                        android:text="Berlaku 6 Bulan"
-                        android:textColor="@color/dark_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp">
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_2_1"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_2_2"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_2_3"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-                </TableLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/light_grey_100" />
-
-                <LinearLayout
-                    android:id="@+id/price_container_gold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/custom_background_light_grey"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:id="@+id/tv_package_price_label_2"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Harga"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tv_package_price_2"
-                        style="@style/textStyleSemIBold_20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 600.000"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Membership Packages Platinum -->
-            <LinearLayout
-                android:id="@+id/layout_package_platinum"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/custom_background_level_member_non_selected"
-                android:clipToPadding="false"
-                android:elevation="4dp"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tv_package_title_3"
-                    style="@style/textStyleSemIBold_20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Paket Ace Platinum" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/icons_clock" />
-
-                    <TextView
-                        android:id="@+id/tvPromoDate_3"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="16dp"
-                        android:text="Berlaku 12 Bulan"
-                        android:textColor="@color/dark_grey"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp">
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_3_1"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_3_2"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/icons_dot"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_package_description_3_3"
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:ellipsize="none"
-                            android:scrollHorizontally="false"
-                            android:text="Tambahan manajemen kebun sebanyak 5 kebun" />
-                    </TableRow>
-                </TableLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/light_grey_100" />
-
-                <LinearLayout
-                    android:id="@+id/price_container_platinum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/custom_background_light_grey"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
-
-                    <TextView
-                        android:id="@+id/tv_package_price_label_3"
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Harga"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tv_package_price_3"
-                        style="@style/textStyleSemIBold_20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 1.200.000"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </LinearLayout>
-            <Button
-                android:id="@+id/btn_continue"
-                style="@style/textStyleButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_button"
-                android:elevation="0dp"
-                android:padding="4dp"
-                android:text="Lanjutkan"
-                android:textAllCaps="false"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="32dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </LinearLayout>
-    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

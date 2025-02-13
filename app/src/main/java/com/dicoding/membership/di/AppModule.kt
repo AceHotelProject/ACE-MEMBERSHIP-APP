@@ -7,6 +7,8 @@ import com.dicoding.core.domain.file.interactor.FileInteractor
 import com.dicoding.core.domain.file.usecase.FileUseCase
 import com.dicoding.core.domain.membership.interactor.MembershipInteractor
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
+import com.dicoding.core.domain.points.interactor.PointsInteractor
+import com.dicoding.core.domain.points.usecase.PointsUseCase
 import com.dicoding.core.domain.merchants.interactor.MerchantInteractor
 import com.dicoding.core.domain.merchants.usecase.MerchantUseCase
 import com.dicoding.core.domain.promo.interactor.PromoInteractor
@@ -61,4 +63,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun provideFIleUseCase(fileInteractor: FileInteractor): FileUseCase
+    @Binds
+    @Singleton
+    abstract fun providePointsUseCase(pointsInteractor: PointsInteractor): PointsUseCase
+
 }

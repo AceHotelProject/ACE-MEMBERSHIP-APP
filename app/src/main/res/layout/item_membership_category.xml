@@ -19,6 +19,7 @@
 
             <!-- Membership Packages -->
             <LinearLayout
+                android:id="@+id/layout_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -40,9 +41,12 @@
                         android:layout_weight="1"
                         android:text="Paket Ace Silver" />
                     <ImageView
+                        android:id="@+id/btn_dot"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
+                        android:padding="6dp"
                         android:src="@drawable/icon_dots"
                         android:layout_gravity="center_vertical"/>
                 </LinearLayout>
@@ -72,6 +76,7 @@
                 </LinearLayout>
 
                 <TableLayout
+                    android:id="@+id/table_tnc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -150,6 +155,7 @@
                     android:background="@color/light_grey_100" />
 
                 <LinearLayout
+                    android:id="@+id/price_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_background_level_member_price_selected"

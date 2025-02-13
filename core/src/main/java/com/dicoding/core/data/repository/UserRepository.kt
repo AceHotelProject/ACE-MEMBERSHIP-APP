@@ -5,8 +5,10 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.local.LocalDataSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
+import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
 import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.repository.IUserRepository
 import com.dicoding.core.utils.datamapper.UserDataMapper
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +33,7 @@ class UserRepository @Inject constructor(
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
-                return UserDataMapper.mapUserResponseToDomain(response)
+                return UserDataMapper.mapUserToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
@@ -49,14 +51,14 @@ class UserRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getAllUsersData(): Flow<Resource<List<User>>> {
-        return object : NetworkBoundResource<List<User>, List<UserResponse>>() {
-            override suspend fun fetchFromApi(response: List<UserResponse>): List<User> {
-                return response.map { UserDataMapper.mapUserResponseToDomain(it) }
+    override fun getAllUsersData(page: Int): Flow<Resource<UserList>> {
+        return object : NetworkBoundResource<UserList, UserListResponse>() {
+            override suspend fun fetchFromApi(response: UserListResponse): UserList {
+                return UserDataMapper.mapResponsesToDomain(response)
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<List<UserResponse>>> {
-                return remoteDataSource.getAllUsersData()
+            override suspend fun createCall(): Flow<ApiResponse<UserListResponse>> {
+                return remoteDataSource.getAllUsersData(page)
             }
         }.asFlow()
     }
@@ -64,7 +66,7 @@ class UserRepository @Inject constructor(
     override fun getUserData(id: String): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
-                return UserDataMapper.mapUserResponseToDomain(response)
+                return UserDataMapper.mapUserToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
@@ -83,7 +85,7 @@ class UserRepository @Inject constructor(
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
-                return UserDataMapper.mapUserResponseToDomain(response)
+                return UserDataMapper.mapUserToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
@@ -108,7 +110,7 @@ class UserRepository @Inject constructor(
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
-                return UserDataMapper.mapUserResponseToDomain(response)
+                return UserDataMapper.mapUserToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
@@ -126,7 +128,7 @@ class UserRepository @Inject constructor(
     override fun getUserByPhone(phone: String): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
-                return UserDataMapper.mapUserResponseToDomain(response)
+                return UserDataMapper.mapUserToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {

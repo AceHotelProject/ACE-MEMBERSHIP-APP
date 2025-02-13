@@ -4,22 +4,40 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+data class Merchant(
+    val point: Int,
+    val refferalPoint: Int,
+    val id: String
+) : Parcelable
+
+
+@Parcelize
 data class User(
     val id: String,
     val name: String,
     val email: String,
-    //val is validated
-    val phone: String,
-    val address: String,
-    val citizenNumber: String,
-    val idPicturePath: String,
+    val phone: String?,
+    val address: String?,
+    val citizenNumber: String?,
+    val pathKTP: String?,
     val role: String,
-    val merchant_id: String,
-    val android_id: String,
-    //val member_type
-    val coupon_used: Int,
+    val merchantId: Merchant?,
+    val androidId: String?,
+    val memberType: String?,
+    val couponUsed: List<String>,
     val point: Int,
-    val subscription_start_date: String,
-    val subscription_end_date: String
-
+    val refferalPoint: Int,
+    val subscriptionStartDate: String?,
+    val subscriptionEndDate: String?,
+    val isEmailVerified: Boolean,
+    val isNumberVerified: Boolean,
+    val isValidated: Boolean
 ) : Parcelable
+
+data class UserList(
+    val data: List<User>,
+    val page: Int,
+    val limit: Int,
+    val totalPages: Int,
+    val totalResults: Int
+)

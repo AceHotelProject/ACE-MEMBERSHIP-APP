@@ -32,6 +32,7 @@ class ProfileDetailViewModel @Inject constructor (
                     _userData.value = Resource.Error(e.message ?: "Nah")
                 }
                 .collect { result ->
+                    Log.d("Debug View Model", "user ID: ${userId}")
                     _userData.value = result
                 }
         }

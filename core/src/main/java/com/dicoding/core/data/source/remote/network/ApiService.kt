@@ -5,6 +5,9 @@ import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
+import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
@@ -155,7 +158,9 @@ interface ApiService {
     ): UserResponse
 
     @GET("v1/users")
-    suspend fun getAllUsersData() : UserListResponse
+    suspend fun getAllUsersData(
+        @Query("page") page: Int
+    ): UserListResponse
 
     @GET("v1/users/{id}")
     suspend fun getUserData(
@@ -207,7 +212,7 @@ interface ApiService {
         @Field("type") type: String,
         @Field("duration") duration: Int,
         @Field("price") price: Int,
-        @Field("tnc") tnc: List<String>
+        @Field("tnc[]") tnc: List<String>
     ): MembershipResponse
 
     @GET("v1/subscriptions")
@@ -225,7 +230,7 @@ interface ApiService {
         @Field("type") type: String? = null,
         @Field("duration") duration: Int? = null,
         @Field("price") price: Int? = null,
-        @Field("tnc") tnc: List<String>? = null
+        @Field("tnc[]") tnc: List<String>? = null
     ): MembershipResponse
 
     @DELETE("v1/subscriptions/{id}")
@@ -318,8 +323,29 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): Response<List<String>>
 
+    // Discount and Promotion
+
+    // Points
+
+    @FormUrlEncoded
+    @POST("v1/points/transfer")
+    suspend fun pointsTransfer(
+        @Field("to") to: String,
+        @Field("from") from: String,
+        @Field("amount") amount: Int,
+        @Field("notes") notes: String
+    ): PointHistoryResponseItem
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "v1/files/delete", hasBody = true)
     suspend fun deleteFile(@Field("fileId") fileId: String): Response<Unit>
 
+    @GET("v1/points/{userId}")
+    suspend fun getUserPoints(
+        @Path("userId") userId: String
+    ): PointsResponse
+
+    @GET("v1/points/history/{userId}")
+    suspend fun getUserHistory(
+        @Path("userId") userId: String
+    ): PointHistoryResponse
 }

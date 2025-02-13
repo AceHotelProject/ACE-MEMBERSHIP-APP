@@ -7,25 +7,30 @@ import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
+import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
+import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
+import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
+import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
+import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
+import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.file.FileUploadResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
+import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
-import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
-import com.dicoding.core.data.source.remote.response.promo.EditPromoRequest
-import com.dicoding.core.data.source.remote.response.promo.EditPromoResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryResponse
-import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -149,12 +154,12 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getAllUsersData(): Flow<ApiResponse<List<UserResponse>>> {
+    suspend fun getAllUsersData(page: Int): Flow<ApiResponse<UserListResponse>> {
         return flow {
             try {
-                val response = apiService.getAllUsersData()
+                val response = apiService.getAllUsersData(page)
                 if (response.data.isNotEmpty()) {
-                    emit(ApiResponse.Success(response.data))
+                    emit(ApiResponse.Success(response))
                 } else {
                     emit(ApiResponse.Empty)
                 }
@@ -215,6 +220,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                     citizenNumber = citizenNumber,
                     phone = phone,
                     address = address
+                    //memberType under maintenance
+                    //memberType = memberType
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
@@ -296,15 +303,11 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getAllMemberships(): Flow<ApiResponse<List<MembershipResponse>>> {
+    suspend fun getAllMemberships(): Flow<ApiResponse<MembershipListResponse>> {
         return flow {
             try {
                 val response = apiService.getAllMemberships()
-                if (response.data.isNotEmpty()) {
-                    emit(ApiResponse.Success(response.data))
-                } else {
-                    emit(ApiResponse.Empty)
-                }
+                emit(ApiResponse.Success(response))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Timber.tag("RemoteDataSource").e(e.toString())
@@ -764,6 +767,66 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Log.e("FileRemoteDataSource", "Delete error: ${e.message}", e)
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    /////////////////////////////////////////////////////////////////////////////// POINTS
+
+    suspend fun transferPoints(
+        to: String,
+        from: String,
+        amount: Int,
+        notes: String
+    ): Flow<ApiResponse<PointHistoryResponseItem>> {
+        return flow {
+            try {
+                val response = apiService.pointsTransfer(
+                    to = to,
+                    from = from,
+                    amount = amount,
+                    notes = notes
+                )
+                if (response.id.isNotEmpty()) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getUserPoints(userId: String): Flow<ApiResponse<PointsResponse>> {
+        return flow {
+            try {
+                val response = apiService.getUserPoints(userId)
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getUserHistory(userId: String): Flow<ApiResponse<PointHistoryResponse>> {
+        return flow {
+            try {
+                val response = apiService.getUserHistory(userId)
+                if (response.listHistory.isNotEmpty()) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
             }
         }.flowOn(Dispatchers.IO)
     }

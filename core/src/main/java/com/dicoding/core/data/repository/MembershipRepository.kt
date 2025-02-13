@@ -5,11 +5,13 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.local.LocalDataSource
 import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.utils.datamapper.MembershipDataMapper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -40,13 +42,27 @@ class MembershipRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getAllMemberships(): Flow<Resource<List<Membership>>> {
-        return object : NetworkBoundResource<List<Membership>, List<MembershipResponse>>() {
-            override suspend fun fetchFromApi(response: List<MembershipResponse>): List<Membership> {
-                return response.map { MembershipDataMapper.mapResponseToDomain(it) }
+    override fun getAllMemberships(): Flow<Resource<MembershipListResponse>> {
+        return object : NetworkBoundResource<MembershipListResponse, MembershipListResponse>() {
+            override suspend fun fetchFromApi(response: MembershipListResponse): MembershipListResponse {
+                return MembershipListResponse(
+                    results = response.results.map {
+                        MembershipResponse(
+                            id = it.id,
+                            type = it.type,
+                            duration = it.duration,
+                            price = it.price,
+                            tnc = it.tnc
+                        )
+                    },
+                    page = response.page,
+                    limit = response.limit,
+                    totalPages = response.totalPages,
+                    totalResults = response.totalResults
+                )
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<List<MembershipResponse>>> {
+            override suspend fun createCall(): Flow<ApiResponse<MembershipListResponse>> {
                 return remoteDataSource.getAllMemberships()
             }
         }.asFlow()
@@ -89,15 +105,24 @@ class MembershipRepository @Inject constructor(
     }
 
     override fun deleteMembership(id: String): Flow<Resource<Unit>> {
-        return object : NetworkBoundResource<Unit, Unit>() {
-            override suspend fun fetchFromApi(response: Unit): Unit {
-                return response
+        return flow {
+            emit(Resource.Loading())
+            remoteDataSource.deleteMembership(id).collect { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Success -> {
+                        // For 204 No Content, we just emit Success with Unit
+                        emit(Resource.Success(Unit))
+                    }
+                    is ApiResponse.Error -> {
+                        emit(Resource.Error(apiResponse.errorMessage))
+                    }
+                    is ApiResponse.Empty -> {
+                        // In case of 204, this might also be considered a success
+                        emit(Resource.Success(Unit))
+                    }
+                }
             }
-
-            override suspend fun createCall(): Flow<ApiResponse<Unit>> {
-                return remoteDataSource.deleteMembership(id)
-            }
-        }.asFlow()
+        }
     }
 
 }

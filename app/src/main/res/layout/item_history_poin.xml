@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/custom_border_grey"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="20dp"
     android:padding="16dp">
 
     <LinearLayout
@@ -18,6 +18,7 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/text_title"
                 style="@style/textStyleMedium_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,17 +28,19 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:id="@+id/coin_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="1dp"
                 android:src="@drawable/icon_copper_coin_green"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/item_referralku_terima_poin_jumlah"
+                app:layout_constraintEnd_toStartOf="@+id/item_jumlah_poin"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Apabila terima poin textColor: Green, transfer textColor: Black-->
             <TextView
-                android:id="@+id/item_referralku_terima_poin_jumlah"
+                android:id="@+id/item_jumlah_poin"
                 style="@style/textStyleSemIBold_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,11 +77,11 @@
 
         <TextView
             style="@style/textStyleMedium_14"
-            android:id="@+id/item_referralku_waktu_terima"
+            android:id="@+id/item_waktu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="22dp"
-            android:text="07:54, 28 Agustus 23"
+                android:text="07:54, 28 Agustus 23"
             android:textColor="@color/dark_grey"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -92,11 +95,11 @@
             android:layout_marginEnd="6dp"
             android:src="@drawable/icons_profile_profile"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/item_referralku_nama"
+            app:layout_constraintEnd_toStartOf="@+id/item_nama"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/item_referralku_nama"
+            android:id="@+id/item_nama"
             style="@style/textStyleMedium_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
