@@ -82,8 +82,8 @@ class ManajemenMitraActivity : AppCompatActivity() {
                             }
                             R.id.menu_delete_merchant -> {
                                 showConfirmationDialog(
-                                    "Tolak Promo",
-                                    "Apakah Anda yakin ingin menolak promo ini?",
+                                    "Hapus Mitra",
+                                    "Apakah Anda yakin ingin menghapus Mitra ini?",
                                     onConfirm = { handleDeleteMerchant(data.id) }
                                 )
                                 true

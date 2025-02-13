@@ -1,25 +1,16 @@
 package com.dicoding.core.utils.datamapper
 
-import com.dicoding.core.data.source.local.entity.auth.TokenEntity
-import com.dicoding.core.data.source.local.entity.auth.UserEntity
-import com.dicoding.core.data.source.remote.response.auth.LoginResponse
-import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
+import android.util.Log
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
-import com.dicoding.core.data.source.remote.response.user.UserResponse
-import com.dicoding.core.domain.auth.model.LoginDomain
-import com.dicoding.core.domain.auth.model.RegisterDomain
-import com.dicoding.core.domain.auth.model.TokensDomain
-import com.dicoding.core.domain.auth.model.TokensFormat
-import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.core.domain.points.model.Points
 import com.dicoding.core.domain.points.model.PointsHistoryData
 import com.dicoding.core.domain.points.model.UserPointHistory
-import com.dicoding.core.domain.user.model.User
 
 object PointsDataMapper {
+    private const val TAG = "PointsDataMapper"
 
     fun mapPointsResponseToDomain(input: PointsResponse): Points = Points(
         id = input.id ?: "",
@@ -29,21 +20,60 @@ object PointsDataMapper {
         totalPointReferral = input.totalPointReferral
     )
 
-    fun mapPointTransferResponseToDomain(input: PointHistoryResponseItem): PointHistory = PointHistory(
-        type = input.type,
-        from = PointsHistoryData(input.from.name!!,input.from.email!!, input.from.phone!!, input.from.id!!),
-        to = PointsHistoryData(input.to.name!!, input.to.email!!, input.to.phone!!, input.to.id!!),
-        amount = input.amount,
-        notes = input.notes,
-        createdAt = input.createdAt,
-        id = input.id
-    )
+    fun mapPointTransferResponseToDomain(input: PointHistoryResponseItem): PointHistory {
+        Log.d(TAG, "Processing history item - Type: ${input.type}, Amount: ${input.amount}")
 
-    fun mapUserPointsHistoryResponseToDomain(input: PointHistoryResponse): UserPointHistory = UserPointHistory(
-        pointIn = input.pointIn,
-        pointOut = input.pointOut,
-        pointReferral = input.pointReferral,
-        totalPoint = input.totalPoint,
-        history = input.listHistory.map { mapPointTransferResponseToDomain(it) }
-    )
+        // Log sender details with null check
+        Log.d(TAG, "Sender details - Name: ${input.from.name}, Email: ${input.from.email}, Phone: ${input.from.phone}, ID: ${input.from.id}")
+
+        // Log recipient details with null check
+        Log.d(TAG, "Recipient details - Name: ${input.to.name}, Email: ${input.to.email}, Phone: ${input.to.phone}, ID: ${input.to.id}")
+
+        return PointHistory(
+            type = input.type,
+            from = PointsHistoryData(
+                name = input.from.name ?: "empty",
+                email = input.from.email ?: "empty",
+                phone = input.from.phone ?: "empty",
+                id = input.from.id ?: "empty"
+            ),
+            to = PointsHistoryData(
+                name = input.to.name ?: "empty",
+                email = input.to.email ?: "empty",
+                phone = input.to.phone ?: "empty",
+                id = input.to.id ?: "empty"
+            ),
+            amount = input.amount,
+            notes = input.notes,
+            createdAt = input.createdAt,
+            id = input.id
+        ).also {
+            Log.d(TAG, "Successfully mapped history item with ID: ${it.id}")
+        }
+    }
+
+    fun mapUserPointsHistoryResponseToDomain(input: PointHistoryResponse): UserPointHistory {
+        Log.d(TAG, "Starting to map history with ${input.listHistory.size} items")
+
+        val mappedHistory = input.listHistory.mapIndexed { index, item ->
+            try {
+                Log.d(TAG, "Processing history item ${index + 1}/${input.listHistory.size}")
+                mapPointTransferResponseToDomain(item)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to map history item $index - Error: ${e.message}", e)
+                throw e
+            }
+        }
+
+        Log.d(TAG, "Successfully mapped ${mappedHistory.size} history items")
+
+        return UserPointHistory(
+            pointIn = input.pointIn,
+            pointOut = input.pointOut,
+            pointReferral = input.pointReferral,
+            totalPoint = input.totalPoint,
+            history = mappedHistory
+        )
+    }
+
 }

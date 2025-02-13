@@ -21,16 +21,16 @@ data class PointsResponse(
 
 data class PointsHistoryResponseItemData(
     @SerializedName("name")
-    val name: String? = null,
+    val name: String? = "empty",
 
     @SerializedName("email")
-    val email: String? = null,
+    val email: String? = "empty",
 
     @SerializedName("phone")
-    val phone: String? = null,
+    val phone: String? = "empty",
 
     @SerializedName("id")
-    val id: String? = null
+    val id: String? = "empty"
 )
 
 data class PointHistoryResponseItem(
