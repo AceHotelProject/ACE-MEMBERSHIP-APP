@@ -3,8 +3,10 @@ package com.dicoding.core.utils.datamapper
 import android.util.Log
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem1
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.domain.points.model.PointHistory
+import com.dicoding.core.domain.points.model.PointHistory1
 import com.dicoding.core.domain.points.model.Points
 import com.dicoding.core.domain.points.model.PointsHistoryData
 import com.dicoding.core.domain.points.model.UserPointHistory
@@ -51,6 +53,17 @@ object PointsDataMapper {
             Log.d(TAG, "Successfully mapped history item with ID: ${it.id}")
         }
     }
+
+    fun mapPointTransferResponseToDomain1(input: PointHistoryResponseItem1): PointHistory1 = PointHistory1(
+        type = input.type,
+        from = input.from,
+        to = input.to,
+        amount = input.amount,
+        notes = input.notes,
+        createdAt = input.createdAt,
+        id = input.id
+
+    )
 
     fun mapUserPointsHistoryResponseToDomain(input: PointHistoryResponse): UserPointHistory {
         Log.d(TAG, "Starting to map history with ${input.listHistory.size} items")

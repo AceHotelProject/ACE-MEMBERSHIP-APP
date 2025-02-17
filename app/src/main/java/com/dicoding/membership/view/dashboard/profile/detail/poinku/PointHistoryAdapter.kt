@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.profile.detail.poinku
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemHistoryPoinBinding
+import com.dicoding.membership.view.dashboard.history.poin.detail.HistoryDetailPoinActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -44,6 +46,14 @@ class PointHistoryAdapter(private val userId: String) : RecyclerView.Adapter<Poi
                     if (isReceiving) R.drawable.icon_copper_coin_green
                     else R.drawable.icon_copper_coin_black
                 )
+
+                root.setOnClickListener {
+                    val intent = Intent(itemView.context, HistoryDetailPoinActivity::class.java).apply {
+                        putExtra("point_history", item)
+                        putExtra("is_receiving", isReceiving)
+                    }
+                    itemView.context.startActivity(intent)
+                }
             }
         }
     }

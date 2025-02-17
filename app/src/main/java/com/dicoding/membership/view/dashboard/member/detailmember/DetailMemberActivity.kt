@@ -10,7 +10,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityDetailMemberBinding
 import com.dicoding.membership.databinding.ActivityMainBinding
@@ -22,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class DetailMemberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailMemberBinding
     private val viewModel: DetailMemberViewModel by viewModels()
+    private var currentUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +73,9 @@ class DetailMemberActivity : AppCompatActivity() {
 
     private fun setupEditButton() {
         binding.fbUbahProfile.setOnClickListener {
-            intent.getStringExtra(EXTRA_USER_ID)?.let { userId ->
+            currentUser?.let { user ->
                 val intent = Intent(this, UbahProfileActivity::class.java).apply {
-                    putExtra(UbahProfileActivity.USER_ID, userId)
+                    putExtra(UbahProfileActivity.USER_DATA, user)
                 }
                 startActivity(intent)
             }
@@ -101,6 +104,7 @@ class DetailMemberActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     showLoading(false)
                     resource.data?.let { user ->
+                        currentUser = user
                         binding.apply {
                             tvMembershipType.text = user.memberType ?: "Non-Member"
                             tvUserNama.text = user.name
@@ -108,6 +112,14 @@ class DetailMemberActivity : AppCompatActivity() {
                             tvUserPhone.text = user.phone ?: "-"
                             tvUserAddress.text = user.address ?: "-"
                             tvUserEmail.text = user.email
+
+                            // Load KTP image if exists
+                            Glide.with(this@DetailMemberActivity)
+                                .load(user.pathKTP)
+                                .placeholder(R.drawable.ktp_example)
+                                .error(R.drawable.ktp_example)
+                                .centerCrop()
+                                .into(ivKtpImage)
                         }
                     }
                 }

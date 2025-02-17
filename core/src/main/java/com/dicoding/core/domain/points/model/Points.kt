@@ -30,6 +30,18 @@ data class PointHistory(
     val id: String
 ) : Parcelable
 
+@Parcelize
+data class PointHistory1(
+    val type: String,
+    val from: String,
+    val to: String,
+    val amount: Int,
+    val notes: String,
+    val createdAt: String,
+    val id: String
+) : Parcelable
+
+
 data class UserPointHistory(
     val pointIn: Int,
     val pointOut: Int,

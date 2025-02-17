@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.history.historydetailriwayat
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
@@ -10,9 +11,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityHistoryDetailRiwayatBinding
+import com.dicoding.membership.view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HistoryDetailRiwayatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryDetailRiwayatBinding
     private val viewModel: HistoryDetailMemberViewModel by viewModels()
+    private var currentUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {  // Fixed the onCreate signature
         super.onCreate(savedInstanceState)
@@ -36,11 +41,23 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
 
         observeUserData()
         observeDeleteResult()
+        setupEditButton()
     }
 
     private fun setupCloseButton() {
         binding.btnClose.setOnClickListener {
             finish()
+        }
+    }
+
+    private fun setupEditButton() {
+        binding.fbUbahProfile.setOnClickListener {
+            currentUser?.let { user ->
+                val intent = Intent(this, UbahProfileActivity::class.java).apply {
+                    putExtra(UbahProfileActivity.USER_DATA, user)
+                }
+                startActivity(intent)
+            }
         }
     }
 
@@ -88,13 +105,22 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                     binding.scrollableContent.visibility = View.VISIBLE
 
                     resource.data?.let { user ->
+                        currentUser = user
                         binding.apply {
-                            tvMembershipType.text = user.memberType ?: "Non-Member"
+                            labelMembershipType.text = user.memberType ?: "Non-Member"
                             tvUserNama.text = user.name
                             tvUserNIK.text = user.citizenNumber ?: "-"
                             tvUserPhone.text = user.phone ?: "-"
                             tvUserAddress.text = user.address ?: "-"
                             tvUserEmail.text = user.email
+
+                            // Load KTP image
+                            Glide.with(this@HistoryDetailRiwayatActivity)
+                                .load(user.pathKTP)
+                                .placeholder(R.drawable.ktp_example)
+                                .error(R.drawable.ktp_example)
+                                .centerCrop()
+                                .into(ivKtpImage)
                         }
                     }
                 }

@@ -50,6 +50,23 @@ data class PointHistoryResponseItem(
     val id: String
 )
 
+data class PointHistoryResponseItem1(
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("from")
+    val from: String,
+    @SerializedName("to")
+    val to: String,
+    @SerializedName("amount")
+    val amount: Int,
+    @SerializedName("notes")
+    val notes: String,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("id")
+    val id: String
+)
+
 data class PointHistoryResponse(
     @SerializedName("pointIn")
     val pointIn: Int = 0,
@@ -67,3 +84,4 @@ data class PointHistoryResponse(
     @SerializedName("history")
     val listHistory: List<PointHistoryResponseItem> = emptyList()
 )
+

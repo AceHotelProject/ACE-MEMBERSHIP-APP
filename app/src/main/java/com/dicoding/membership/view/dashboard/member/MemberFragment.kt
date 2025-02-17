@@ -17,6 +17,7 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMemberBinding
 import com.dicoding.membership.databinding.FragmentMitraBinding
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
 import com.dicoding.membership.view.dashboard.member.detailmember.DetailMemberActivity
 import com.dicoding.membership.view.dashboard.member.listeditmember.ListEditMemberActivity
@@ -81,8 +82,8 @@ class MemberFragment : Fragment() {
         memberAdapter = MemberAdapter().apply {
             // Add click listener implementation
             setOnItemClickListener { userId ->
-                val intent = Intent(requireContext(), DetailMemberActivity::class.java).apply {
-                    putExtra(DetailMemberActivity.EXTRA_USER_ID, userId)
+                val intent = Intent(requireContext(), HistoryDetailRiwayatActivity::class.java).apply {
+                    putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
                 }
                 startActivity(intent)
             }

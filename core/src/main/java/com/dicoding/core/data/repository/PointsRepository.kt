@@ -6,6 +6,7 @@ import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.domain.points.model.PointHistory
+import com.dicoding.core.domain.points.model.PointHistory1
 import com.dicoding.core.domain.points.model.Points
 import com.dicoding.core.domain.points.model.UserPointHistory
 import com.dicoding.core.domain.points.repository.IPointsRepository
@@ -37,12 +38,12 @@ class PointsRepository @Inject constructor(
         from: String,
         amount: Int,
         notes: String
-    ): Flow<Resource<PointHistory>> {
+    ): Flow<Resource<PointHistory1>> {
         return flow {
             emit(Resource.Loading())
             when (val apiResponse = remoteDataSource.transferPoints(to, from, amount, notes).first()) {
                 is ApiResponse.Success -> {
-                    val domainData = PointsDataMapper.mapPointTransferResponseToDomain(apiResponse.data)
+                    val domainData = PointsDataMapper.mapPointTransferResponseToDomain1(apiResponse.data)
                     emit(Resource.Success(domainData))
                 }
                 is ApiResponse.Empty -> {

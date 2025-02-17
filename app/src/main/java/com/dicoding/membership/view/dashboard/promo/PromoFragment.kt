@@ -165,33 +165,38 @@ class PromoFragment : Fragment() {
 
     private fun observePromos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // LoadState observers
             launch {
                 ajuanPromoAdapter.loadStateFlow.collect { loadState ->
+                    Log.d("PromoFragment", "Ajuan LoadState changed: ${loadState.refresh}")
                     when (loadState.refresh) {
                         is LoadState.Loading -> {
+                            Log.d("PromoFragment", "Ajuan Promo entering Loading state")
                             showLoading()
                             binding.scrollView2.visibility = View.GONE
                             binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
-                            Log.d("PromoFragment", "Ajuan Promo Loading")
                         }
                         is LoadState.NotLoading -> {
+                            Log.d("PromoFragment", "Ajuan Promo entering NotLoading state")
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
-                            Log.d("PromoFragment", "Ajuan Promo Ready")
 
-                            // Check if adapter is empty
-                            if (ajuanPromoAdapter.itemCount == 0) {
+                            kotlinx.coroutines.delay(100)
+
+                            val itemCount = ajuanPromoAdapter.itemCount
+                            Log.d("PromoFragment", "Ajuan Promo item count: $itemCount")
+
+                            if (itemCount == 0) {
+                                Log.d("PromoFragment", "Showing tvTidakAdaRiwayatAjuan")
                                 binding.tvTidakAdaRiwayatAjuan.visibility = View.VISIBLE
-                                binding.rvPromoMitra.visibility = View.GONE
+                                binding.rvAjuanPromo.visibility = View.GONE
                             } else {
+                                Log.d("PromoFragment", "Hiding tvTidakAdaRiwayatAjuan")
                                 binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
-                                binding.rvPromoMitra.visibility = View.VISIBLE
+                                binding.rvAjuanPromo.visibility = View.VISIBLE
                             }
-
-                            Log.d("PromoFragment", "Promo Ajuan Ready with ${ajuanPromoAdapter.itemCount} items")
                         }
                         is LoadState.Error -> {
+                            Log.d("PromoFragment", "Ajuan Promo entering Error state: ${(loadState.refresh as LoadState.Error).error.message}")
                             hideLoading()
                             binding.scrollView2.visibility = View.VISIBLE
                             binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE

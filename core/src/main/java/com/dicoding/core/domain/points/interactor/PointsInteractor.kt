@@ -2,6 +2,7 @@ package com.dicoding.core.domain.points.interactor
 
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.points.model.PointHistory
+import com.dicoding.core.domain.points.model.PointHistory1
 import com.dicoding.core.domain.points.model.Points
 import com.dicoding.core.domain.points.model.UserPointHistory
 import com.dicoding.core.domain.points.repository.IPointsRepository
@@ -21,7 +22,7 @@ class PointsInteractor @Inject constructor(
         from: String,
         amount: Int,
         notes: String
-    ): Flow<Resource<PointHistory>> {
+    ): Flow<Resource<PointHistory1>> {
         return pointsRepository.transferPoints(to, from, amount, notes)
     }
     override fun getUserHistory(userId: String): Flow<Resource<UserPointHistory>> {

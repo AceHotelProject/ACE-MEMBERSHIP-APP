@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.points.model.PointHistory
+import com.dicoding.core.domain.points.model.PointHistory1
 import com.dicoding.core.domain.points.usecase.PointsUseCase
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.usecase.UserUseCase
@@ -39,8 +40,8 @@ class TransferPoinViewModel @Inject constructor (
         }
     }
 
-    private val _transferResult = MutableLiveData<Resource<PointHistory>>()
-    val transferResult: LiveData<Resource<PointHistory>> = _transferResult
+    private val _transferResult = MutableLiveData<Resource<PointHistory1>>()
+    val transferResult: LiveData<Resource<PointHistory1>> = _transferResult
 
     fun submitTransfer(to: String, from: String, amount: Int, notes: String) {
         viewModelScope.launch {

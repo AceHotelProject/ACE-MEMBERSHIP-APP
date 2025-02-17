@@ -1177,6 +1177,8 @@ class StaffAddPromoActivity : AppCompatActivity() {
                                 showToast(result.message ?: "Terjadi kesalahan")
                                 Log.e("EditPromo", "Error: ${result.message}")
                             }
+
+                            else -> {}
                         }
                     }
                 } else {

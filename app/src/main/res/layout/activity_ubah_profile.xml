@@ -32,6 +32,7 @@
 
 
     <ScrollView
+        android:id="@+id/sv_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -57,7 +58,7 @@
                 android:text="Foto KTP/SIM" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/add_mitra_foto_mitra_card"
+                android:id="@+id/add_foto_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -65,10 +66,10 @@
                 app:cardCornerRadius="12dp">
 
                 <ImageView
-                    android:id="@+id/add_mitra_foto_mitra_image"
+                    android:id="@+id/add_foto_ktp_image"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="centerInside"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/image_empty" />
 
             </androidx.cardview.widget.CardView>
@@ -223,8 +224,6 @@
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:layout_marginBottom="64dp"
                 android:background="@drawable/custom_button"
                 android:elevation="0dp"
@@ -237,5 +236,23 @@
         </LinearLayout>
 
     </ScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

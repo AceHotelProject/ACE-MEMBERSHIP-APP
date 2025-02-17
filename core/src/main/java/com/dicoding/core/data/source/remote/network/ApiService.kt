@@ -6,7 +6,6 @@ import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
-import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
@@ -14,6 +13,7 @@ import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdR
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem1
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.promo.CreatePromoResponse
@@ -334,7 +334,8 @@ interface ApiService {
         @Field("from") from: String,
         @Field("amount") amount: Int,
         @Field("notes") notes: String
-    ): PointHistoryResponseItem
+    ): PointHistoryResponseItem1
+
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "v1/files/delete", hasBody = true)
     suspend fun deleteFile(@Field("fileId") fileId: String): Response<Unit>

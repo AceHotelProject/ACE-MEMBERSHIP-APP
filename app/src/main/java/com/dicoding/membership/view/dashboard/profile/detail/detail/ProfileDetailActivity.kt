@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class ProfileDetailActivity : AppCompatActivity(){
     private lateinit var binding: ActivityProfileDetailBinding
     private val viewModel: ProfileDetailViewModel by viewModels()
+    private var currentUser: User? = null // Add this to store the current user
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +44,9 @@ class ProfileDetailActivity : AppCompatActivity(){
 
     private fun setupEditButton() {
         binding.btnEdit.setOnClickListener {
-            val userId = intent.getStringExtra(EXTRA_USER_ID)
-            userId?.let {
+            currentUser?.let { user ->
                 val intent = Intent(this, UbahProfileActivity::class.java).apply {
-                    putExtra(UbahProfileActivity.USER_ID, it)
+                    putExtra(UbahProfileActivity.USER_DATA, user)
                 }
                 startActivity(intent)
             }
@@ -69,9 +69,9 @@ class ProfileDetailActivity : AppCompatActivity(){
                 }
                 is Resource.Success -> {
                     showLoading(false)
-
                     Log.d("Activity debug", "Data gathered: ${resource.data}")
                     resource.data?.let { user ->
+                        currentUser = user // Store the current user
                         updateUserUI(user)
                     }
                 }
@@ -85,7 +85,6 @@ class ProfileDetailActivity : AppCompatActivity(){
                 }
                 is Resource.Message -> {
                     showLoading(false)
-                    //Timber.tag("ProfileDetailActivity").d(resource.message)
                 }
             }
         }

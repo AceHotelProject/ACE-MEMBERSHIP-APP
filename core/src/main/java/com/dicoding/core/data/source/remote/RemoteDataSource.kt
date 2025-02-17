@@ -25,6 +25,7 @@ import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdR
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
+import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem1
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
@@ -778,7 +779,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         from: String,
         amount: Int,
         notes: String
-    ): Flow<ApiResponse<PointHistoryResponseItem>> {
+    ): Flow<ApiResponse<PointHistoryResponseItem1>> {
         return flow {
             try {
                 val response = apiService.pointsTransfer(
