@@ -1,16 +1,12 @@
-package com.dicoding.membership.view.dashboard.history.poin.detail
+package com.dicoding.membership.view.dashboard.history.historydetailpoin
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityHistoryDetailPoinBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone

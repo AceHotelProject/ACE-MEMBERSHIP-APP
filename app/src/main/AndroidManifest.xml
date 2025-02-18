@@ -61,7 +61,7 @@
             android:name=".view.dashboard.history.historydetailpoin.pencarian.PencarianPoinActivity"
             android:exported="false" />
         <activity
-            android:name=".view.dashboard.history.poin.detail.HistoryDetailPoinActivity"
+            android:name=".view.dashboard.history.historydetailpoin.HistoryDetailPoinActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity"
@@ -121,9 +121,6 @@
             android:theme="@style/Base.Theme.Membership" />
         <activity
             android:name=".view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.dashboard.history.historydetailpoin.HistoryDetailPoinActivity"
             android:exported="false" />
         <activity
             android:name=".view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity"
