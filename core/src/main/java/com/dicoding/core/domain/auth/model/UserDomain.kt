@@ -2,6 +2,15 @@ package com.dicoding.core.domain.auth.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+
+// Domain models
+@Parcelize
+data class MerchantIdDomain(
+    val id: String,
+    val point: Int,
+    val referralPoint: Int
+) : Parcelable
 
 @Parcelize
 data class UserDomain(
@@ -17,7 +26,7 @@ data class UserDomain(
     val citizenNumber: String?,
     val pathKTP: String?,
     val androidId: String?,
-    val merchantId: String?,
+    val merchantId: @RawValue MerchantIdDomain?,
     val couponUsed: List<String>,
     val point: Int,
     val refferalPoint: Int,

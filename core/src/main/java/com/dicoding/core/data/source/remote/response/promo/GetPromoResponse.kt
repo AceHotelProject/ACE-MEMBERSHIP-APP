@@ -54,8 +54,11 @@ data class ResultsItem(
 	@field:SerializedName("pictures")
 	val pictures: List<String?>? = null,
 
-	@field:SerializedName("token")
-	val token: String? = null,
+	@field:SerializedName("token_code")
+	val tokenCode: String? = null,
+
+	@field:SerializedName("expired_date")
+	val expiredDate: String? = null,
 
 	@field:SerializedName("maximal_use")
 	val maximalUse: Int? = null,
@@ -69,7 +72,7 @@ data class ResultsItem(
 	@field:SerializedName("detail")
 	val detail: String? = null,
 
-	@field:SerializedName("_id")
+	@field:SerializedName("id")
 	val id: String? = null,
 
 	@field:SerializedName("category")

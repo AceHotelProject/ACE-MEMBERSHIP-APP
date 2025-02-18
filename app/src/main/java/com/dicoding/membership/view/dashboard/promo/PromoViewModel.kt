@@ -1,6 +1,5 @@
 package com.dicoding.membership.view.dashboard.promo
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope

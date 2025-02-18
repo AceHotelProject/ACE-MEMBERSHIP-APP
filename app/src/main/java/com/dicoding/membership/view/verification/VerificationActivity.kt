@@ -99,6 +99,9 @@ class VerificationActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     showLoading(false)
+                    result.data?.let { response ->
+                        Toast.makeText(this, "Kode OTP: ${response.token}", Toast.LENGTH_LONG).show()
+                    }
                     Toast.makeText(this, "Kode OTP baru telah dikirim", Toast.LENGTH_SHORT).show()
                     startTimer()
                 }

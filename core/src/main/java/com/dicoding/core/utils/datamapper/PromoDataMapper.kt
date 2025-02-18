@@ -36,7 +36,8 @@ object PromoDataMapper {
             status = input.status ?: "",
             createdBy = input.createdBy,
             updatedBy = input.updatedBy,
-            token = input.tokenId
+            token = input.tokenId,
+            expiredDate = null
         )
     }
 
@@ -64,7 +65,8 @@ object PromoDataMapper {
                     isActive = it.isActive ?: false,
                     createdBy = it.createdBy,
                     updatedBy = it.updatedBy,
-                    token = it.token
+                    token = it.tokenCode,
+                    expiredDate = it.expiredDate
                 )
             } ?: emptyList()
         )
@@ -88,7 +90,8 @@ object PromoDataMapper {
             status = input.status ?: "",
             createdBy = input.createdBy,        // tetap nullable
             updatedBy = input.updatedBy,        // tetap nullable
-            token = null                        // tidak ada di response
+            token = null,                        // tidak ada di response
+            expiredDate = null
         )
     }
 

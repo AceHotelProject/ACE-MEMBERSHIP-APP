@@ -27,5 +27,21 @@ data class UserEntity(
     var isEmailVerified: Boolean? = false,
 
     @Embedded
-    var tokenInfo: TokenEntity
+    var tokenInfo: TokenEntity,
+
+    @Embedded
+    var merchantInfo: MerchantIdEntity? = null
+
+) : Parcelable
+
+@Parcelize
+data class MerchantIdEntity(
+    @ColumnInfo(name = "merchant_id")
+    var id: String? = null,
+
+    @ColumnInfo(name = "merchant_point")
+    var point: Int? = 0,
+
+    @ColumnInfo(name = "merchant_referral_point")
+    var referralPoint: Int? = 0
 ) : Parcelable

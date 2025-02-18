@@ -12,6 +12,6 @@ data class DeletePromoResponse(
     @field:SerializedName("message")
     val message: String? = null,
 
-    @field:SerializedName("_id")
+    @field:SerializedName("id")
     val id: String? = null
 ) : Parcelable

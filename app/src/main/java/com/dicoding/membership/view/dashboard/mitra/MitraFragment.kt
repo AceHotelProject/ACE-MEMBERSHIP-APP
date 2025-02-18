@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMitraBinding
 import com.dicoding.membership.view.dashboard.admin.addmitra.AddMitraActivity
@@ -48,11 +50,68 @@ class MitraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkUserRole()
+
         setupImageAdapter()
 
-        validateTokenAndProceed()
-
         handleMenuButton()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
+
+            Log.d("MitraFragment", "User Data: ${loginDomain.user.role}")
+            Log.d("MitraFragment", "Merchant ID Data: ${loginDomain.user.merchantId}")
+
+////            Testing
+//            val mockUserRole = UserRole.RECEPTIONIST
+//            setupUserLogic(mockUserRole)
+
+//            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+
+            setupUserLogic(finalUserRole)
+
+            Log.d("MitraFragment", "Current User Role: ${finalUserRole.name}")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupUserLogic(userRole: UserRole) {
+        when (userRole) {
+            UserRole.USER, UserRole.MEMBER, UserRole.NONMEMBER -> {
+                Log.d("MitraFragment", "User is ${userRole.name}, skipping merchant data loading")
+            }
+            UserRole.RECEPTIONIST, UserRole.MITRA -> {
+                viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+                    if (loginDomain.user.merchantId?.id.isNullOrEmpty()) {
+                        Log.e("MitraFragment", "Merchant ID not found")
+                    } else {
+                        loadMerchantData(loginDomain.user.merchantId?.id.toString())
+                    }
+                }
+            }
+            UserRole.ADMIN -> {
+                validateTokenAndProceed()
+            }
+            else -> {
+                Log.e("MitraFragment", "Invalid user role")
+            }
+        }
     }
 
     private fun setupImageAdapter() {

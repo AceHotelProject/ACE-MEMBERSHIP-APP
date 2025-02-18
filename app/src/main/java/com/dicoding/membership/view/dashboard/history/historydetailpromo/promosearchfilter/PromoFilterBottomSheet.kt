@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
@@ -59,10 +58,27 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private fun checkUserRole() {
         viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
-            //            Testing
-            val mockUserRole = UserRole.MEMBER
+//            //            Testing
+//            val mockUserRole = UserRole.MEMBER
 
-            setupFiltersByRole(mockUserRole)
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+
+            setupFiltersByRole(finalUserRole)
+
+//            setupFiltersByRole(mockUserRole)
         }
     }
 
@@ -95,7 +111,33 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
                 setupRecyclerViews(showStatusFilter = true)
             }
 
-            UserRole.MEMBER, UserRole.NONMEMBER -> {
+            UserRole.MEMBER -> {
+                binding.apply {
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
+
+                        // redeemed (member) & no status (nonmember)
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+
+                        // Status valid
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
+
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+                    }
+                }
+                setupRecyclerViews(showStatusFilter = false)
+            }
+            UserRole.NONMEMBER -> {
                 binding.apply {
                     if (isFromHistory) {
                         tvDateFilter.visibility = View.VISIBLE
@@ -148,31 +190,8 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
                 }
                 setupRecyclerViews(showStatusFilter = false)
             }
-            UserRole.USER -> {
-                binding.apply {
-                    if (isFromHistory) {
-                        tvDateFilter.visibility = View.VISIBLE
-                        filterRecyclerviewDate.visibility = View.VISIBLE
+            else -> {
 
-                        // redeemed (member) & no status (nonmember)
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    } else {
-                        tvDateFilter.visibility = View.GONE
-                        filterRecyclerviewDate.visibility = View.GONE
-
-                        // Status valid
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    }
-                }
-                setupRecyclerViews(showStatusFilter = false)
             }
         }
     }

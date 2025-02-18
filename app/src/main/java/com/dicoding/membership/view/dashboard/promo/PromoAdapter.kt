@@ -3,17 +3,20 @@ package com.dicoding.membership.view.dashboard.promo
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
+import com.dicoding.core.utils.DateUtils.formatToWIB
 import com.dicoding.core.utils.ImageUtils
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.membership.R
@@ -75,6 +78,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
         return PromoViewHolder(binding)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: PromoViewHolder, position: Int) {
         Log.d("PromoAdapter", "onBindViewHolder called. Position: $position, isPaging: $isPaging")
         if (isPaging) {
@@ -104,6 +108,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
 
     inner class PromoViewHolder(private val binding: ItemDashboardPromoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(data: PromoDomain) {
             with(binding) {
                 detailPromoTitle.text = data.name
@@ -134,7 +139,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                         if (!data.token.isNullOrEmpty()) {
                             layoutUser.visibility = View.VISIBLE
                             itemDashboardPromoCode.text = data.token
-                            itemDashboardPromoExpiryTime.text = data.endDate
+                            itemDashboardPromoExpiryTime.text = formatToWIB(data.expiredDate.toString())
                             Log.d("PromoAdapter", "Token ditemukan, layoutUser ditampilkan")
                         } else {
                             layoutUser.visibility = View.GONE

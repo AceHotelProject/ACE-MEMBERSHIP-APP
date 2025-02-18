@@ -21,5 +21,6 @@ data class PromoDomain(
     val status: String,
     val createdBy: String?,
     val updatedBy: String?,
-    val token: String?
+    val token: String?,
+    val expiredDate: String?
 ) : Parcelable

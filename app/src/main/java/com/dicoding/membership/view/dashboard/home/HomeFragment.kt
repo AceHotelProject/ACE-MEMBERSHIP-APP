@@ -25,6 +25,7 @@ import com.dicoding.membership.view.dashboard.promo.PromoAdapter
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -202,15 +203,53 @@ class HomeFragment : Fragment() {
         homeViewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
 
-//            Testing
-            val mockUserRole = UserRole.MEMBER
+            binding.tvPointsCount.apply {
+                text = "${loginDomain.user.point}"
+                visibility = View.VISIBLE
+            }
 
-            setupLinearVisibility(mockUserRole)
+            binding.tvGreeting.apply {
+                Log.d("HomeFragment", "Setting greeting text with name: ${loginDomain.user.name}")
+                text = "Hi, ${loginDomain.user.name} \uD83D\uDC4B"
+                visibility = View.VISIBLE
+            }
+
+            binding.tvNMGreeting.apply {
+                Log.d("HomeFragment", "Setting greeting text with name: ${loginDomain.user.name}")
+                text = "Hi, ${loginDomain.user.name} \uD83D\uDC4B"
+                visibility = View.VISIBLE
+            }
+
+////            Testing
+//            val mockUserRole = UserRole.MEMBER
+//
+//            setupLinearVisibility(mockUserRole)
+
+            //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+
+            setupLinearVisibility(finalUserRole)
 
 //            Use This For Real
 //            setupFabVisibility(userRole)
 
             Log.d("HomeFragment", "User Role: ${userRole.display}")
+
+            val gson = Gson()
+            val jsonString = gson.toJson(loginDomain)
+            Log.d("HomeFragment", "Complete LoginDomain: $jsonString")
         }
     }
 
@@ -224,6 +263,7 @@ class HomeFragment : Fragment() {
             UserRole.MEMBER -> {
                 binding.linearLayoutMember.visibility = View.VISIBLE
                 binding.linearLayoutNonMember.visibility = View.GONE
+
                 // Reset scroll state with all parameters
                 (activity as? MainActivity)?.handleScrollState(
                     isScrollingDown = false,
@@ -236,6 +276,8 @@ class HomeFragment : Fragment() {
             UserRole.NONMEMBER -> {
                 binding.linearLayoutMember.visibility = View.GONE
                 binding.linearLayoutNonMember.visibility = View.VISIBLE
+                Log.d("HomeFragment", "Current greeting text: ${binding.tvGreeting.text}")
+
                 // Reset scroll state with all parameters
                 (activity as? MainActivity)?.handleScrollState(
                     isScrollingDown = false,

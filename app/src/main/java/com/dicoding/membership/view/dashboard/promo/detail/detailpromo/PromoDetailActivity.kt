@@ -1,7 +1,6 @@
 package com.dicoding.membership.view.dashboard.promo.detail.detailpromo
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,16 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.domain.promo.model.PromoHistoryDomain
-import com.dicoding.core.utils.ImageUtils.reduceFileImage
-import com.dicoding.core.utils.ImageUtils.uriToFile
 import com.dicoding.core.utils.constants.UserRole
-import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.DateUtils
+import com.dicoding.core.utils.DateUtils
+import com.dicoding.core.utils.DateUtils.formatToWIB
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.ActivityPromoDetailBinding
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity.Companion.PROMO_SOURCE_HISTORY
@@ -92,9 +89,26 @@ class PromoDetailActivity : AppCompatActivity() {
         viewModel.getUser().observe(this) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
 
-//            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole, promo)
+////            Testing
+//            val mockUserRole = UserRole.ADMIN
+//            setupUserVisibility(mockUserRole, promo)
+
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            setupUserVisibility(finalUserRole, promo)
+
 
 //            Use This For Real
 //            setupFabVisibility(userRole)
@@ -116,7 +130,7 @@ class PromoDetailActivity : AppCompatActivity() {
                 binding.btnSetuju.visibility = View.GONE
                 binding.btnTolak.visibility = View.GONE
             }
-            UserRole.USER -> {
+            UserRole.MEMBER -> {
                 if (!promo?.token.isNullOrEmpty()) {
                     // Token tersedia, tampilkan layout dan isi token
                     binding.layoutItemDetailPromo.visibility = View.VISIBLE
@@ -149,6 +163,7 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupView(promo: PromoDomain?, source: String?) {
 
         bindDataToLayout(promo, source)
@@ -198,7 +213,7 @@ class PromoDetailActivity : AppCompatActivity() {
             // Bind text data
             tvDetailCategory.text = history.promoCategory
             tvPromoName.text = history.promoName
-            tvOleh.text = "oleh ${history.merchantName}"
+            tvOleh.text = "oleh ${history.id}"
             tvDeskripsi.text = history.promoDetail
             tvPromoTitle.text = "Detail Riwayat Promo"
 
@@ -228,6 +243,7 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun bindDataToLayout(promo: PromoDomain?, source: String?) {
         binding.apply {
             // Setup RecyclerView with PagerSnapHelper
@@ -256,8 +272,10 @@ class PromoDetailActivity : AppCompatActivity() {
 
             tvDetailCategory.text = promo?.category ?: "Kategori Tidak Tersedia"
             tvPromoName.text = promo?.name ?: "Nama Promo Tidak Tersedia"
-            tvOleh.text = "oleh ${promo?.category ?: "Admin"}"
+            tvOleh.text = "oleh ${promo?.merchantId ?: "Admin"}"
+            Log.d("PromoDetail", "Merchant Id ${promo?.merchantId?.isEmpty()}")
             tvDeskripsi.text = promo?.detail ?: "Deskripsi Tidak Tersedia"
+            tvExpiryTime.text = formatToWIB(promo?.expiredDate ?: " ")
 
             Log.d("PromoDetail", "TnC List: ${promo?.tnc}")
             Log.d("PromoDetail", "TnC is null? ${promo?.tnc == null}")

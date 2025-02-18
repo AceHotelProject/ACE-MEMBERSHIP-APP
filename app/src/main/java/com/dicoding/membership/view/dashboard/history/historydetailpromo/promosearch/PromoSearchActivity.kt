@@ -77,6 +77,24 @@ class PromoSearchActivity : AppCompatActivity() {
             val mockUserRole = UserRole.MEMBER
             setupUserVisibility(mockUserRole)
 
+            //            //            True
+//            val finalUserRole = when (userRole) {
+//                UserRole.USER -> {
+//                    // If the role is USER, check isMember status
+//                    if (loginDomain.user.isMember) {
+//                        UserRole.MEMBER
+//                    } else {
+//                        UserRole.NONMEMBER
+//                    }
+//                }
+//                // For other roles, keep them as is
+//                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+//                else -> userRole // Handle any other cases
+//            }
+//            Use This For Real
+//            setupUserVisibility(userRole)
+//            setupAdapters(userRole)
+
             setupViews()
 
             setupAdapters(mockUserRole)
@@ -87,8 +105,9 @@ class PromoSearchActivity : AppCompatActivity() {
 
             setupSwipeRefresh()
 
+
             when (mockUserRole) {
-                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
                     validateToken()
                     observeData()
                 }

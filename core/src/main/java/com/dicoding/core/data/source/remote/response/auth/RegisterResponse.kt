@@ -3,6 +3,7 @@ package com.dicoding.core.data.source.remote.response.auth
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 data class RegisterResponse(
@@ -49,7 +50,7 @@ data class AuthUser(
 	val androidId: String? = null,
 
 	@field:SerializedName("merchantId")
-	val merchantId: String? = null,
+	val merchantId: @RawValue MerchantIdResponse? = null,
 
 	@field:SerializedName("couponUsed")
 	val couponUsed: List<String>? = emptyList(),
@@ -68,4 +69,16 @@ data class AuthUser(
 
 	@field:SerializedName("isMember")
 	val isMember: Boolean? = null
+) : Parcelable
+
+@Parcelize
+data class MerchantIdResponse(
+	@field:SerializedName("point")
+	val point: Int? = 0,
+
+	@field:SerializedName("referralPoint")
+	val referralPoint: Int? = 0,
+
+	@field:SerializedName("id")
+	val id: String? = null
 ) : Parcelable
