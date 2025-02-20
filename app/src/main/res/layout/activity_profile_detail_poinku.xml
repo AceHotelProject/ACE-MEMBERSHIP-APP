@@ -337,4 +337,49 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_non_member"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginEnd="26dp"
+            android:text="Daftar Membership"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginEnd="26dp"
+            android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
+            android:textColor="@color/dark_grey"
+            android:gravity="center"/>
+        <Button
+            android:id="@+id/btn_daftar"
+            style="@style/textStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/custom_button"
+            android:elevation="0dp"
+            android:padding="10dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="32dp"
+            android:text="Daftar Sekarang"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

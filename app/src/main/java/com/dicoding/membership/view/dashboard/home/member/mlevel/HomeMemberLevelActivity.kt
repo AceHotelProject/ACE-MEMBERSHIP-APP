@@ -3,18 +3,13 @@ package com.dicoding.membership.view.dashboard.home.member.mlevel
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
-import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityHomeMemberLevelBinding
 import com.dicoding.membership.view.dashboard.home.member.mreferral.HomeMemberReferralActivity
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @AndroidEntryPoint
 class HomeMemberLevelActivity : AppCompatActivity() {

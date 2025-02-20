@@ -3,13 +3,22 @@ package com.dicoding.membership.view.dashboard.profile.detail.referralku
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.dicoding.core.data.source.Resource
+import com.dicoding.core.utils.isInternetAvailable
+import com.dicoding.membership.R
+import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityProfileDetailReferralkuBinding
+import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
+import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
+import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity.Companion
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -23,14 +32,19 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
         binding = ActivityProfileDetailReferralkuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupUI()
+        val userId = intent.getStringExtra(ProfileDetailActivity.EXTRA_USER_ID) ?: return
+        viewModel.getUserData(userId)
+
+        observeUserData()
+
+        buttonHandler()
         observeReferralToken()
         setupSwipeRefresh()
         observeLoading()  // Add this line
         viewModel.getReferralToken()
     }
 
-    private fun setupUI() {
+    private fun buttonHandler() {
         binding.btnClose.setOnClickListener {
             finish()
         }
@@ -52,8 +66,59 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
             viewModel.isLoading.collect { isLoading ->
                 binding.swipeRefresh.isRefreshing = isLoading
                 //binding.linearLayout4.visibility = if(isLoading) View.GONE else View.VISIBLE
+                showLoading(true)
             }
         }
+    }
+
+    private fun observeUserData() {
+        viewModel.userData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+                is Resource.Success -> {
+                    showLoading(false)
+                    Log.d("Activity debug", "Data gathered: ${resource.data}")
+                    resource.data?.let { user ->
+                        if(!user.isMember){
+                            nonMemberLayout()
+                        }
+
+                    }
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    if (!isInternetAvailable(this)) {
+                        showToast(getString(R.string.check_internet))
+                    } else {
+                        showToast(resource.message.toString())
+                    }
+                }
+                is Resource.Message -> {
+                    showLoading(false)
+                }
+            }
+        }
+    }
+
+    private fun showLoading(b: Boolean){
+        binding.loadingOverlay.visibility = if(b) View.VISIBLE else View.GONE
+        binding.linearLayout4.visibility = if(!b) View.VISIBLE else View.GONE
+    }
+
+    private fun nonMemberLayout(){
+        binding.linearLayout4.visibility = View.GONE
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutNonMember.visibility = View.VISIBLE
+        binding.btnDaftar.setOnClickListener {
+            viewModel.userData.value?.let { user ->
+                startActivity(Intent(this, HomeMemberLevelActivity::class.java).apply {
+                    putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
+                })
+            }
+        }
+
     }
 
     private fun observeReferralToken() {

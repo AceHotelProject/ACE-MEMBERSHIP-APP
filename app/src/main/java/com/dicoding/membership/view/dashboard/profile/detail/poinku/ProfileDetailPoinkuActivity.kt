@@ -13,8 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.points.model.Points
+import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.R
+import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityProfileDetailPoinkuBinding
+import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity.Companion
 import com.dicoding.membership.view.dashboard.profile.detail.poinku.terima.TerimaPoinActivity
@@ -27,21 +30,61 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileDetailPoinkuBinding
     private val viewModel: ProfileDetailPoinkuViewModel by viewModels()
     private lateinit var historyAdapter: PointHistoryAdapter
+    private var userId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileDetailPoinkuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
+        viewModel.getUserData(userId)
+        observeUserData()
+
+
+
         //functions
         setupRecyclerView()
-        setupObservers()
         setupClickListeners()
         setupSwipeRefresh()
 
-        val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
-        viewModel.getUserPoints(userId)
-        viewModel.getUserHistory(userId)
+        //observer moved to observe user data
+
+
+    }
+
+    private fun observeUserData() {
+        viewModel.userData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+                is Resource.Success -> {
+                    showLoading(false)
+                    Log.d("Activity debug", "Data gathered: ${resource.data}")
+                    resource.data?.let { user ->
+                        if(!user.isMember){
+                            nonMemberLayout()
+                        } else {
+                            viewModel.getUserHistory(userId)
+                            setupObservers()
+                        }
+
+                    }
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    if (!isInternetAvailable(this)) {
+                        showToast(getString(R.string.check_internet))
+                    } else {
+                        showToast(resource.message.toString())
+                    }
+                }
+                is Resource.Message -> {
+                    showLoading(false)
+                }
+            }
+        }
     }
 
     private fun setupSwipeRefresh() {
@@ -144,9 +187,22 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
         }
     }
 
+    private fun nonMemberLayout() {
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutPoinku.visibility = View.GONE
+        binding.layoutNonMember.visibility = View.VISIBLE
+        binding.btnDaftar.setOnClickListener {
+            viewModel.userData.value?.let { user ->
+                startActivity(Intent(this, HomeMemberLevelActivity::class.java).apply {
+                    putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
+                })
+            }
+        }
+    }
+
     private fun showLoading(isLoading: Boolean) {
-        //binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
-        //binding.layoutPoinku.visibility = if (isLoading) View.GONE else View.VISIBLE
+        binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.layoutPoinku.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 
     companion object {

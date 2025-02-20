@@ -14,6 +14,7 @@ import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityProfileDetailBinding
+import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ubahprofil.UbahProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,21 +29,18 @@ class ProfileDetailActivity : AppCompatActivity(){
         binding = ActivityProfileDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupUI()
+        //
+        buttonHandler()
         observeUserData()
-        setupEditButton()
 
         val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
         viewModel.getUserData(userId)
     }
 
-    private fun setupUI() {
+    private fun buttonHandler() {
         binding.btnClose.setOnClickListener {
             finish()
         }
-    }
-
-    private fun setupEditButton() {
         binding.btnEdit.setOnClickListener {
             currentUser?.let { user ->
                 val intent = Intent(this, UbahProfileActivity::class.java).apply {
@@ -72,7 +70,12 @@ class ProfileDetailActivity : AppCompatActivity(){
                     Log.d("Activity debug", "Data gathered: ${resource.data}")
                     resource.data?.let { user ->
                         currentUser = user // Store the current user
-                        updateUserUI(user)
+                        if(user.isMember){
+                            updateUserUI(user)
+                        } else {
+                            nonMemberLayout()
+                        }
+
                     }
                 }
                 is Resource.Error -> {
@@ -92,6 +95,7 @@ class ProfileDetailActivity : AppCompatActivity(){
 
     private fun updateUserUI(user: User) {
         with(binding) {
+            layoutNonMember.visibility = View.GONE
             when (user.role) {
                 "admin", "merchant", "receptionist" -> {
                     profileDetailLayoutNonuser.visibility = View.VISIBLE
@@ -139,6 +143,20 @@ class ProfileDetailActivity : AppCompatActivity(){
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun nonMemberLayout(){
+        binding.detailLayoutSv.visibility = View.GONE
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutNonMember.visibility = View.VISIBLE
+        binding.btnDaftar.setOnClickListener {
+            viewModel.userData.value?.let { user ->
+                startActivity(Intent(this, HomeMemberLevelActivity::class.java).apply {
+                    putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
+                })
+            }
+        }
+
     }
 
     companion object {
