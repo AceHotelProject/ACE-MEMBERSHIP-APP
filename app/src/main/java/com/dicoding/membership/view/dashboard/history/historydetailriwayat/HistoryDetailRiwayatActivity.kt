@@ -107,7 +107,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         currentUser = user
                         binding.apply {
-                            labelMembershipType.text = user.memberType ?: "Non-Member"
+                            labelMembershipType.text = user.membership?.subscriptionType?.type ?: "Non-Member"
                             tvUserNama.text = user.name
                             tvUserNIK.text = user.citizenNumber ?: "-"
                             tvUserPhone.text = user.phone ?: "-"

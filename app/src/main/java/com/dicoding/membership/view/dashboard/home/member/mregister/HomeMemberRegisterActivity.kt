@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.utils.isInternetAvailable
@@ -27,6 +28,7 @@ import com.dicoding.membership.databinding.ActivityHomeMemberRegisterBinding
 import com.dicoding.membership.view.status.StatusTemplate
 import com.dicoding.membership.view.status.StatusTemplateActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
@@ -34,6 +36,8 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeMemberRegisterBinding
     private val viewModel: HomeMemberRegisterViewModel by viewModels()
     private var selectedPackage: String? = ""
+    private var selectedImageUri: Uri? = null
+    private var isImageSelected = false
 
     private val CAMERA_PERMISSION = Manifest.permission.CAMERA
     private val STORAGE_PERMISSION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -94,55 +98,6 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                 requestPermissionLauncher.launch(permission)
             }
         }
-    }
-
-    private val galleryLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { selectedUri ->
-            // Convert gallery URI to bitmap then to our stored URI format
-            try {
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedUri)
-                val imageUri = getBitmapUri(bitmap)
-                viewModel.setImageString(imageUri.toString())
-
-                Glide.with(this)
-                    .load(bitmap)
-                    .centerCrop()
-                    .into(binding.imgKtpSim)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                showToast("Failed to process image")
-            }
-        }
-    }
-
-    private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap ->
-        bitmap?.let {
-            // Convert bitmap to URI using content provider
-            val imageUri = getBitmapUri(bitmap)
-            viewModel.setImageString(imageUri.toString())
-
-            // Display image
-            Glide.with(this)
-                .load(bitmap)
-                .centerCrop()
-                .into(binding.imgKtpSim)
-        }
-    }
-
-    private fun getBitmapUri(bitmap: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path = MediaStore.Images.Media.insertImage(
-            contentResolver,
-            bitmap,
-            "Title",
-            null
-        )
-        return Uri.parse(path)
     }
 
     private fun showImagePickerDialog() {
@@ -293,75 +248,135 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
         binding.mainNsv.visibility = if(isLoading) View.GONE else View.VISIBLE
     }
 
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            selectedImageUri = selectedUri  // Store the URI for later upload
+            // Show image locally only
+            Glide.with(this)
+                .load(selectedUri)
+                .centerCrop()
+                .into(binding.imgKtpSim)
+            isImageSelected = true
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicturePreview()
+    ) { bitmap ->
+        bitmap?.let {
+            // Convert bitmap to URI for local storage
+            val bytes = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+            val path = MediaStore.Images.Media.insertImage(
+                contentResolver,
+                bitmap,
+                "Title",
+                null
+            )
+            selectedImageUri = Uri.parse(path)  // Store the URI for later upload
+
+            // Show image locally only
+            Glide.with(this)
+                .load(bitmap)
+                .centerCrop()
+                .into(binding.imgKtpSim)
+            isImageSelected = true
+        }
+    }
+
     private fun handleButtonRegister() {
         binding.apply {
             btnRegister.setOnClickListener {
+                showLoading(true)  // Show loading immediately when button is clicked
+
                 // First observe userData to get the userId
                 viewModel.userData.observe(this@HomeMemberRegisterActivity) { loginDomain ->
                     val userId = loginDomain.user.id
-                    val idPicturePath = viewModel.imagePath ?: "EmptyPath"
                     val name = edRegisterName.text?.toString() ?: "Default Name"
                     val citizenNumber = edRegisterNik.text?.toString() ?: "0000000000000000"
                     val phone = edRegisterPhone.text?.toString() ?: "000000000000"
                     val address = edRegisterAddress.text?.toString() ?: "Default Address"
                     val memberType = selectedPackage
 
-                    viewModel.completeUserData(
-                        id = userId,
-                        name = name,
-                        pathKTP = idPicturePath,
-                        citizenNumber = citizenNumber,
-                        phone = phone,
-                        address = address,
-                        memberType = memberType
-                    ).observe(this@HomeMemberRegisterActivity) { result ->
-                        when (result) {
-                            is Resource.Error -> {
+                    lifecycleScope.launch {
+                        // First upload the image if one was selected
+                        val imageUrl = if (isImageSelected && selectedImageUri != null) {
+                            var uploadedUrl: String? = null
+                            try {
+                                viewModel.uploadFile(selectedImageUri!!, this@HomeMemberRegisterActivity)
+                                    .collect { result ->
+                                        when (result) {
+                                            is Resource.Success -> {
+                                                result.data?.let { upload ->
+                                                    uploadedUrl = upload.fileUrl
+                                                }
+                                            }
+                                            is Resource.Error -> {
+                                                showLoading(false)
+                                                showToast("Upload failed: ${result.message}")
+                                                return@collect
+                                            }
+                                            else -> {}
+                                        }
+                                    }
+                            } catch (e: Exception) {
                                 showLoading(false)
-                                isButtonEnabled(true)
+                                showToast("Upload failed: ${e.message}")
+                                return@launch
+                            }
+                            uploadedUrl
+                        } else null
 
-                                if (!isInternetAvailable(this@HomeMemberRegisterActivity)) {
-                                    showToast(getString(R.string.check_internet))
-                                } else {
-                                    showToast(result.message.toString())
+                        // Then complete user data with the uploaded image URL
+                        viewModel.completeUserData(
+                            id = userId,
+                            name = name,
+                            pathKTP = imageUrl ?: "EmptyPath",
+                            citizenNumber = citizenNumber,
+                            phone = phone,
+                            address = address,
+                            memberType = memberType
+                        ).observe(this@HomeMemberRegisterActivity) { result ->
+                            when (result) {
+                                is Resource.Error -> {
+                                    showLoading(false)
+                                    isButtonEnabled(true)
+
+                                    if (!isInternetAvailable(this@HomeMemberRegisterActivity)) {
+                                        showToast(getString(R.string.check_internet))
+                                    } else {
+                                        showToast(result.message.toString())
+                                    }
                                 }
-                            }
-
-                            is Resource.Loading -> {
-                                showLoading(true)
-                                isButtonEnabled(false)
-                            }
-
-                            is Resource.Message -> {
-                                showLoading(false)
-                                isButtonEnabled(true)
-                            }
-
-                            is Resource.Success -> {
-                                showLoading(false)
-                                isButtonEnabled(true)
-
-                                // Debug memberType
-                                Log.d("Membertype Update", "Membertype updated to $memberType")
-
-                                // Status Template Activity
-                                val statusTemplate = StatusTemplate(
-                                    title = "Membership Berhasil",
-                                    description = "Membership berhasil Membership berhasil Membership berhasil Membership berhasil Membership berhasil Membership berhasil Membership berhasil Membership berhasil ",
-                                    showCoupon = false,
-                                    promoCode = "",
-                                    expiryTime = "",
-                                    buttonText = "Selesai"
-                                )
-                                val intent = Intent(this@HomeMemberRegisterActivity, StatusTemplateActivity::class.java).apply {
-                                    putExtra(StatusTemplateActivity.EXTRA_STATUS_TEMPLATE, statusTemplate)
+                                is Resource.Loading -> {
+                                    // Loading is already shown
                                 }
-                                startActivity(intent)
-                                finish()
+                                is Resource.Success -> {
+                                    showLoading(false)
+                                    isButtonEnabled(true)
 
+                                    // Debug memberType
+                                    Log.d("Membertype Update", "Membertype updated to $memberType")
+
+                                    // Status Template Activity
+                                    val statusTemplate = StatusTemplate(
+                                        title = "Membership Berhasil",
+                                        description = "Anda telah memilih tipe membership id: ${memberType}.",
+                                        showCoupon = false,
+                                        promoCode = "",
+                                        expiryTime = "",
+                                        buttonText = "Selesai"
+                                    )
+                                    val intent = Intent(this@HomeMemberRegisterActivity, StatusTemplateActivity::class.java).apply {
+                                        putExtra(StatusTemplateActivity.EXTRA_STATUS_TEMPLATE, statusTemplate)
+                                    }
+                                    startActivity(intent)
+                                    finish()
+                                }
+                                else -> {}
                             }
-
-                            else -> {}
                         }
                     }
                 }

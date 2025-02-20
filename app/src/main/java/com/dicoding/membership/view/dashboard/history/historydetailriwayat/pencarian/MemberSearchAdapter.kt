@@ -53,7 +53,7 @@ class MemberSearchAdapter : RecyclerView.Adapter<MemberSearchAdapter.ViewHolder>
 
         fun bind(user: User) {
             with(binding) {
-                labelMembershipType.text = user.memberType ?: "Non-Member"
+                labelMembershipType.text = user.membership?.subscriptionType?.type ?: "Non-Member"
                 tvUserName.text = user.name
                 tvUserEmail.text = user.email
                 tvUserPhone.text = user.phone ?: "-"

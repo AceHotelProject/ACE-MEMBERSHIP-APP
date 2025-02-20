@@ -49,13 +49,13 @@ class MemberFragment : Fragment() {
         // RecyclerView implementation
         setupRecyclerView()
         observeData()
+        memberViewModel.getAllUsers()
 
         validateToken()
         handleMenuButton()
     }
 
     private fun observeData() {
-        memberViewModel.getAllUsers()
         memberViewModel.userList.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Loading -> showLoading(true)

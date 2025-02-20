@@ -7,6 +7,7 @@ import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
+import com.dicoding.core.domain.user.model.ReferralToken
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.repository.IUserRepository
@@ -103,10 +104,12 @@ class UserRepository @Inject constructor(
 
     override fun completeUserData(
         id: String,
+        name: String?,
         pathKTP: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?
+        address: String?,
+        subscriptionType: String?
     ): Flow<Resource<User>> {
         return object : NetworkBoundResource<User, UserResponse>() {
             override suspend fun fetchFromApi(response: UserResponse): User {
@@ -116,10 +119,12 @@ class UserRepository @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
                 return remoteDataSource.completeUserData(
                     id = id,
+                    name = name,
                     pathKTP = pathKTP,
                     citizenNumber = citizenNumber,
                     phone = phone,
-                    address = address
+                    address = address,
+                    subscriptionType = subscriptionType
                 )
             }
         }.asFlow()
@@ -147,5 +152,17 @@ class UserRepository @Inject constructor(
                 return remoteDataSource.deleteUser(id)
             }
         }.asFlow()
+    }
+
+    override suspend fun createReferralToken(): Result<ReferralToken> {
+        return remoteDataSource.createReferralToken().map { response ->
+            UserDataMapper.mapReferralTokenToDomain(response)
+        }
+    }
+
+    override suspend fun getReferralToken(): Result<ReferralToken> {
+        return remoteDataSource.getReferralToken().map { response ->
+            UserDataMapper.mapReferralTokenToDomain(response)
+        }
     }
 }

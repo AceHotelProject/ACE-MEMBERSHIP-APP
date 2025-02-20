@@ -37,16 +37,31 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
         setupRecyclerView()
         setupObservers()
         setupClickListeners()
+        setupSwipeRefresh()
 
         val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
         viewModel.getUserPoints(userId)
         viewModel.getUserHistory(userId)
     }
 
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return@setOnRefreshListener
+            viewModel.refreshData(userId)
+        }
+    }
+
     private fun setupObservers() {
         lifecycleScope.launch {
             var pointsLoaded = false
             var historyLoaded = false
+
+            // Observe loading state
+            launch {
+                viewModel.isLoading.collect { isLoading ->
+                    binding.swipeRefresh.isRefreshing = isLoading
+                }
+            }
 
             launch {
                 viewModel.points.collect { resource ->
@@ -61,7 +76,6 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                             pointsLoaded = true
                             if (historyLoaded) showLoading(false)
                         }
-
                         else -> {}
                     }
                 }
@@ -82,7 +96,6 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                             historyLoaded = true
                             if (pointsLoaded) showLoading(false)
                         }
-
                         else -> {}
                     }
                 }
@@ -132,8 +145,8 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.layoutPoinku.visibility = if (isLoading) View.GONE else View.VISIBLE
+        //binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+        //binding.layoutPoinku.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 
     companion object {

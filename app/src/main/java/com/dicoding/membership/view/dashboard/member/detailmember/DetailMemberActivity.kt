@@ -106,7 +106,7 @@ class DetailMemberActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         currentUser = user
                         binding.apply {
-                            tvMembershipType.text = user.memberType ?: "Non-Member"
+                            tvMembershipType.text = user.membership?.subscriptionType?.type ?: "Non-Member"
                             tvUserNama.text = user.name
                             tvUserNIK.text = user.citizenNumber ?: "-"
                             tvUserPhone.text = user.phone ?: "-"

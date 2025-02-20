@@ -246,6 +246,7 @@
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/iv_buktipembayaran"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
@@ -293,6 +294,7 @@
                             android:textColor="@color/dark_grey" />
 
                         <TextView
+                            android:id="@+id/tv_name"
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -316,6 +318,7 @@
                             android:textColor="@color/dark_grey" />
 
                         <TextView
+                            android:id="@+id/tv_citizen_number"
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -340,6 +343,7 @@
                             android:textColor="@color/dark_grey" />
 
                         <TextView
+                            android:id="@+id/tv_phone"
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -362,6 +366,7 @@
                             android:textColor="@color/dark_grey" />
 
                         <TextView
+                            android:id="@+id/tv_address"
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -384,6 +389,7 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tv_email"
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -412,7 +418,7 @@
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/btn_continue"
+                android:id="@+id/btn_simpan"
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -421,8 +427,27 @@
                 android:padding="10dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="64dp"
-                android:text="Lanjutkan"
+                android:text="Simpan"
                 android:textAllCaps="false" />
         </LinearLayout>
     </ScrollView>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_close">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

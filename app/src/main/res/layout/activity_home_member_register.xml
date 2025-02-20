@@ -43,8 +43,8 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/custom_edit_text"
-                android:scaleType="centerInside"
-                android:src="@drawable/icons_image" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/image_empty" />
 
             <!-- Name -->
             <TextView

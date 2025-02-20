@@ -91,7 +91,7 @@
                 android:text="Periode Berlaku" />
 h
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ti_layout_bulan"
+                android:id="@+id/ti_layout_hari"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,13 +106,13 @@ h
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ti_tipe_bulan"
+                    android:id="@+id/ti_tipe_hari"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/custom_edit_text"
                     android:drawablePadding="12sp"
                     android:ems="10"
-                    android:hint="Masukkan jumlah bulan"
+                    android:hint="Masukkan jumlah hari"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textColorHint="@color/dark_grey"

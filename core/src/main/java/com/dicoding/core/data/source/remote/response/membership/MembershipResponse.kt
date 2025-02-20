@@ -17,7 +17,11 @@ data class MembershipResponse(
 
     @SerializedName("tnc")
     val tnc: List<String>? = null,
-    )
+
+    @SerializedName("image")
+    val image: List<String>? = null,
+
+)
 
 data class MembershipListResponse(
     @SerializedName("results")

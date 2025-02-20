@@ -20,7 +20,8 @@ object MembershipDataMapper {
         type = input.type ?: "",
         duration = input.duration ?: 0,
         price = input.price ?: 0,
-        tnc = input.tnc ?: emptyList()
+        tnc = input.tnc ?: emptyList(),
+        image = input.image ?: emptyList()
     )
 
 }

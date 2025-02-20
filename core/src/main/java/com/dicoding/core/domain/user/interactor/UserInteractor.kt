@@ -2,6 +2,7 @@ package com.dicoding.core.domain.user.interactor
 
 import com.dicoding.core.data.repository.UserRepository
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.ReferralToken
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.usecase.UserUseCase
@@ -45,8 +46,7 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         name: String?,
         citizenNumber: String?,
         phone: String?,
-        address: String?,
-        memberType: String?
+        address: String?
     ): Flow<Resource<User>> {
         return userRepository.updateUserData(
             id = id,
@@ -65,14 +65,16 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         citizenNumber: String?,
         phone: String?,
         address: String?,
-        memberType: String?
+        subscriptionType: String?
     ): Flow<Resource<User>> {
         return userRepository.completeUserData(
             id = id,
+            name = name,
             pathKTP = pathKTP,
             citizenNumber = citizenNumber,
             phone = phone,
-            address = address
+            address = address,
+            subscriptionType = subscriptionType
         )
     }
 
@@ -82,5 +84,13 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
 
     override fun deleteUser(id: String): Flow<Resource<Unit>> {
         return userRepository.deleteUser(id)
+    }
+
+    override suspend fun createReferralToken(): Result<ReferralToken> {
+        return userRepository.createReferralToken()
+    }
+
+    override suspend fun getReferralToken(): Result<ReferralToken> {
+        return userRepository.getReferralToken()
     }
 }

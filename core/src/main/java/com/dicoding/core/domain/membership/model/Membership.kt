@@ -5,5 +5,6 @@ data class Membership(
     val type: String,
     val duration: Int,
     val price: Int,
-    val tnc: List<String>
+    val tnc: List<String>,
+    val image: List<String>
 )

@@ -31,6 +31,7 @@ import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import com.dicoding.core.data.source.remote.response.user.ReferralTokenResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
 import kotlinx.coroutines.Dispatchers
@@ -238,19 +239,23 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
     suspend fun completeUserData(
         id: String,
+        name: String? = null,
         pathKTP: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null
+        address: String? = null,
+        subscriptionType: String? = null
     ): Flow<ApiResponse<UserResponse>> {
         return flow {
             try {
                 val response = apiService.completeUserData(
                     id = id,
+                    name = name,
                     pathKTP = pathKTP,
                     citizenNumber = citizenNumber,
                     phone = phone,
-                    address = address
+                    address = address,
+                    subscriptionType = subscriptionType
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
@@ -276,13 +281,36 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun createReferralToken(): Result<ReferralTokenResponse> = try {
+        val response = apiService.createReferralToken()
+        if (response.isSuccessful) {
+            Result.success(response.body()!!)
+        } else {
+            Result.failure(HttpException(response))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    suspend fun getReferralToken(): Result<ReferralTokenResponse> = try {
+        val response = apiService.getReferralToken()
+        if (response.isSuccessful) {
+            Result.success(response.body()!!)
+        } else {
+            Result.failure(HttpException(response))
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     /////////////////////////////////////////////////////////////////////////////// MEMBERSHIP
 
     suspend fun createMembership(
         type: String,
         duration: Int,
         price: Int,
-        tnc: List<String>
+        tnc: List<String>,
+        image: List<String>
     ): Flow<ApiResponse<MembershipResponse>> {
         return flow {
             try {
@@ -290,7 +318,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                     type = type,
                     duration = duration,
                     price = price,
-                    tnc = tnc
+                    tnc = tnc,
+                    image = image
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))
@@ -337,7 +366,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         type: String? = null,
         duration: Int? = null,
         price: Int? = null,
-        tnc: List<String>? = null
+        tnc: List<String>? = null,
+        image: List<String>? = null
     ): Flow<ApiResponse<MembershipResponse>> {
         return flow {
             try {
@@ -346,7 +376,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                     type = type,
                     duration = duration,
                     price = price,
-                    tnc = tnc
+                    tnc = tnc,
+                    image = image
                 )
                 if (response.id != null) {
                     emit(ApiResponse.Success(response))

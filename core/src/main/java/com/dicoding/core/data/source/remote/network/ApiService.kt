@@ -25,6 +25,7 @@ import com.dicoding.core.data.source.remote.response.test.DetailStoryResponse
 import com.dicoding.core.data.source.remote.response.test.LoginTest
 import com.dicoding.core.data.source.remote.response.test.RegisterTest
 import com.dicoding.core.data.source.remote.response.test.StoryResponse
+import com.dicoding.core.data.source.remote.response.user.ReferralTokenResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
 import okhttp3.MultipartBody
@@ -187,16 +188,25 @@ interface ApiService {
     @FormUrlEncoded
     suspend fun completeUserData(
         @Path("id") id: String,
+        @Field("name") name: String? = null,
         @Field("pathKTP") pathKTP: String? = null,
         @Field("citizenNumber") citizenNumber: String? = null,
         @Field("phone") phone: String? = null,
-        @Field("address") address: String? = null
+        @Field("address") address: String? = null,
+        @Field("subscriptionType") subscriptionType: String? = null
     ): UserResponse
 
     @DELETE("v1/users/{id}")
     suspend fun deleteUser(
         @Path("id") id: String
     ): Unit
+
+    @POST("v1/users/referral-token")
+    suspend fun createReferralToken(): Response<ReferralTokenResponse>
+
+    @GET("v1/users/referral-token")
+    suspend fun getReferralToken(): Response<ReferralTokenResponse>
+
 
     // Non Member
 
@@ -206,16 +216,17 @@ interface ApiService {
         @Body updateData: Map<String, Any>
     )
 
-    @POST("v1/subscriptions")
+    @POST("v1/subscriptions/type")
     @FormUrlEncoded
     suspend fun createMembership(
         @Field("type") type: String,
         @Field("duration") duration: Int,
         @Field("price") price: Int,
-        @Field("tnc[]") tnc: List<String>
+        @Field("tnc[]") tnc: List<String>,
+        @Field("image[]") image: List<String>
     ): MembershipResponse
 
-    @GET("v1/subscriptions")
+    @GET("v1/subscriptions/type")
     suspend fun getAllMemberships(): MembershipListResponse
 
     @GET("v1/subscriptions/{id}")
@@ -230,7 +241,8 @@ interface ApiService {
         @Field("type") type: String? = null,
         @Field("duration") duration: Int? = null,
         @Field("price") price: Int? = null,
-        @Field("tnc[]") tnc: List<String>? = null
+        @Field("tnc[]") tnc: List<String>? = null,
+        @Field("image[]") image: List<String>? = null
     ): MembershipResponse
 
     @DELETE("v1/subscriptions/{id}")

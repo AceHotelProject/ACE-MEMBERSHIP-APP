@@ -3,6 +3,35 @@
     import com.google.gson.Gson
     import com.google.gson.JsonElement
     import com.google.gson.annotations.SerializedName
+    data class SubscriptionTypeResponse(
+        @SerializedName("type")
+        val type: String = "",
+        @SerializedName("id")
+        val id: String = ""
+    )
+
+    data class MembershipResponse(
+        @SerializedName("userId")
+        val userId: String = "",
+        @SerializedName("verificatorId")
+        val verificatorId: String? = null,
+        @SerializedName("subscriptionType")
+        val subscriptionType: SubscriptionTypeResponse? = null,
+        @SerializedName("status")
+        val status: String = "",
+        @SerializedName("payment")
+        val payment: Int = 0,
+        @SerializedName("paymentProof")
+        val paymentProof: String? = null,
+        @SerializedName("startDate")
+        val startDate: String = "",
+        @SerializedName("endDate")
+        val endDate: String = "",
+        @SerializedName("createdAt")
+        val createdAt: String = "",
+        @SerializedName("id")
+        val id: String = ""
+    )
 
     data class MerchantUserResponse(
         @SerializedName("point")
@@ -25,71 +54,54 @@
         ) : MerchantIdResponse()
     }
 
-
     data class UserResponse(
         @SerializedName("id")
         val id: String? = null,
-
         @SerializedName("name")
         val name: String? = null,
-
         @SerializedName("email")
         val email: String? = null,
-
         @SerializedName("isEmailVerified")
         val isEmailVerified: Boolean = false,
-
         @SerializedName("isNumberVerified")
         val isNumberVerified: Boolean = false,
-
         @SerializedName("isPhoneVerified")
         val isPhoneVerified: Boolean = false,
-
         @SerializedName("isValidated")
         val isValidated: Boolean = false,
-
         @SerializedName("phone")
         val phone: String? = null,
-
         @SerializedName("address")
         val address: String? = null,
-
         @SerializedName("citizenNumber")
         val citizenNumber: String? = null,
-
         @SerializedName("pathKTP")
         val pathKTP: String? = null,
-
         @SerializedName("role")
         val role: String = "user",
-
         @SerializedName("merchantId")
         private val _merchantId: JsonElement? = null,
-
         @SerializedName("androidId")
         val androidId: String? = null,
-
-        @SerializedName("memberType")
-        val memberType: String? = null,
-
         @SerializedName("couponUsed")
         val couponUsed: List<String> = emptyList(),
-
         @SerializedName("point")
         val point: Int = 0,
-
         @SerializedName("refferalPoint")
         val refferalPoint: Int = 0,
-
-        @SerializedName("subscriptionStartDate")
-        val subscriptionStartDate: String? = null,
-
-        @SerializedName("subscriptionEndDate")
-        val subscriptionEndDate: String? = null,
-
+        @SerializedName("referralPoint")
+        val referralPoint: Int = 0,
+        @SerializedName("uniqueCode")
+        val uniqueCode: String? = null,
+        @SerializedName("referralToken")
+        val referralToken: String? = null,
+        @SerializedName("membership")
+        val membership: MembershipResponse? = null,
+        @SerializedName("isMember")
+        val isMember: Boolean = false,
         @SerializedName("createdAt")
         val createdAt: String? = null
-    ){
+    ) {
         val merchantId: MerchantIdResponse?
             get() = when {
                 _merchantId == null -> null
@@ -111,7 +123,6 @@
                 else -> null
             }
     }
-
     data class UserListResponse(
         @SerializedName("results")
         val data: List<UserResponse> = emptyList(),
@@ -127,4 +138,14 @@
 
         @SerializedName("totalResults")
         val totalResults: Int = 0
+    )
+
+    data class ReferralTokenResponse(
+        @SerializedName("token") val token: String,
+        @SerializedName("user") val user: String,
+        @SerializedName("type") val type: String,
+        @SerializedName("expires") val expires: String?,
+        @SerializedName("blacklisted") val blacklisted: Boolean,
+        @SerializedName("createdAt") val createdAt: String,
+        @SerializedName("id") val id: String
     )

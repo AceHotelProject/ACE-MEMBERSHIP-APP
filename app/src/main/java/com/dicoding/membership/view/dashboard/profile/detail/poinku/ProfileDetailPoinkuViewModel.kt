@@ -24,22 +24,41 @@ class ProfileDetailPoinkuViewModel @Inject constructor (
     private val _userHistory = MutableStateFlow<Resource<UserPointHistory>>(Resource.Loading())
     val userHistory: StateFlow<Resource<UserPointHistory>> = _userHistory
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+
     fun getUserPoints(userId: String) {
         Log.d("Points", "Fetching points for user: $userId")
         viewModelScope.launch {
-            pointsUseCase.getUserPoints(userId)
-                .collect { result ->
-                    Log.d("Points", "Received points result: $result")
-                    _points.value = result
-                }
+            try {
+                _isLoading.value = true
+                pointsUseCase.getUserPoints(userId)
+                    .collect { result ->
+                        Log.d("Points", "Received points result: $result")
+                        _points.value = result
+                    }
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun getUserHistory(userId: String) {
         viewModelScope.launch {
-            pointsUseCase.getUserHistory(userId).collect {
-                _userHistory.value = it
+            try {
+                _isLoading.value = true
+                pointsUseCase.getUserHistory(userId).collect {
+                    _userHistory.value = it
+                }
+            } finally {
+                _isLoading.value = false
             }
         }
+    }
+
+    fun refreshData(userId: String) {
+        getUserPoints(userId)
+        getUserHistory(userId)
     }
 }

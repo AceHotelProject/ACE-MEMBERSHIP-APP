@@ -1,24 +1,22 @@
-package com.dicoding.membership.view.dashboard.member.listeditmember.editmember
+package com.dicoding.membership.view.dashboard.floatingvalidasi.detailvalidasi
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-//changed the resource
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.file.model.FileDeleteDomain
 import com.dicoding.core.domain.file.model.FileUploadDomain
 import com.dicoding.core.domain.file.usecase.FileUseCase
-import com.dicoding.core.domain.membership.model.Membership
-import com.dicoding.core.domain.membership.usecase.MembershipUseCase
+import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -29,38 +27,32 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-
 @HiltViewModel
-class EditMemberViewModel @Inject constructor(
-    private val membershipUseCase: MembershipUseCase,
+class DetailValidasiViewModel @Inject constructor(
+    private val userUseCase: UserUseCase,
     private val fileUseCase: FileUseCase
-) : ViewModel() {
+): ViewModel(){
+    private val _userData = MutableLiveData<Resource<User>>()
+    val userData: LiveData<Resource<User>> = _userData
+    private val _uploadState = MutableLiveData<Resource<FileUploadDomain>>()
+    val uploadState: LiveData<Resource<FileUploadDomain>> = _uploadState
 
-    private val _membershipState = MutableStateFlow<Resource<Membership>?>(null)
-    val membershipState: StateFlow<Resource<Membership>?> = _membershipState.asStateFlow()
+    var selectedImageUri: Uri? = null
+    private var uploadedImageUrl: String? = null
 
-    fun createMembership(type: String, duration: Int, price: Int, tnc: List<String>, image: List<String>) {
+    fun getUserData(userId: String) {
         viewModelScope.launch {
-            _membershipState.value = Resource.Loading()
-            membershipUseCase.createMembership(type, duration, price, tnc, image)
-                .collect { result ->
-                    _membershipState.value = result
+            // Emit loading state
+            _userData.value = Resource.Loading()
+
+            userUseCase.getUserData(userId)
+                .catch { e ->
+                    _userData.value = Resource.Error(e.message ?: "Nah")
                 }
-        }
-    }
-
-    fun updateMembership(id: String, type: String, duration: Int, price: Int, tnc: List<String>, image: List<String>) {
-        viewModelScope.launch {
-            membershipUseCase.updateMembership(
-                id = id,
-                type = type,
-                duration = duration,
-                price = price,
-                tnc = tnc,
-                image = image
-            ).collect { result ->
-                _membershipState.value = result  // This is correct way to update StateFlow
-            }
+                .collect { result ->
+                    Log.d("Debug View Model", "user ID: ${userId}")
+                    _userData.value = result
+                }
         }
     }
 
@@ -88,63 +80,42 @@ class EditMemberViewModel @Inject constructor(
         }
     }
 
-    fun deleteFile(fileUrl: String): Flow<Resource<FileDeleteDomain>> {
-        return flow {
-            emit(Resource.Loading())
-            try {
-                fileUseCase.deleteFile(fileUrl).collect { result ->
-                    emit(result)
-                }
-            } catch (e: Exception) {
-                emit(Resource.Error(e.message ?: "Unknown error"))
-            }
-        }
-    }
-
     private fun compressImage(context: Context, uri: Uri): File? {
         try {
-            // Create input stream from Uri
             context.contentResolver.openInputStream(uri)?.let { inputStream ->
                 val bufferedInputStream = inputStream.buffered()
                 bufferedInputStream.mark(inputStream.available())
 
-                // First decode with inJustDecodeBounds=true to check dimensions
                 val options = BitmapFactory.Options().apply {
                     inJustDecodeBounds = true
                 }
                 BitmapFactory.decodeStream(bufferedInputStream, null, options)
 
-                // Reset stream to start
                 bufferedInputStream.reset()
 
-                // Calculate inSampleSize
                 options.apply {
                     inJustDecodeBounds = false
-                    inSampleSize = calculateInSampleSize(this, 1024, 1024) // Max dimensions 1024x1024
+                    inSampleSize = calculateInSampleSize(this, 1024, 1024)
                 }
 
-                // Decode bitmap with calculated inSampleSize
                 val bitmap = BitmapFactory.decodeStream(bufferedInputStream, null, options)
 
-                // Compress bitmap
                 val outputStream = ByteArrayOutputStream()
                 var quality = 100
                 bitmap?.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
 
-                // Keep compressing until size is under 1MB or quality hits minimum
                 while (outputStream.toByteArray().size > 1024 * 1024 && quality > 10) {
                     outputStream.reset()
                     quality -= 10
                     bitmap?.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
                 }
 
-                // Create temporary file
                 val tempFile = File.createTempFile("compressed_", ".jpg", context.cacheDir)
                 FileOutputStream(tempFile).use { fos ->
                     fos.write(outputStream.toByteArray())
                 }
 
-                bitmap?.recycle() // Clean up bitmap
+                bitmap?.recycle()
                 inputStream.close()
                 return tempFile
             }
@@ -162,8 +133,6 @@ class EditMemberViewModel @Inject constructor(
             val halfHeight: Int = height / 2
             val halfWidth: Int = width / 2
 
-            // Calculate largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than requested height and width
             while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
                 inSampleSize *= 2
             }
@@ -173,18 +142,12 @@ class EditMemberViewModel @Inject constructor(
 
     private fun convertFileToMultipart(file: File): MultipartBody.Part? {
         return try {
-            // Create RequestBody from file
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-
-            // Create MultipartBody.Part using the RequestBody
-            MultipartBody.Part.createFormData(
-                name = "file", // The key name expected by your server
-                filename = file.name,
-                body = requestFile
-            )
+            MultipartBody.Part.createFormData("file", file.name, requestFile)
         } catch (e: Exception) {
             Log.e("FileConversion", "Error converting to MultipartBody: ${e.message}")
             null
         }
     }
+
 }

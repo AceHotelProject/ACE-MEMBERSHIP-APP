@@ -42,7 +42,7 @@ class HomeMemberLevelActivity : AppCompatActivity() {
         }
 
         adapter.setOnItemSelectedCallback { membership ->
-            selectedMemberType = membership.type
+            selectedMemberType = membership.id
             isButton(true)
         }
     }

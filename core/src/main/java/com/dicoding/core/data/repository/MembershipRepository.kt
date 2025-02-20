@@ -24,7 +24,8 @@ class MembershipRepository @Inject constructor(
         type: String,
         duration: Int,
         price: Int,
-        tnc: List<String>
+        tnc: List<String>,
+        image: List<String>
     ): Flow<Resource<Membership>> {
         return object : NetworkBoundResource<Membership, MembershipResponse>() {
             override suspend fun fetchFromApi(response: MembershipResponse): Membership {
@@ -36,7 +37,8 @@ class MembershipRepository @Inject constructor(
                     type = type,
                     duration = duration,
                     price = price,
-                    tnc = tnc
+                    tnc = tnc,
+                    image = image
                 )
             }
         }.asFlow()
@@ -85,7 +87,8 @@ class MembershipRepository @Inject constructor(
         type: String?,
         duration: Int?,
         price: Int?,
-        tnc: List<String>?
+        tnc: List<String>?,
+        image: List<String>?
     ): Flow<Resource<Membership>> {
         return object : NetworkBoundResource<Membership, MembershipResponse>() {
             override suspend fun fetchFromApi(response: MembershipResponse): Membership {
@@ -98,7 +101,8 @@ class MembershipRepository @Inject constructor(
                     type = type,
                     duration = duration,
                     price = price,
-                    tnc = tnc
+                    tnc = tnc,
+                    image = image
                 )
             }
         }.asFlow()

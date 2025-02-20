@@ -1,6 +1,7 @@
 package com.dicoding.core.domain.user.usecase
 
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.ReferralToken
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.model.UserList
 import kotlinx.coroutines.flow.Flow
@@ -28,8 +29,7 @@ interface UserUseCase {
         name: String? = null,
         citizenNumber: String? = null,
         phone: String? = null,
-        address: String? = null,
-        memberType: String? = null
+        address: String? = null
     ): Flow<Resource<User>>
 
     fun completeUserData(
@@ -39,10 +39,15 @@ interface UserUseCase {
         citizenNumber: String? = null,
         phone: String? = null,
         address: String? = null,
-        memberType: String? = null
+        subscriptionType: String? = null
     ): Flow<Resource<User>>
 
     fun getUserByPhone(phone: String): Flow<Resource<User>>
 
     fun deleteUser(id: String): Flow<Resource<Unit>>
+
+    suspend fun createReferralToken(): Result<ReferralToken>
+
+    suspend fun getReferralToken(): Result<ReferralToken>
+
 }

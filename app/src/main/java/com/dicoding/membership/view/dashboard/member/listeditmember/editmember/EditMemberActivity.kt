@@ -1,7 +1,10 @@
 package com.dicoding.membership.view.dashboard.member.listeditmember.editmember
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
@@ -9,8 +12,11 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,8 +24,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.R
+import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityDetailMemberBinding
 import com.dicoding.membership.databinding.ActivityEditMemberBinding
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
@@ -34,6 +42,12 @@ class EditMemberActivity : AppCompatActivity() {
     private val viewModel: EditMemberViewModel by viewModels()
     private var membershipId: String? = null
     private var screenTitle: String? = null
+    private var selectedBigBannerUri: Uri? = null
+    private var selectedSmallBannerUri: Uri? = null
+    private var previousBigBannerUrl: String? = null
+    private var previousSmallBannerUrl: String? = null
+    private var isImageBigSelected = false
+    private var isImageSmallSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +68,7 @@ class EditMemberActivity : AppCompatActivity() {
         setupSubmitButton()
         handleEditText()
         observeMembershipState()
+        setupImagePickers()
     }
 
     private fun setupBackButton() {
@@ -66,6 +81,53 @@ class EditMemberActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener {
             showConfirmationDialog()
         }
+    }
+
+    private val bigBannerGalleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            selectedBigBannerUri = selectedUri
+            isImageBigSelected = true
+
+            // Show image locally
+            Glide.with(this)
+                .load(selectedUri)
+                .centerCrop()
+                .into(binding.addFotoBannerBig)
+        }
+    }
+
+    private val smallBannerGalleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { selectedUri ->
+            selectedSmallBannerUri = selectedUri
+            isImageSmallSelected = true
+
+            // Show image locally
+            Glide.with(this)
+                .load(selectedUri)
+                .centerCrop()
+                .into(binding.addFotoBannerSmall)
+        }
+    }
+
+    // Modify setupImagePickers to use GetContent
+    private fun setupImagePickers() {
+        binding.addFotoBannerBigCv.setOnClickListener {
+            bigBannerGalleryLauncher.launch("image/*")
+        }
+
+        binding.addFotoBannerSmallCv.setOnClickListener {
+            smallBannerGalleryLauncher.launch("image/*")
+        }
+    }
+
+    private fun openGallery(launcher: ActivityResultLauncher<Intent>) {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        launcher.launch(intent)
     }
 
     private fun showConfirmationDialog() {
@@ -84,8 +146,9 @@ class EditMemberActivity : AppCompatActivity() {
     }
 
     private fun submitData() {
+        // Get existing form data
         val type = binding.tiTipeMember.text.toString()
-        val duration = binding.tiTipeBulan.text.toString().toInt()
+        val duration = binding.tiTipeHari.text.toString().toInt()
         val price = binding.tiTipeHarga.text.toString().toInt()
         val tncString = binding.tiTipeSyaratKetentuan.text.toString()
         val tncList = if (tncString.contains(";")) {
@@ -93,16 +156,91 @@ class EditMemberActivity : AppCompatActivity() {
         } else {
             listOf(tncString.trim())
         }
-        Log.d("TnC Debug", "TnC List: $tncList")
 
-        when (binding.btnAdd.text) {
-            "Simpan" -> {
-                membershipId?.let { id ->
-                    viewModel.updateMembership(id, type, duration, price, tncList)
-                } ?: showError("Membership ID not found")
+        lifecycleScope.launch {
+            val imageUrls = mutableListOf<String>()
+
+            // Handle big banner
+            if (isImageBigSelected && selectedBigBannerUri != null) {
+                // Delete old image if exists
+                previousBigBannerUrl?.let { oldUrl ->
+                    try {
+                        viewModel.deleteFile(oldUrl).collect { result ->
+                            when (result) {
+                                is Resource.Success -> Log.d("ImageDelete", "Successfully deleted old big banner")
+                                is Resource.Error -> Log.e("ImageDelete", "Failed to delete old big banner: ${result.message}")
+                                else -> {}
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ImageDelete", "Error deleting big banner: ${e.message}")
+                    }
+                }
+
+                // Upload new image
+                viewModel.uploadFile(selectedBigBannerUri!!, this@EditMemberActivity)
+                    .collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                result.data?.let { upload ->
+                                    imageUrls.add(upload.fileUrl)
+                                }
+                            }
+                            is Resource.Error -> {
+                                showToast("Failed to upload big banner: ${result.message}")
+                                return@collect
+                            }
+                            else -> {}
+                        }
+                    }
+            } else {
+                imageUrls.add(previousBigBannerUrl ?: "")
             }
-            "Tambah" -> {
-                viewModel.createMembership(type, duration, price, tncList)
+
+            // Handle small banner
+            if (isImageSmallSelected && selectedSmallBannerUri != null) {
+                // Delete old image if exists
+                previousSmallBannerUrl?.let { oldUrl ->
+                    try {
+                        viewModel.deleteFile(oldUrl).collect { result ->
+                            when (result) {
+                                is Resource.Success -> Log.d("ImageDelete", "Successfully deleted old small banner")
+                                is Resource.Error -> Log.e("ImageDelete", "Failed to delete old small banner: ${result.message}")
+                                else -> {}
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ImageDelete", "Error deleting small banner: ${e.message}")
+                    }
+                }
+
+                // Upload new image
+                viewModel.uploadFile(selectedSmallBannerUri!!, this@EditMemberActivity)
+                    .collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                result.data?.let { upload ->
+                                    imageUrls.add(upload.fileUrl)
+                                }
+                            }
+                            is Resource.Error -> {
+                                showToast("Failed to upload small banner: ${result.message}")
+                                return@collect
+                            }
+                            else -> {}
+                        }
+                    }
+            } else {
+                imageUrls.add(previousSmallBannerUrl ?: "")
+            }
+
+            // Submit membership data with image URLs
+            if (binding.btnAdd.text == "Simpan") {
+                membershipId?.let { id ->
+                    viewModel.updateMembership(id, type, duration, price, tncList, imageUrls)
+                }
+            } else {
+                viewModel.createMembership(type, duration, price, tncList, imageUrls)
             }
         }
     }
@@ -183,7 +321,7 @@ class EditMemberActivity : AppCompatActivity() {
             }
         })
 
-        binding.tiTipeBulan.addTextChangedListener(object : TextWatcher {
+        binding.tiTipeHari.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 checkForms()
             }
@@ -235,7 +373,7 @@ class EditMemberActivity : AppCompatActivity() {
     private fun checkForms() {
         binding.apply {
             val tipemember = tiTipeMember.text.toString()
-            val bulanberlaku = tiTipeBulan.text.toString()
+            val Hariberlaku = tiTipeHari.text.toString()
             val hargamember = tiTipeHarga.text.toString()
             val syaratketentuan = tiTipeSyaratKetentuan.text.toString()
             //val potonganharga = tiTipePotonganHarga.text.toString()
@@ -251,21 +389,19 @@ class EditMemberActivity : AppCompatActivity() {
                 binding.tiTipeMember.error = null
             }
 
-            // Validasi Bulan Berlaku
-            if (bulanberlaku.isEmpty()) {
-                binding.tiTipeBulan.error = "Bulan berlaku tidak boleh kosong"
+            // Validasi Hari Berlaku
+            if (Hariberlaku.isEmpty()) {
+                binding.tiTipeHari.error = "Hari berlaku tidak boleh kosong"
             } else {
                 try {
-                    val bulanValue = bulanberlaku.toInt()
-                    if (bulanValue <= 0) {
-                        binding.tiTipeBulan.error = "Bulan berlaku tidak boleh 0 atau negatif"
-                    } else if (bulanValue > 60) {
-                        binding.tiTipeBulan.error = "Bulan berlaku maksimal 60"
+                    val HariValue = Hariberlaku.toInt()
+                    if (HariValue <= 0) {
+                        binding.tiTipeHari.error = "Hari berlaku tidak boleh 0 atau negatif"
                     } else {
-                        binding.tiTipeBulan.error = null
+                        binding.tiTipeHari.error = null
                     }
                 } catch (e: NumberFormatException) {
-                    binding.tiTipeBulan.error = "Bulan berlaku harus berupa angka"
+                    binding.tiTipeHari.error = "Hari berlaku harus berupa angka"
                 }
             }
 
@@ -317,7 +453,7 @@ class EditMemberActivity : AppCompatActivity() {
             // Enable button jika semua validasi terpenuhi
             isButtonEnabled(
                 tipemember.isNotEmpty() && tipemember.length <= 20 && tipemember.matches(Regex("^[a-zA-Z ]+$")) &&
-                        bulanberlaku.isNotEmpty() && try { bulanberlaku.toInt() in 1..60 } catch (e: NumberFormatException) { false } &&
+                        Hariberlaku.isNotEmpty() && try { Hariberlaku.toInt() > 0} catch (e: NumberFormatException) { false } &&
                         hargamember.isNotEmpty() && try { hargamember.toInt() in 1..50000000 } catch (e: NumberFormatException) { false } &&
                         syaratketentuan.isNotEmpty() && syaratketentuan.length <= 200
                         //potonganharga.isNotEmpty() && try { potonganharga.toInt() in 1..1000000 } catch (e: NumberFormatException) { false }

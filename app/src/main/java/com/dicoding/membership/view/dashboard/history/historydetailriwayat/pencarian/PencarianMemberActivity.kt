@@ -201,7 +201,7 @@ class PencarianMemberActivity : AppCompatActivity() {
             }
 
             selectedMemberType?.let { memberType ->
-                matches = matches && user.memberType == memberType
+                matches = matches && user.membership?.subscriptionType?.type == memberType
             }
 
             matches

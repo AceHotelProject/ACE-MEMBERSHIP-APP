@@ -18,6 +18,7 @@ import com.dicoding.membership.databinding.FragmentProfileBinding
 import com.dicoding.membership.view.dashboard.admin.manajemenmitra.ManajemenMitraActivity
 import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
 import com.dicoding.membership.view.dashboard.profile.detail.detail.ProfileDetailActivity
+import com.dicoding.membership.view.dashboard.profile.detail.membershipku.ProfileDetailMembershipkuActivity
 import com.dicoding.membership.view.dashboard.profile.detail.poinku.ProfileDetailPoinkuActivity
 import com.dicoding.membership.view.dashboard.profile.detail.referralku.ProfileDetailReferralkuActivity
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
@@ -77,8 +78,8 @@ class ProfileFragment : Fragment() {
         binding.layoutMembershipku.setOnClickListener {
             viewModel.userData.value?.let { loginDomain ->
                 //use case untuk membership, untuk sementara ke arah join member
-                val intent = Intent(requireContext(), HomeMemberLevelActivity::class.java).apply {
-                    putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, loginDomain.user.id)
+                val intent = Intent(requireContext(), ProfileDetailMembershipkuActivity::class.java).apply {
+                    putExtra(ProfileDetailMembershipkuActivity.EXTRA_USER_ID, loginDomain.user.id)
                 }
                 startActivity(intent)
             }
@@ -152,7 +153,7 @@ class ProfileFragment : Fragment() {
 
 //            Testing
             val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole)
+            //setupUserVisibility(mockUserRole)
 
 //            Use This For Real
 //            setupFabVisibility(userRole)

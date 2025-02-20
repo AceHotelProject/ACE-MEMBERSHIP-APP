@@ -11,7 +11,8 @@ interface IMembershipRepository {
         type: String,
         duration: Int,
         price: Int,
-        tnc: List<String>
+        tnc: List<String>,
+        image: List<String>
     ): Flow<Resource<Membership>>
 
     fun getAllMemberships(): Flow<Resource<MembershipListResponse>>
@@ -23,7 +24,8 @@ interface IMembershipRepository {
         type: String? = null,
         duration: Int? = null,
         price: Int? = null,
-        tnc: List<String>? = null
+        tnc: List<String>? = null,
+        image: List<String>? = null
     ): Flow<Resource<Membership>>
 
     fun deleteMembership(id: String): Flow<Resource<Unit>>

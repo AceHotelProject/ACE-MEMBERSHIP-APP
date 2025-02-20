@@ -17,13 +17,15 @@ class MembershipInteractor @Inject constructor(
         type: String,
         duration: Int,
         price: Int,
-        tnc: List<String>
+        tnc: List<String>,
+        image: List<String>
     ): Flow<Resource<Membership>> {
         return membershipRepository.createMembership(
             type = type,
             duration = duration,
             price = price,
-            tnc = tnc
+            tnc = tnc,
+            image = image
         )
     }
 
@@ -40,14 +42,16 @@ class MembershipInteractor @Inject constructor(
         type: String?,
         duration: Int?,
         price: Int?,
-        tnc: List<String>?
+        tnc: List<String>?,
+        image: List<String>?
     ): Flow<Resource<Membership>> {
         return membershipRepository.updateMembership(
             id = id,
             type = type,
             duration = duration,
             price = price,
-            tnc = tnc
+            tnc = tnc,
+            image = image
         )
     }
 

@@ -6,25 +6,21 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
-import android.util.Patterns
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
-import com.dicoding.membership.databinding.ActivityRedeemPromoCodeBinding
-import com.dicoding.membership.databinding.ActivityRegisterBinding
 import com.dicoding.membership.databinding.ActivityValidasiBinding
 import com.dicoding.membership.view.dashboard.MainActivity
-import com.dicoding.membership.view.dashboard.profile.detail.poinku.transfer.TransferPoinActivity.Companion.EXTRA_USER_ID
+import com.dicoding.membership.view.dashboard.floatingvalidasi.detailvalidasi.DetailValidasiActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class ValidasiActivity : AppCompatActivity() {
@@ -38,7 +34,7 @@ class ValidasiActivity : AppCompatActivity() {
         binding = ActivityValidasiBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        isButtonEnabled(false)
+        isButton(false)
         handleEditText()
         handleMenuButton()
         setupImagePicker()
@@ -49,7 +45,7 @@ class ValidasiActivity : AppCompatActivity() {
         viewModel.userData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    showLoadingDataPengguna(true)  // Show loading only for data pengguna section
+                    showLoadingDataPengguna(true)
                 }
                 is Resource.Success -> {
                     showLoadingDataPengguna(false)
@@ -57,22 +53,24 @@ class ValidasiActivity : AppCompatActivity() {
                         if (user.id == intent.getStringExtra(EXTRA_USER_ID)) {
                             Toast.makeText(this, "Tidak dapat transfer ke nomor sendiri", Toast.LENGTH_SHORT).show()
                             clearUserDataUI()
+                            clearMembershipDataUI()
                             isButton(false)
                         } else {
                             updateUserDataUI(user)
+                            updateMembershipDataUI(user)
+                            isButton(true)
                         }
                     }
                 }
                 is Resource.Error -> {
                     showLoadingDataPengguna(false)
-                    // Show error message
                     Toast.makeText(
                         this,
                         resource.message ?: "Terjadi kesalahan",
                         Toast.LENGTH_SHORT
                     ).show()
-                    // Clear the UI data on error
                     clearUserDataUI()
+                    clearMembershipDataUI()
                 }
                 is Resource.Message -> TODO()
             }
@@ -80,32 +78,82 @@ class ValidasiActivity : AppCompatActivity() {
     }
 
     private fun updateUserDataUI(user: User) {
-        with(binding){
+        with(binding) {
             tvMail.text = user.email
             tvTelepon.text = user.phone
             selectedUserId = user.id
         }
     }
 
-    private fun isButton(b: Boolean){
+    private fun updateMembershipDataUI(user: User) {
+        user.membership?.let { membership ->
+            with(binding) {
+                // Update subscription type
+                labelMembershipType.text = membership.subscriptionType.type
+
+                // Update status
+                labelStatus.text = membership.status
+
+                // Update payment
+                tvHarga.text = formatCurrency(membership.payment)
+
+                // Update end date with formatted date
+                tvExpMember.text = formatDateTime(membership.endDate)
+
+                // Update verificator ID
+                tvVerifikator.text = membership.verificatorId ?: "-"
+
+                // Update transaction date with formatted date
+                tvTglTransaksi.text = formatDateTime(membership.startDate)
+
+                // Update payment proof image if available
+                membership.paymentProof?.let { proofUrl ->
+                    Glide.with(this@ValidasiActivity)
+                        .load(proofUrl)
+                        .placeholder(R.drawable.image_empty)
+                        .error(R.drawable.image_empty)
+                        .into(ivBuktipembayaran)
+                }
+            }
+        }
+    }
+
+    private fun clearMembershipDataUI() {
+        with(binding) {
+            labelMembershipType.text = "-"
+            labelStatus.text = "-"
+            tvHarga.text = formatCurrency(0)
+            tvExpMember.text = "-"
+            tvVerifikator.text = "-"
+            tvTglTransaksi.text = "-"
+            ivBuktipembayaran.setImageResource(R.drawable.image_empty)
+        }
+    }
+
+    private fun formatDateTime(dateTimeString: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val outputFormat = SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale("id"))
+            outputFormat.timeZone = TimeZone.getDefault()
+
+            val date = inputFormat.parse(dateTimeString)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            "-"
+        }
+    }
+
+    private fun isButton(b: Boolean) {
         binding.btnContinue.isEnabled = b
     }
 
     private fun clearUserDataUI() {
-        with(binding){
+        with(binding) {
             tvMail.text = "Empty"
             tvTelepon.text = "Empty"
             selectedUserId = null
-        }
-    }
-
-    private fun isButtonEnabled(isEnabled: Boolean) {
-        binding.btnContinue.isEnabled = isEnabled
-
-        if (!isEnabled && !isImageSelected) {
-            binding.btnContinue.setOnClickListener {
-                Toast.makeText(this, "Bukti pembayaran harus diupload", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -130,6 +178,7 @@ class ValidasiActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
         binding.buttonCek.setOnClickListener {
             val kodePengguna = binding.masukkanKodePenggunaVal.text.toString()
 
@@ -138,9 +187,18 @@ class ValidasiActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             viewModel.getUserDataByPhone(kodePengguna)
-
         }
-
+        binding.btnContinue.setOnClickListener {
+            // Check if we have a selected user ID
+            selectedUserId?.let { userId ->
+                val intent = Intent(this, DetailValidasiActivity::class.java).apply {
+                    putExtra(DetailValidasiActivity.EXTRA_USER_ID, userId)
+                }
+                startActivity(intent)
+            } ?: run {
+                Toast.makeText(this, "Data pengguna tidak ditemukan", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupImagePicker() {
@@ -154,18 +212,14 @@ class ValidasiActivity : AppCompatActivity() {
         binding.apply {
             val kodepengguna = masukkanKodePenggunaVal.text.toString()
 
-            // Validasi Kode Pengguna
             if (kodepengguna.isEmpty()) {
-                binding.masukkanKodePenggunaVal.error = "Kode pengguna tidak boleh kosong"
+                masukkanKodePenggunaVal.error = "Kode pengguna tidak boleh kosong"
             } else {
-                binding.masukkanKodePenggunaVal.error = null
+                masukkanKodePenggunaVal.error = null
             }
 
-            // Enable button jika semua validasi terpenuhi
-            isButtonEnabled(
-                kodepengguna.isNotEmpty() &&
-                        kodepengguna.length <= 8 &&
-                        isImageSelected
+            isButton(
+                kodepengguna.isNotEmpty()
             )
         }
     }
@@ -181,13 +235,22 @@ class ValidasiActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLoadingDataPengguna(isLoading: Boolean){
+    private fun showLoadingDataPengguna(isLoading: Boolean) {
         binding.loadingOverlayDataPengguna.visibility = if(isLoading) View.VISIBLE else View.GONE
-        binding.dataPenggunaLayout.visibility = if(!isLoading) View.VISIBLE else View.GONE
+        binding.layoutDataPengguna.visibility = if(!isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun formatCurrency(amount: Int): String {
+        return try {
+            val formattedNumber = String.format("%,d", amount).replace(',', '.')
+            "Rp $formattedNumber"
+        } catch (e: Exception) {
+            "Rp 0"
+        }
     }
 
     companion object {
         private const val IMAGE_PICK_CODE = 1000
+        const val EXTRA_USER_ID = "extra_user_id"
     }
-
 }

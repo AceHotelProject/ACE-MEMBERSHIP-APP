@@ -61,71 +61,86 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_history_data"
                 android:layout_marginTop="12dp"
-                app:cardElevation="0dp">
-                <ProgressBar
-                    android:id="@+id/loading_overlay_data_pengguna"
+                android:minHeight="85dp"
+                android:orientation="horizontal"
+                android:background="@drawable/custom_border_grey">
+
+                <LinearLayout
+                    android:id="@+id/layout_data_pengguna"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:orientation="vertical"
+                    android:padding="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:id="@+id/data_pengguna_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/item_background_white"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        style="@style/textStyleMedium_16"
+                        style="@style/textStyleSemIBold_16"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Data Pengguna" />
+                        android:text="Data Pengguna"
+                        android:textColor="@color/black" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="8.5dp">
+
 
                         <TextView
                             android:id="@+id/tv_mail"
-                            style="@style/textStyleRegular_12"
+                            style="@style/textStyleMedium_12"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
                             android:text="pengguna@gmail.com"
                             android:textColor="@color/dark_grey" />
 
                         <ImageView
-                            android:layout_width="3dp"
-                            android:layout_height="3dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="5dp"
-                            android:src="@drawable/icons_dot2" />
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="4dp"
+                            android:src="@drawable/icon_circle_small" />
 
                         <TextView
                             android:id="@+id/tv_telepon"
-                            style="@style/textStyleRegular_12"
+                            style="@style/textStyleMedium_12"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="081338665678"
+                            android:layout_marginStart="4dp"
+                            android:text="081234567890"
                             android:textColor="@color/dark_grey" />
+
                     </LinearLayout>
+
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/loading_overlay_data_pengguna"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 style="@style/textStyleRegular_12"
