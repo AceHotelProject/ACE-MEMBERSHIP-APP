@@ -277,8 +277,7 @@
             android:layout_marginStart="26dp"
             android:layout_marginEnd="26dp"
             android:text="Daftar Membership"
-            android:textStyle="bold"
-            android:textSize="32sp"
+            style="@style/textStyleSemIBold_32"
             android:textColor="@color/black"/>
         <TextView
             android:layout_width="wrap_content"
@@ -297,6 +296,7 @@
             android:background="@drawable/custom_button"
             android:elevation="0dp"
             android:padding="10dp"
+            android:textSize="24sp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="32dp"

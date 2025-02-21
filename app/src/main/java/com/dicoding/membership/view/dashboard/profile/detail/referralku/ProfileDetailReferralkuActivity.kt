@@ -37,10 +37,7 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
 
         observeUserData()
 
-        buttonHandler()
-        observeReferralToken()
-        setupSwipeRefresh()
-        observeLoading()  // Add this line
+        buttonHandler() // Add this line
         viewModel.getReferralToken()
     }
 
@@ -83,6 +80,10 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         if(!user.isMember){
                             nonMemberLayout()
+                        } else {
+                            setupSwipeRefresh()
+                            observeReferralToken()
+                            observeLoading()
                         }
 
                     }

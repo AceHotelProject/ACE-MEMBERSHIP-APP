@@ -210,18 +210,13 @@ interface ApiService {
 
     // Non Member
 
-    @PATCH("v1/subscriptions/{id}")
-    suspend fun updateSubscriptionById(
-        @Path("id") id: String,
-        @Body updateData: Map<String, Any>
-    )
-
     @POST("v1/subscriptions/type")
     @FormUrlEncoded
     suspend fun createMembership(
         @Field("type") type: String,
         @Field("duration") duration: Int,
         @Field("price") price: Int,
+        @Field("maxCoupon") maxCoupon: Int,
         @Field("tnc[]") tnc: List<String>,
         @Field("image[]") image: List<String>
     ): MembershipResponse
@@ -229,7 +224,7 @@ interface ApiService {
     @GET("v1/subscriptions/type")
     suspend fun getAllMemberships(): MembershipListResponse
 
-    @GET("v1/subscriptions/{id}")
+    @GET("v1/subscriptions/type/{id}")
     suspend fun getMembershipById(
         @Path("id") id: String
     ): MembershipResponse
@@ -239,6 +234,7 @@ interface ApiService {
     suspend fun updateMembership(
         @Path("id") id: String,
         @Field("type") type: String? = null,
+        @Field("maxCoupon") maxCoupon: Int? = null,
         @Field("duration") duration: Int? = null,
         @Field("price") price: Int? = null,
         @Field("tnc[]") tnc: List<String>? = null,

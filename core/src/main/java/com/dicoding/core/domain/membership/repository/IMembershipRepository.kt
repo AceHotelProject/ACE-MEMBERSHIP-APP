@@ -10,6 +10,7 @@ interface IMembershipRepository {
     fun createMembership(
         type: String,
         duration: Int,
+        maxCoupon: Int,
         price: Int,
         tnc: List<String>,
         image: List<String>
@@ -22,6 +23,7 @@ interface IMembershipRepository {
     fun updateMembership(
         id: String,
         type: String? = null,
+        maxCoupon: Int? = null,
         duration: Int? = null,
         price: Int? = null,
         tnc: List<String>? = null,

@@ -19,9 +19,11 @@ object MembershipDataMapper {
         id = input.id ?: "",
         type = input.type ?: "",
         duration = input.duration ?: 0,
+        maxCoupon = input.maxCoupon ?: 0,
         price = input.price ?: 0,
         tnc = input.tnc ?: emptyList(),
-        image = input.image ?: emptyList()
+        image = input.image ?: emptyList(),
+        createdAt = input.createdAt ?: ""
     )
 
 }

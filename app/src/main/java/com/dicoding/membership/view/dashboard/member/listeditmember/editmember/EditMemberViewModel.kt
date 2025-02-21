@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import kotlin.math.max
 
 
 @HiltViewModel
@@ -36,24 +37,37 @@ class EditMemberViewModel @Inject constructor(
     private val fileUseCase: FileUseCase
 ) : ViewModel() {
 
+    private val _membershipData = MutableStateFlow<Resource<Membership>?>(null)
+    val membershipData: StateFlow<Resource<Membership>?> = _membershipData.asStateFlow()
+
     private val _membershipState = MutableStateFlow<Resource<Membership>?>(null)
     val membershipState: StateFlow<Resource<Membership>?> = _membershipState.asStateFlow()
 
-    fun createMembership(type: String, duration: Int, price: Int, tnc: List<String>, image: List<String>) {
+    fun getMembershipById(id: String) {
+        viewModelScope.launch {
+            membershipUseCase.getMembershipById(id)
+                .collect { result ->
+                    _membershipData.value = result
+                }
+        }
+    }
+
+    fun createMembership(type: String, duration: Int, maxCoupon: Int, price: Int, tnc: List<String>, image: List<String>) {
         viewModelScope.launch {
             _membershipState.value = Resource.Loading()
-            membershipUseCase.createMembership(type, duration, price, tnc, image)
+            membershipUseCase.createMembership(type, duration, maxCoupon, price, tnc, image)
                 .collect { result ->
                     _membershipState.value = result
                 }
         }
     }
 
-    fun updateMembership(id: String, type: String, duration: Int, price: Int, tnc: List<String>, image: List<String>) {
+    fun updateMembership(id: String, type: String, maxCoupon: Int, duration: Int, price: Int, tnc: List<String>, image: List<String>) {
         viewModelScope.launch {
             membershipUseCase.updateMembership(
                 id = id,
                 type = type,
+                maxCoupon = maxCoupon,
                 duration = duration,
                 price = price,
                 tnc = tnc,

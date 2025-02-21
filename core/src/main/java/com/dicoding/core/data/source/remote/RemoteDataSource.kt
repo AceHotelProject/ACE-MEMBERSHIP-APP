@@ -308,6 +308,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     suspend fun createMembership(
         type: String,
         duration: Int,
+        maxCoupon: Int,
         price: Int,
         tnc: List<String>,
         image: List<String>
@@ -317,6 +318,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 val response = apiService.createMembership(
                     type = type,
                     duration = duration,
+                    maxCoupon = maxCoupon,
                     price = price,
                     tnc = tnc,
                     image = image
@@ -364,6 +366,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     suspend fun updateMembership(
         id: String,
         type: String? = null,
+        maxCoupon: Int? = null,
         duration: Int? = null,
         price: Int? = null,
         tnc: List<String>? = null,
@@ -374,6 +377,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                 val response = apiService.updateMembership(
                     id = id,
                     type = type,
+                    maxCoupon = maxCoupon,
                     duration = duration,
                     price = price,
                     tnc = tnc,

@@ -16,6 +16,7 @@ class MembershipInteractor @Inject constructor(
     override fun createMembership(
         type: String,
         duration: Int,
+        maxCoupon: Int,
         price: Int,
         tnc: List<String>,
         image: List<String>
@@ -23,6 +24,7 @@ class MembershipInteractor @Inject constructor(
         return membershipRepository.createMembership(
             type = type,
             duration = duration,
+            maxCoupon = maxCoupon,
             price = price,
             tnc = tnc,
             image = image
@@ -40,6 +42,7 @@ class MembershipInteractor @Inject constructor(
     override fun updateMembership(
         id: String,
         type: String?,
+        maxCoupon: Int?,
         duration: Int?,
         price: Int?,
         tnc: List<String>?,
@@ -48,6 +51,7 @@ class MembershipInteractor @Inject constructor(
         return membershipRepository.updateMembership(
             id = id,
             type = type,
+            maxCoupon = maxCoupon,
             duration = duration,
             price = price,
             tnc = tnc,

@@ -21,7 +21,12 @@ data class MembershipResponse(
     @SerializedName("image")
     val image: List<String>? = null,
 
-)
+    @SerializedName("maxCoupon")
+    val maxCoupon: Int? = null,
+
+    @SerializedName("createdAt")
+    val createdAt: String? = null
+    )
 
 data class MembershipListResponse(
     @SerializedName("results")

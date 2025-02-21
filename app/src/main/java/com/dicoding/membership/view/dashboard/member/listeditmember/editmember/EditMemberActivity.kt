@@ -63,12 +63,84 @@ class EditMemberActivity : AppCompatActivity() {
         // Data passed: membership ID
         membershipId = intent.getStringExtra("MEMBERSHIP_ID")
 
-        setupBackButton()
+        setupUI()
+
+        membershipId?.let { id ->
+            viewModel.getMembershipById(id)
+        }
+    }
+
+    private fun setupUI() {
+        // Basic UI setup
+        binding.detailTitle.text = screenTitle
+        binding.btnAdd.text = if (membershipId.isNullOrEmpty()) "Tambah" else "Simpan"
         isButtonEnabled(false)
-        setupSubmitButton()
-        handleEditText()
-        observeMembershipState()
+
+        // If membershipId exists, fetch and display membership data
+        membershipId?.let { id ->
+            showLoading(true)
+            viewModel.getMembershipById(id)
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.membershipData.collect { resource ->
+                        when (resource) {
+                            is Resource.Loading -> {
+                                showLoading(true)
+                            }
+                            is Resource.Success -> {
+                                showLoading(false)
+                                resource.data?.let { membership ->
+                                    // Prefill form fields
+                                    binding.apply {
+                                        tiTipeMember.setText(membership.type)
+                                        tiTipeHari.setText(membership.duration.toString())
+                                        tiTipeHarga.setText(membership.price.toString())
+                                        tiMaxCoupon.setText(membership.maxCoupon.toString())
+
+                                        // Handle images
+                                        if (membership.image.isNotEmpty()) {
+                                            previousBigBannerUrl = membership.image.getOrNull(0)
+                                            previousSmallBannerUrl = membership.image.getOrNull(1)
+
+                                            previousBigBannerUrl?.let { url ->
+                                                Glide.with(this@EditMemberActivity)
+                                                    .load(url)
+                                                    .centerCrop()
+                                                    .into(addFotoBannerBig)
+                                            }
+
+                                            previousSmallBannerUrl?.let { url ->
+                                                Glide.with(this@EditMemberActivity)
+                                                    .load(url)
+                                                    .centerCrop()
+                                                    .into(addFotoBannerSmall)
+                                            }
+                                        }
+
+                                        // Convert TNC list to semicolon-separated string
+                                        tiTipeSyaratKetentuan.setText(membership.tnc.joinToString("; "))
+                                    }
+                                }
+                            }
+                            is Resource.Error -> {
+                                showLoading(false)
+                                showError(resource.message ?: "Failed to load membership data")
+                            }
+                            else -> {
+                                showLoading(false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Setup other UI components
+        setupBackButton()
         setupImagePickers()
+        handleEditText()
+        setupSubmitButton()
+        observeMembershipState()
     }
 
     private fun setupBackButton() {
@@ -149,6 +221,7 @@ class EditMemberActivity : AppCompatActivity() {
         // Get existing form data
         val type = binding.tiTipeMember.text.toString()
         val duration = binding.tiTipeHari.text.toString().toInt()
+        val maxCoupon = binding.tiMaxCoupon.text.toString().toInt()
         val price = binding.tiTipeHarga.text.toString().toInt()
         val tncString = binding.tiTipeSyaratKetentuan.text.toString()
         val tncList = if (tncString.contains(";")) {
@@ -237,10 +310,10 @@ class EditMemberActivity : AppCompatActivity() {
             // Submit membership data with image URLs
             if (binding.btnAdd.text == "Simpan") {
                 membershipId?.let { id ->
-                    viewModel.updateMembership(id, type, duration, price, tncList, imageUrls)
+                    viewModel.updateMembership(id, type, maxCoupon, duration, price, tncList, imageUrls)
                 }
             } else {
-                viewModel.createMembership(type, duration, price, tncList, imageUrls)
+                viewModel.createMembership(type, duration, maxCoupon, price, tncList, imageUrls)
             }
         }
     }
