@@ -190,10 +190,16 @@ class MitraFragment : Fragment() {
                             }
                         }
                         is LoadState.Error -> {
-                            Log.e("MitraFragment", "Error loading merchants: ${(loadState.refresh as LoadState.Error).error.message}")
-                            if (isDataEmpty) {
-                                navigateToAddMitra()
+                            val error = (loadState.refresh as LoadState.Error).error
+                            Log.e("MitraFragment", "Error loading merchants: ${error.message}")
+
+                            // Instead of navigating, show a toast message
+                            val errorMessage = if (error is retrofit2.HttpException && error.code() == 401) {
+                                "Authentication failed. Please login again."
+                            } else {
+                                "Failed to load merchant data: ${error.message ?: "Unknown error"}"
                             }
+                            showErrorMessage(errorMessage)
                         }
                         else -> {
                             // Loading state, do nothing
@@ -207,6 +213,12 @@ class MitraFragment : Fragment() {
                 Log.d("MitraFragment", "Submitting paging data")
                 tempAdapter.submitData(pagingData)
             }
+        }
+    }
+
+    private fun showErrorMessage(message: String) {
+        context?.let {
+            android.widget.Toast.makeText(it, message, android.widget.Toast.LENGTH_LONG).show()
         }
     }
 
@@ -246,6 +258,27 @@ class MitraFragment : Fragment() {
                 is Resource.Error -> {
                     hideLoading()
                     Log.e("MitraFragment", "Failed to load merchant: ${result.message}")
+                }
+                else -> { }
+            }
+        }
+
+        viewModel.getMerchantStatistic(merchantId).observe(viewLifecycleOwner) { result ->
+            when(result) {
+                is Resource.Success -> {
+                    result.data?.let { statistic ->
+                        binding.apply {
+                            Log.d("MitraFragment", "Successfully loaded merchant statistics")
+                            tvMitraPromo.text = statistic.totalPromo.toString()
+                            tvMitraPromoUse.text = statistic.totalPromoUsed.toString()
+                            tvMitraPoin.text = statistic.totalPoint.toString()
+                            tvMitraPoinTerima.text = statistic.pointIn.toString()
+                            tvMitraPoinTransfer.text = statistic.pointOut.toString()
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    Log.e("MitraFragment", "Failed to load merchant statistics: ${result.message}")
                 }
                 else -> { }
             }

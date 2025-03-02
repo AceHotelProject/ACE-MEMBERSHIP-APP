@@ -10,6 +10,7 @@ import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantStatistic
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
@@ -251,6 +252,7 @@ interface ApiService {
         @Field("end_date") endDate: String,
         @Field("member_type") memberType: String,
         @Field("maximal_use") maximalUse: Int,
+        @Field("merchant") merchant: String
     ): CreatePromoResponse
 
     @PATCH("v1/promos/manage/{id}")
@@ -315,6 +317,11 @@ interface ApiService {
     suspend fun deleteMerchant(
         @Path("id") id: String
     ): Response<Unit>
+
+    @GET("v1/merchants/{id}/statistic")
+    suspend fun getMerchantStatistic(
+        @Path("id") id: String
+    ): GetMerchantStatistic
 
     ////////////////////////////////////////////// File
     @Multipart

@@ -115,6 +115,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                 detailPromoDescription.text = data.detail
                 detailPromoCategory.text = data.category
                 itemDashboardPromoCode.text = data.token
+                detailPromoUsed.text = ("${data.used} / ${data.maximalUse}")
 
                 Log.d("PromoAdapter", "Binding item with role: ${userRole.name}")
 
@@ -153,16 +154,32 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                 }
 
                 root.setOnClickListener {
+                    Log.d("PromoAdapter", """
+                Item clicked details:
+                ID: ${data.id}
+                Name: ${data.name}
+                Category: ${data.category}
+                Detail: ${data.detail}
+                Token: ${data.token}
+                Merchant ID: ${data.merchantId}
+                Pictures: ${data.pictures}
+                Used: ${data.used}
+                Max Use: ${data.maximalUse}
+                Expired Date: ${data.expiredDate}
+                Is Active: ${data.isActive}
+            """.trimIndent())
                     onItemClickCallback?.onItemClicked(data)
                 }
             }
         }
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bindHistory(data: PromoHistoryDomain) {
             with(binding) {
                 detailPromoTitle.text = data.promoName
                 detailPromoDescription.text = data.promoDetail
                 detailPromoCategory.text = data.promoCategory
                 itemDashboardPromoCode.text = data.tokenCode
+                detailPromoUsed.text = ("${data.count} / ${data.maximalUse}")
 
                 if (data.promoPictures.isNotEmpty()) {
                     loadImage(
@@ -178,7 +195,7 @@ class PromoAdapter : PagingDataAdapter<PromoDomain, PromoAdapter.PromoViewHolder
                 if (!data.tokenCode.isNullOrEmpty()) {
                     layoutUser.visibility = View.VISIBLE
                     itemDashboardPromoCode.text = data.tokenCode
-                    itemDashboardPromoExpiryTime.text = data.activationDate
+                    itemDashboardPromoExpiryTime.text = formatToWIB(data.activationDate)
                 } else {
                     layoutUser.visibility = View.GONE
                 }

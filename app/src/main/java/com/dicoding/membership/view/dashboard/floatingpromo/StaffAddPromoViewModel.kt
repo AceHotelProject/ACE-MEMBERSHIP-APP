@@ -32,6 +32,8 @@ class StaffAddPromoViewModel @Inject constructor(
     private val fileUseCase: FileUseCase
 ) : ViewModel() {
 
+    fun getUser() = authUseCase.getUser().asLiveData()
+
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
     fun createPromo(
@@ -44,10 +46,11 @@ class StaffAddPromoViewModel @Inject constructor(
         endDate: String,
         memberType: String,
         maximalUse: Int,
+        merchant: String
     ) = promoUseCase.createPromo(
         name, category, detail, pictures, tnc,
         startDate, endDate, memberType,
-        maximalUse
+        maximalUse, merchant
     ).asLiveData()
 
     fun editPromo(
@@ -61,7 +64,7 @@ class StaffAddPromoViewModel @Inject constructor(
         endDate: String,
         memberType: String,
         maximalUse: Int,
-        isActive: Boolean
+        isActive: Boolean,
     ) = promoUseCase.editPromo(
         id = id,
         name = name,
@@ -73,7 +76,7 @@ class StaffAddPromoViewModel @Inject constructor(
         endDate = endDate,
         memberType = memberType,
         maximalUse = maximalUse,
-        isActive = isActive
+        isActive = isActive,
     ).asLiveData()
 
     fun uploadFile(uri: Uri, context: Context): Flow<Resource<FileUploadDomain>> {

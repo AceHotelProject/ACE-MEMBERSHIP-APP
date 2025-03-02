@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MitraViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val promoUseCase: PromoUseCase,
-    private val merchantUseCase: MerchantUseCase
+    private val merchantUseCase: MerchantUseCase,
 ) : ViewModel() {
 
     fun getUser() = authUseCase.getUser().asLiveData()
@@ -36,6 +36,8 @@ class MitraViewModel @Inject constructor(
 
     fun getMerchantsById(id: String) = merchantUseCase.getMerchantById(id).asLiveData()
 
+    fun getMerchantStatistic(id: String) = merchantUseCase.getMerchantStatistic(id).asLiveData()
+
     private val _selectedCategory = MutableStateFlow("")
     val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
 
@@ -44,7 +46,9 @@ class MitraViewModel @Inject constructor(
             getPromos(
                 category = category,
                 status = "valid",
-                name = ""
+                name = "",
+                expiredDate = "",
+                merchantName = ""
             )
         }
         .cachedIn(viewModelScope)
@@ -53,6 +57,6 @@ class MitraViewModel @Inject constructor(
         _selectedCategory.value = category
     }
 
-    fun getPromos(category: String, status: String, name: String) =
-        promoUseCase.getPromos(category, status, name)
+    fun getPromos(category: String, status: String, name: String, expiredDate: String, merchantName: String) =
+        promoUseCase.getPromos(category, status, name, expiredDate, merchantName)
 }

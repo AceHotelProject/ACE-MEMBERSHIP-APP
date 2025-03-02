@@ -180,7 +180,9 @@ class HomeFragment : Fragment() {
                 homeViewModel.getPromos(
                     category = "",
                     status = "valid",
-                    name = ""
+                    name = "",
+                    expiredDate = "",
+                    merchantName = "",
                 ).collectLatest { pagingData ->
                     Log.d("HomeFragment", "Received paging data")
                     promoAdapter.submitData(pagingData)

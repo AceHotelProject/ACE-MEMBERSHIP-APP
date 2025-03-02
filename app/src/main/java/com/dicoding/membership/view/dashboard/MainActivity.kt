@@ -502,17 +502,14 @@ class  MainActivity : AppCompatActivity() {
             fab.setOnClickListener {
                 when (fab) {
                     binding.fbCoupon -> {
-                        showToast("FAB Coupon clicked!")
                         val intent = Intent(this, RedeemCouponCodeActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbValidMembership -> {
-                        showToast("FAB Valid Membership clicked!")
                         val intent = Intent(this, ValidasiActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbAddPromo -> {
-                        showToast("FAB Add Promo clicked!")
                         val intent = Intent(this, StaffAddPromoActivity::class.java).apply {
                             putExtra(StaffAddPromoActivity.EXTRA_IS_EDIT, false)
                         }

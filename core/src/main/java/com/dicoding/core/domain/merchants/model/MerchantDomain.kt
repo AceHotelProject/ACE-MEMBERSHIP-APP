@@ -136,3 +136,12 @@ data class UpdateMerchantDomain(
     val point: Int,
     val refferalPoint: Int
 ) : Parcelable
+
+data class MerchantStatisticDomain(
+    val totalPoint: Int = 0,
+    val pointOut: Int = 0,
+    val totalPromoUsed: Int = 0,
+    val pointIn: Int = 0,
+    val totalPromo: Int = 0,
+    val pointReferral: Int = 0
+)

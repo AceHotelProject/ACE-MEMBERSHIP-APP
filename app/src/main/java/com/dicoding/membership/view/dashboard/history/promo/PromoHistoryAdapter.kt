@@ -48,11 +48,11 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                 tvColourStatus.apply {
                     text = history.status
                     when (history.status.lowercase()) {
-                        "active" -> {
+                        "active", "valid" -> {
                             setTextColor(ContextCompat.getColor(context, R.color.green))
                             background.setTint(ContextCompat.getColor(context, R.color.green_accent))
                         }
-                        "redeemed" -> {
+                        "redeemed", "draft" -> {
                             setTextColor(ContextCompat.getColor(context, com.dicoding.core.R.color.red))
                             val redAccentTransparent = ColorUtils.setAlphaComponent(
                                 ContextCompat.getColor(context, R.color.red),
@@ -63,7 +63,7 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                     }
                 }
 
-                tvPromoDate.text = formatDate(history.activationDate)
+                tvPromoDate.text = formatDate(history.createdAt)
                 tvPromoAuthor.text = history.userName
 
                 // Tambahkan onClickListener

@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.membership.R
 import com.dicoding.membership.view.login.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TokenExpiredDialog : DialogFragment() {
@@ -26,20 +28,36 @@ class TokenExpiredDialog : DialogFragment() {
 
             val btnContinue = view.findViewById<Button>(R.id.btn_expired_continue)
             btnContinue.setOnClickListener {
-                tokenExpiredViewModel.deleteToken()
-
-                val intentToLogin = Intent(requireContext(), LoginActivity::class.java)
-                intentToLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(intentToLogin)
-
-                dismiss()
-
-                activity?.finish()
+                handleDataDeletion()
             }
 
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    private fun handleDataDeletion() {
+        tokenExpiredViewModel.getUser().observe(this) { user ->
+            user?.let {
+                lifecycleScope.launch {
+                    tokenExpiredViewModel.deleteToken()
+
+                    tokenExpiredViewModel.deleteUser(it)
+                    tokenExpiredViewModel.deleteAllData()
+
+                    navigateToLogin()
+                }
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        val intent = Intent(requireActivity(), LoginActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        startActivity(intent)
+        dismiss()
+        requireActivity().finish()
     }
 }

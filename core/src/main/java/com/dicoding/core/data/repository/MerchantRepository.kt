@@ -10,19 +10,20 @@ import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantStatistic
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.data.source.remote.response.merchants.UpdateMerchantResponse
 import com.dicoding.core.domain.merchants.model.CreateMerchantDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
+import com.dicoding.core.domain.merchants.model.MerchantStatisticDomain
 import com.dicoding.core.domain.merchants.model.UpdateMerchantDomain
 import com.dicoding.core.domain.merchants.repository.IMerchantRepository
 import com.dicoding.core.utils.datamapper.MerchantDataMapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-// data/repository/MerchantRepository.kt
 class MerchantRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource
 ) : IMerchantRepository {
@@ -82,6 +83,18 @@ class MerchantRepository @Inject constructor(
 
             override suspend fun createCall(): Flow<ApiResponse<Unit>> {
                 return remoteDataSource.deleteMerchant(id)
+            }
+        }.asFlow()
+    }
+
+    override fun getMerchantStatistic(id: String): Flow<Resource<MerchantStatisticDomain>> {
+        return object : NetworkBoundResource<MerchantStatisticDomain, GetMerchantStatistic>() {
+            override suspend fun fetchFromApi(response: GetMerchantStatistic): MerchantStatisticDomain {
+                return MerchantDataMapper.mapGetMerchantStatisticResponseToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<GetMerchantStatistic>> {
+                return remoteDataSource.getMerchantStatistic(id)
             }
         }.asFlow()
     }

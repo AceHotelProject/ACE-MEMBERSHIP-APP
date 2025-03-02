@@ -1,6 +1,7 @@
 package com.dicoding.core.data.source.remote.response.promo
 
 import android.os.Parcelable
+import com.dicoding.core.data.source.remote.response.merchants.Merchant
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -67,5 +68,5 @@ data class EditPromoRequest(
 	val end_date: String?,
 	val member_type: String?,
 	val maximal_use: Int?,
-	val is_active: Boolean?
+	val is_active: Boolean?,
 )

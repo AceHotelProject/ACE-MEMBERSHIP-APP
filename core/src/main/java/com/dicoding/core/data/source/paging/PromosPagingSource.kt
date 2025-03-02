@@ -14,7 +14,9 @@ class PromosPagingSource @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val category: String = "",
     private val status: String = "",
-    private val name: String = ""
+    private val name: String = "",
+    private val expiredDate: String = "",
+    private val merchantName: String = "",
 ) : PagingSource<Int, PromoDomain>() {
 
     override fun getRefreshKey(state: PagingState<Int, PromoDomain>): Int? {
@@ -35,7 +37,9 @@ class PromosPagingSource @Inject constructor(
                 limit = params.loadSize,
                 category = category,
                 status = status,
-                name = name
+                name = name,
+                expiredDate = expiredDate,
+                merchantName = merchantName
             ).first()
 
             when (response) {

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,7 +18,6 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -599,16 +599,29 @@ class StaffAddPromoActivity : AppCompatActivity() {
         }
     }
 
-//    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
+    //    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
             data?.let { intent ->
                 if (intent.clipData != null) {
+                    // Create a list to store selected URIs with their dates
+                    val imagesWithDates = mutableListOf<ImageWithDate>()
+
+                    // Get all selected URIs and their dates
                     val count = intent.clipData!!.itemCount
                     for (i in 0 until count) {
                         val uri = intent.clipData!!.getItemAt(i).uri
-                        handleImageUpload(uri)
+                        val date = getImageDate(uri)
+                        imagesWithDates.add(ImageWithDate(uri, date))
+                    }
+
+                    // Sort by date in descending order (newest first)
+                    imagesWithDates.sortByDescending { it.date }
+
+                    // Process each URI in order of newest to oldest
+                    imagesWithDates.forEach { imageWithDate ->
+                        handleImageUpload(imageWithDate.uri)
                     }
                 } else if (intent.data != null) {
                     handleImageUpload(intent.data!!)
@@ -616,6 +629,24 @@ class StaffAddPromoActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun getImageDate(uri: Uri): Long {
+        val projection = arrayOf(MediaStore.Images.Media.DATE_MODIFIED)
+        var date: Long = 0
+
+        contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
+                date = cursor.getLong(dateColumn)
+            }
+        }
+        return date
+    }
+
+    data class ImageWithDate(
+        val uri: Uri,
+        val date: Long
+    )
 
     private fun handleImageUpload(uri: Uri) {
         lifecycleScope.launch {
@@ -711,6 +742,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
     }
 
     private fun submitForm() {
+
         val name = binding.edAddPromo.text.toString()
         val memberType = binding.acTipeMember.text.toString()
         val category = binding.acCategoryPromo.text.toString()
@@ -753,47 +785,63 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             val imageUris = selectedImages.mapNotNull { it.toString() }
 
-            // Get token and create promo
-            staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
-                if (token.isNotEmpty()) {
-                    staffAddPromoViewModel.createPromo(
-                        name = name,
-                        category = category,
-                        detail = description,
-                        pictures = imageUris, // Will be handled separately
-                        tnc = tncList,
-                        startDate = startDate,
-                        endDate = endDate,
-                        memberType = memberType,
-                        maximalUse = maxUse,
-                    ).observe(this) { result ->
-                        when(result) {
-                            is Resource.Success -> {
-                                hideLoading()
-                                showToast("Promo berhasil dibuat")
-                                navigateToStatus()
-                            }
-                            is Resource.Loading -> {
-                                showLoading()
-                            }
-                            is Resource.Message -> {
-                                hideLoading()
-                                showToast(result.message ?: "Unknown message")
-                            }
-                            is Resource.Error -> {
-                                hideLoading()
-                                showToast(result.message ?: "Terjadi kesalahan")
-                            }
-                            else -> {
-                                showToast(result.message ?: "Unknown message")
+            // Get merchant from user data
+            staffAddPromoViewModel.getUser().observe(this) { user ->
+                Log.d("MerchantDebug", "User data received: $user")
+                Log.d("MerchantDebug", "Merchant ID: ${user.user.merchantId?.id}")
+                Log.d("MerchantDebug", "Full user properties:")
+                user?.let {
+                    it.javaClass.declaredFields.forEach { field ->
+                        field.isAccessible = true
+                        Log.d("MerchantDebug", "${field.name}: ${field.get(it)}")
+                    }
+                }
+
+                val merchant = user.user.merchantId?.id // Changed from merchant to merchantId
+                Log.d("MerchantDebug", "Final merchant value to be used: $merchant")
+
+                // Get token and create promo
+                staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
+                    if (token.isNotEmpty()) {
+                        staffAddPromoViewModel.createPromo(
+                            name = name,
+                            category = category,
+                            detail = description,
+                            pictures = imageUris,
+                            tnc = tncList,
+                            startDate = startDate,
+                            endDate = endDate,
+                            memberType = memberType,
+                            maximalUse = maxUse,
+                            merchant = merchant.toString()
+                        ).observe(this) { result ->
+                            when(result) {
+                                is Resource.Success -> {
+                                    hideLoading()
+                                    showToast("Promo berhasil dibuat")
+                                    navigateToStatus()
+                                }
+                                is Resource.Loading -> {
+                                    showLoading()
+                                }
+                                is Resource.Message -> {
+                                    hideLoading()
+                                    showToast(result.message ?: "Unknown message")
+                                }
+                                is Resource.Error -> {
+                                    hideLoading()
+                                    showToast(result.message ?: "Terjadi kesalahan")
+                                }
+                                else -> {
+                                    showToast(result.message ?: "Unknown message")
+                                }
                             }
                         }
+                    } else {
+                        showToast("Token tidak valid")
                     }
-                } else {
-                    showToast("Token tidak valid")
                 }
             }
-
         } catch (e: Exception) {
             showToast("Format tanggal tidak valid: ${e.message}")
         }
@@ -1157,7 +1205,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         endDate = endDate,
                         memberType = memberType,
                         maximalUse = maxUse,
-                        isActive = true
+                        isActive = true,
                     ).observe(this) { result ->
                         when(result) {
                             is Resource.Success -> {

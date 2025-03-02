@@ -170,7 +170,7 @@ class ProfileFragment : Fragment() {
             }
             setupUserVisibility(finalUserRole)
 
-            Log.d("HomeFragment", "User Role: ${finalUserRole.display}")
+            Log.d("ProfileFragment", "User Role: ${finalUserRole.display}")
         }
     }
 

@@ -160,6 +160,20 @@ class PromoFragment : Fragment() {
 
     private fun navigateToDetail(data: PromoDomain, source: String) {
         val intent = Intent(requireContext(), PromoDetailActivity::class.java).apply {
+            Log.d("PromoAdapter", """
+                Item clicked details:
+                ID: ${data.id}
+                Name: ${data.name}
+                Category: ${data.category}
+                Detail: ${data.detail}
+                Token: ${data.token}
+                Merchant ID: ${data.merchantId}
+                Pictures: ${data.pictures}
+                Used: ${data.used}
+                Max Use: ${data.maximalUse}
+                Expired Date: ${data.expiredDate}
+                Is Active: ${data.isActive}
+            """.trimIndent())
             putExtra(PromoDetailActivity.EXTRA_PROMO, data)
             putExtra(PromoDetailActivity.EXTRA_SOURCE, source)
         }
@@ -168,9 +182,6 @@ class PromoFragment : Fragment() {
 
     private fun observePromos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            if (getCurrentUserRole() in listOf(UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST)) {
-
-            }
             launch {
                 ajuanPromoAdapter.loadStateFlow.collect { loadState ->
                     Log.d("PromoFragment", "Ajuan LoadState changed: ${loadState.refresh}")
@@ -252,7 +263,9 @@ class PromoFragment : Fragment() {
                 viewModel.getPromos(
                     category = "", // Kosong untuk ajuan promo
                     status = "draft", // Filter status draft langsung di API
-                    name = "" // Kosong karena tidak ada pencarian
+                    name = "", // Kosong karena tidak ada pencarian
+                    expiredDate = "",
+                    merchantName = ""
                 ).collect { pagingData ->
                     ajuanPromoAdapter.submitData(pagingData)
                 }
@@ -398,7 +411,9 @@ class PromoFragment : Fragment() {
                         viewModel.getPromos(
                             category = "",
                             status = "draft",
-                            name = ""
+                            name = "",
+                            expiredDate = "",
+                            merchantName = ""
                         ).collect { pagingData ->
                             ajuanPromoAdapter.submitData(pagingData)
                         }

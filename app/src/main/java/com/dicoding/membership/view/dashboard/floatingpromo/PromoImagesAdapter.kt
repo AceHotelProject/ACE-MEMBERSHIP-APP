@@ -19,6 +19,16 @@ class PromoImagesAdapter : RecyclerView.Adapter<PromoImagesAdapter.ImageViewHold
         notifyItemInserted(images.size - 1)
     }
 
+    fun addImageAt(uri: Uri, position: Int) {
+        if (position <= images.size) {
+            images.add(position, uri)
+            notifyItemInserted(position)
+        } else {
+            images.add(uri)
+            notifyItemInserted(images.size - 1)
+        }
+    }
+
     fun removeImage(position: Int) {
         if (position in 0 until images.size) {
             images.removeAt(position)

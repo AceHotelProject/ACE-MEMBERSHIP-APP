@@ -42,8 +42,11 @@ data class ResultsItem(
 	@field:SerializedName("tnc")
 	val tnc: List<String?>? = null,
 
-	@field:SerializedName("merchant_id")
+	@field:SerializedName("merchant")
 	val merchantId: String? = null,
+
+	@field:SerializedName("merchant_name")
+	val merchantName: String? = null,
 
 	@field:SerializedName("used")
 	val used: Int? = null,
@@ -79,7 +82,7 @@ data class ResultsItem(
 	val category: String? = null,
 
 	@field:SerializedName("start_date")
-	val startDate: String? = null
+	val startDate: String? = null,
 ) : Parcelable
 
 @Parcelize

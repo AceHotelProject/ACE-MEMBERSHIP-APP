@@ -7,6 +7,7 @@ import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.domain.merchants.model.CreateMerchantDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
+import com.dicoding.core.domain.merchants.model.MerchantStatisticDomain
 import com.dicoding.core.domain.merchants.model.UpdateMerchantDomain
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,6 @@ interface MerchantUseCase {
     fun updateMerchant(id: String, request: MerchantData): Flow<Resource<UpdateMerchantDomain>>
 
     fun deleteMerchant(id: String): Flow<Resource<Unit>>
+
+    fun getMerchantStatistic(id: String): Flow<Resource<MerchantStatisticDomain>>
 }

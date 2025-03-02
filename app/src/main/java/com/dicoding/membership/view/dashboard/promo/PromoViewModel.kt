@@ -35,7 +35,9 @@ class PromoViewModel @Inject constructor(
             getPromos(
                 category = category,
                 status = "valid",
-                name = ""
+                name = "",
+                expiredDate = "",
+                merchantName = ""
             )
         }
         .cachedIn(viewModelScope)
@@ -44,8 +46,8 @@ class PromoViewModel @Inject constructor(
         _selectedCategory.value = category
     }
 
-    fun getPromos(category: String, status: String, name: String) =
-        promoUseCase.getPromos(category, status, name)
+    fun getPromos(category: String, status: String, name: String, expiredDate: String, merchantName: String) =
+        promoUseCase.getPromos(category, status, name, expiredDate, merchantName)
 
 //    fun getProposalPromos() = promoUseCase.getProposalPromos().asLiveData()
 

@@ -3,6 +3,7 @@ package com.dicoding.membership.view.dashboard.promo.detail.detailpromo
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -27,6 +28,7 @@ import com.dicoding.membership.databinding.ActivityPromoDetailBinding
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity.Companion.PROMO_SOURCE_HISTORY
 import com.dicoding.membership.view.dashboard.promo.PromoFragment
+import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.detailmitrapromo.DetailMitraPromoActivity
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.status.StatusTemplate
@@ -182,6 +184,7 @@ class PromoDetailActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setupHistoryView(history: PromoHistoryDomain) {
         binding.apply {
             // Setup RecyclerView with PagerSnapHelper for horizontal snap scrolling
@@ -213,7 +216,17 @@ class PromoDetailActivity : AppCompatActivity() {
             // Bind text data
             tvDetailCategory.text = history.promoCategory
             tvPromoName.text = history.promoName
-            tvOleh.text = "oleh ${history.id}"
+//            tvOleh.text = "oleh ${history.id}"
+            tvOleh.text = Html.fromHtml("oleh <u>${history.merchantName ?: ""}</u>", Html.FROM_HTML_MODE_COMPACT)
+            tvOleh.setOnClickListener {
+                if (!history.id.isNullOrEmpty()) {
+                    val intent = Intent(this@PromoDetailActivity, DetailMitraPromoActivity::class.java).apply {
+                        putExtra(DetailMitraPromoActivity.EXTRA_MERCHANT_ID, history.id)
+                        putExtra(DetailMitraPromoActivity.EXTRA_MERCHANT_NAME, history.merchantName)
+                    }
+                    startActivity(intent)
+                }
+            }
             tvDeskripsi.text = history.promoDetail
             tvPromoTitle.text = "Detail Riwayat Promo"
 
@@ -272,8 +285,18 @@ class PromoDetailActivity : AppCompatActivity() {
 
             tvDetailCategory.text = promo?.category ?: "Kategori Tidak Tersedia"
             tvPromoName.text = promo?.name ?: "Nama Promo Tidak Tersedia"
-            tvOleh.text = "oleh ${promo?.merchantId ?: "Admin"}"
+            tvOleh.text = Html.fromHtml("oleh <u>${promo?.merchantName ?: ""}</u>", Html.FROM_HTML_MODE_COMPACT)
+            tvOleh.setOnClickListener {
+                if (!promo?.merchantId.isNullOrEmpty()) {
+                    val intent = Intent(this@PromoDetailActivity, DetailMitraPromoActivity::class.java).apply {
+                        putExtra(DetailMitraPromoActivity.EXTRA_MERCHANT_ID, promo?.merchantId)
+                        putExtra(DetailMitraPromoActivity.EXTRA_MERCHANT_NAME, promo?.merchantName)
+                    }
+                    startActivity(intent)
+                }
+            }
             Log.d("PromoDetail", "Merchant Id ${promo?.merchantId?.isEmpty()}")
+
             tvDeskripsi.text = promo?.detail ?: "Deskripsi Tidak Tersedia"
             tvExpiryTime.text = formatToWIB(promo?.expiredDate ?: " ")
 

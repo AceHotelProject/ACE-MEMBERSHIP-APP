@@ -62,7 +62,7 @@ object DateUtils {
             val minute = String.format("%02d", wibDate.minute)
 
             // Return string yang sudah diformat
-            "EXP $hour:$minute WIB. $day, $date $month $year"
+            "EXP $hour:$minute WIB, $date $month $year"
         } catch (e: Exception) {
             "Format tanggal tidak valid"
         }

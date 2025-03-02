@@ -20,12 +20,15 @@ interface PromoUseCase {
         endDate: String,
         memberType: String,
         maximalUse: Int,
+        merchant: String
     ): Flow<Resource<PromoDomain>>
 
     fun getPromos(
         category: String,
         status: String,
-        name: String
+        name: String,
+        expiredDate: String,
+        merchantName: String,
     ): Flow<PagingData<PromoDomain>>
 
     fun getProposalPromos(): Flow<Resource<GetPromosDomain>>
@@ -41,7 +44,7 @@ interface PromoUseCase {
         endDate: String,
         memberType: String,
         maximalUse: Int,
-        isActive: Boolean
+        isActive: Boolean,
     ): Flow<Resource<PromoDomain>>
 
     fun deletePromo(id: String): Flow<Resource<Unit>>
@@ -53,8 +56,9 @@ interface PromoUseCase {
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 
     fun getPromoHistory(
-        promoName: String,
-        promoCategory: String,
-        status: String
+        name: String,
+        category: String,
+        status: String,
+        expiredDate: String,
     ): Flow<PagingData<PromoHistoryDomain>>
 }

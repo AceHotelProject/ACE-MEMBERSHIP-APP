@@ -39,9 +39,11 @@ class HistoryPromoViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getPromoHistory(
-        promoName: String = "",
-        promoCategory: String = "",
-        status: String = ""
+        name: String = "",
+        category: String = "",
+        status: String = "",
+        expiredDate: String = "",
+        merchantName: String = ""
     ): Flow<PagingData<PromoHistoryDomain>> {
         // Get user role from AuthUseCase
         val userFlow = authUseCase.getUser()
@@ -49,17 +51,17 @@ class HistoryPromoViewModel @Inject constructor(
         return userFlow.flatMapLatest { loginDomain ->
             // Determine default status based on user role
             val defaultStatus = when (mapToUserRole(loginDomain.user.role)) {
-                UserRole.ADMIN, UserRole.MITRA -> "valid"
+                UserRole.ADMIN, UserRole.MITRA -> status
                 UserRole.RECEPTIONIST -> "draft"
                 UserRole.USER -> "redeemed"
-                else -> status // Use provided status for other roles
+                else -> status
             }
 
-            // Use the determined status in the promoUseCase call
             promoUseCase.getPromoHistory(
-                promoName = promoName,
-                promoCategory = promoCategory,
-                status = if (status.isEmpty()) defaultStatus else status
+                name = name,
+                category = category,
+                status = status.ifEmpty { defaultStatus },
+                expiredDate = expiredDate,
             )
         }.cachedIn(viewModelScope)
     }

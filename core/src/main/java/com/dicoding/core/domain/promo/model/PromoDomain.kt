@@ -15,6 +15,7 @@ data class PromoDomain(
     val endDate: String,
     val memberType: String,
     val merchantId: String,
+    val merchantName: String,
     val maximalUse: Int,
     val used: Int,
     val isActive: Boolean,

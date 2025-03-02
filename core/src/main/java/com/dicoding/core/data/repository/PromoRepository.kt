@@ -40,6 +40,7 @@ class PromoRepository @Inject constructor(
         endDate: String,
         memberType: String,
         maximalUse: Int,
+        merchant: String
     ): Flow<Resource<PromoDomain>> {
         return object : NetworkBoundResource<PromoDomain, CreatePromoResponse>() {
             override suspend fun fetchFromApi(response: CreatePromoResponse): PromoDomain {
@@ -50,7 +51,7 @@ class PromoRepository @Inject constructor(
                 return remoteDataSource.createPromo(
                     name, category, detail, pictures, tnc,
                     startDate, endDate, memberType,
-                    maximalUse
+                    maximalUse, merchant
                 )
             }
         }.asFlow()
@@ -59,7 +60,9 @@ class PromoRepository @Inject constructor(
     override fun getPromos(
         category: String,
         status: String,
-        name: String
+        name: String,
+        expiredDate: String,
+        merchantName: String,
     ): Flow<PagingData<PromoDomain>> {
         return Pager(
             config = PagingConfig(
@@ -68,7 +71,7 @@ class PromoRepository @Inject constructor(
                 initialLoadSize = 10
             ),
             pagingSourceFactory = {
-                PromosPagingSource(remoteDataSource, category, status, name)
+                PromosPagingSource(remoteDataSource, category, status, name, expiredDate, merchantName)
             }
         ).flow
     }
@@ -96,7 +99,7 @@ class PromoRepository @Inject constructor(
         endDate: String,
         memberType: String,
         maximalUse: Int,
-        isActive: Boolean
+        isActive: Boolean,
     ): Flow<Resource<PromoDomain>> {
         return object : NetworkBoundResource<PromoDomain, EditPromoResponse>() {
             override suspend fun fetchFromApi(response: EditPromoResponse): PromoDomain {
@@ -106,7 +109,7 @@ class PromoRepository @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<EditPromoResponse>> {
                 return remoteDataSource.editPromo(
                     id, name, category, detail, pictures, tnc,
-                    startDate, endDate, memberType, maximalUse, isActive
+                    startDate, endDate, memberType, maximalUse, isActive,
                 )
             }
         }.asFlow()
@@ -161,9 +164,10 @@ class PromoRepository @Inject constructor(
     }
 
     override fun getPromoHistory(
-        promoName: String,
-        promoCategory: String,
-        status: String
+        name: String,
+        category: String,
+        status: String,
+        expiredDate: String,
     ): Flow<PagingData<PromoHistoryDomain>> {
         return Pager(
             config = PagingConfig(
@@ -174,9 +178,10 @@ class PromoRepository @Inject constructor(
             pagingSourceFactory = {
                 PromoHistoryPagingSource(
                     remoteDataSource,
-                    promoName,
-                    promoCategory,
-                    status
+                    name,
+                    category,
+                    status,
+                    expiredDate,
                 )
             }
         ).flow

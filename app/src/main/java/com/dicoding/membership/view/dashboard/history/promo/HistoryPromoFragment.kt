@@ -205,7 +205,7 @@ class HistoryPromoFragment : Fragment() {
                 lifecycleScope.launch {
                     launch {
                         viewModel.getPromoHistory(
-                            promoCategory = viewModel.selectedCategory.value
+                            category = viewModel.selectedCategory.value
                         ).collect { pagingData ->
                             historyAdapter.submitData(pagingData)
                         }
