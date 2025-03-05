@@ -105,6 +105,21 @@ dependencies {
     // Chip
     implementation(libs.flexbox)
 
+    // Security
+    // Security crypto library untuk enkripsi
+    implementation(libs.androidx.security.crypto)
+
+    // SQLCipher untuk enkripsi database Room
+    implementation(libs.net.zetetic.sqlcipher)
+    implementation(libs.androidx.sqlite.ktx)
+
+    // DataStore dependencies (yang kemungkinan sudah ada)
+    implementation(libs.androidx.datastore.preferences)
+
+    // OkHttp dependencies (yang kemungkinan sudah ada)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.squareup.okhttp.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

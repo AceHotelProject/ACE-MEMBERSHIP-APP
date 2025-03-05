@@ -188,20 +188,21 @@ class DetailMitraPromoActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            // Observe LoadState dari adapter
-            promoAdapter.loadStateFlow.collectLatest { loadState ->
-                when (loadState.refresh) {
-                    is LoadState.Loading -> {
-                        showLoading()
-                        Log.d("DetailMitraPromo", "Promo Loading")
-                    }
-                    is LoadState.NotLoading -> {
-                        hideLoading()
-                        Log.d("DetailMitraPromo", "Promo Ready")
-                    }
-                    is LoadState.Error -> {
-                        hideLoading()
-                        Log.e("DetailMitraPromo", "Promo Error: ${(loadState.refresh as LoadState.Error).error.message}")
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.promos.collectLatest { pagingData ->
+                    Log.d("DetailMitraPromo", "Received paging data")
+                    promoAdapter.submitData(pagingData)
+
+                    promoAdapter.addLoadStateListener { loadState ->
+                        if (loadState.refresh is LoadState.NotLoading && promoAdapter.itemCount == 0) {
+                            binding.tvNoPromoMitra.visibility = View.VISIBLE
+                            binding.rvPromoMitra.visibility = View.GONE
+                            Log.d("DetailMitraPromo", "No promo data available")
+                        } else if (loadState.refresh is LoadState.NotLoading && promoAdapter.itemCount > 0) {
+                            binding.tvNoPromoMitra.visibility = View.GONE
+                            binding.rvPromoMitra.visibility = View.VISIBLE
+                            Log.d("DetailMitraPromo", "Promo data available: ${promoAdapter.itemCount} items")
+                        }
                     }
                 }
             }

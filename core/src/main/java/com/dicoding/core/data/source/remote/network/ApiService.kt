@@ -216,7 +216,7 @@ interface ApiService {
         @Field("tnc[]") tnc: List<String>
     ): MembershipResponse
 
-    @GET("v1/subscriptions")
+    @GET("v1/subscriptions/type")
     suspend fun getAllMemberships(): MembershipListResponse
 
     @GET("v1/subscriptions/{id}")

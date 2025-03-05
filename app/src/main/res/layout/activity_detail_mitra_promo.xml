@@ -128,6 +128,17 @@
                 android:text="Promo Mitra"
                 android:visibility="visible" />
 
+            <TextView
+                android:id="@+id/tv_no_promo_mitra"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center"
+                android:text="Promo mitra belum dibuat"
+                android:visibility="gone" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_promo_mitra"
                 android:layout_width="match_parent"

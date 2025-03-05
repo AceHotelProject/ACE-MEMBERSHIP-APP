@@ -6,17 +6,25 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import com.dicoding.core.domain.file.model.FileDeleteDomain
 import com.dicoding.core.domain.file.model.FileUploadDomain
 import com.dicoding.core.domain.file.usecase.FileUseCase
+import com.dicoding.core.domain.membership.usecase.MembershipUseCase
+import com.dicoding.core.domain.merchants.usecase.MerchantUseCase
 import com.dicoding.core.domain.promo.usecase.PromoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -29,7 +37,9 @@ import javax.inject.Inject
 class StaffAddPromoViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val promoUseCase: PromoUseCase,
-    private val fileUseCase: FileUseCase
+    private val fileUseCase: FileUseCase,
+    private val membershipUseCase: MembershipUseCase,
+    private val merchantUseCase: MerchantUseCase
 ) : ViewModel() {
 
     fun getUser() = authUseCase.getUser().asLiveData()
@@ -212,5 +222,24 @@ class StaffAddPromoViewModel @Inject constructor(
             Log.e("PathConversion", "Error: ${e.message}")
             null
         }
+    }
+
+    private val _memberships = MutableLiveData<Resource<MembershipListResponse>>()
+    val memberships: LiveData<Resource<MembershipListResponse>> = _memberships
+
+    fun getMemberships() {
+        viewModelScope.launch {
+            Log.d("StaffAddPromoViewModel", "ViewModel: getMemberships called")
+            membershipUseCase.getAllMemberships()
+                .collect { result ->
+                    Log.d("StaffAddPromoViewModel", "ViewModel: received result $result")
+                    _memberships.value = result
+                }
+        }
+    }
+
+    // Di ViewModel, tambahkan log
+    fun getMerchants() = merchantUseCase.getMerchants().cachedIn(viewModelScope).also {
+        Log.d("ViewModel", "getMerchants() called")
     }
 }

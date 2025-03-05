@@ -107,7 +107,7 @@ class HistoryDetailPromoActivity : AppCompatActivity() {
             })
 
             tvStatus.text = history.status
-            tvMitra.text = history.merchantName
+            tvMitra.text = if (history.merchantName == null || history.merchantName.isEmpty() || history.merchantName == "Unknown Merchant") "ACE Membership" else history.merchantName
 
             history.draftDate.let { tvDraftedDate.text = formatDate(it) }
             history.validatedDate.let { tvValidatedDate.text = formatDate(it) }
@@ -143,23 +143,23 @@ class HistoryDetailPromoActivity : AppCompatActivity() {
         when (history.status.lowercase()) {
             "draft" -> {
                 draftedDateLayout.visibility = View.VISIBLE
-                binding.tvVerivikator.text = history.draftedByName
+                binding.tvVerivikator.text = if (history.draftedByName.isNullOrEmpty()) "Admin" else history.draftedByName
                 binding.tvsVerivikator.text = "Diajukan oleh:"
             }
             "valid" -> {
                 validatedDateLayout.visibility = View.VISIBLE
-                binding.tvVerivikator.text = history.validatedByName
+                binding.tvVerivikator.text = if (history.validatedByName.isNullOrEmpty()) "Admin" else history.validatedByName
                 binding.tvsVerivikator.text = "Divalidasi oleh:"
             }
             "active" -> {
                 activationDateLayout.visibility = View.VISIBLE
-                binding.tvVerivikator.text = history.activatedByName
+                binding.tvVerivikator.text = if (history.activatedByName.isNullOrEmpty()) "Admin" else history.activatedByName
                 binding.tvsVerivikator.text = "Diaktifkan oleh:"
             }
             "redeemed" -> {
                 redeemedDateLayout.visibility = View.VISIBLE
                 activationDateLayout.visibility = View.VISIBLE
-                binding.tvVerivikator.text = history.redeemedByName ?: "-"
+                binding.tvVerivikator.text = if (history.redeemedByName.isNullOrEmpty()) "Admin" else history.redeemedByName
                 binding.tvsVerivikator.text = "Ditukarkan oleh:"
             }
         }
