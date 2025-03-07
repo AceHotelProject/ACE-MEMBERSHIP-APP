@@ -1,5 +1,6 @@
 package com.dicoding.membership.view.dashboard.floatingvalidasi
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,9 @@ class ValidasiViewModel @Inject constructor(
     private val _userData = MutableLiveData<Resource<User>>()
     val userData: LiveData<Resource<User>> = _userData
 
+    private val _userDataAdmin = MutableLiveData<Resource<User>>()
+    val userDataAdmin: LiveData<Resource<User>> = _userDataAdmin
+
     fun getUserDataByPhone(phone: String) {
         viewModelScope.launch {
             // Emit loading state
@@ -30,6 +34,21 @@ class ValidasiViewModel @Inject constructor(
                 }
                 .collect { result ->
                     _userData.value = result
+                }
+        }
+    }
+    fun getUserDataAdmin(userId: String) {
+        viewModelScope.launch {
+            // Emit loading state
+            _userDataAdmin.value = Resource.Loading()
+
+            userUseCase.getUserData(userId)
+                .catch { e ->
+                    _userDataAdmin.value = Resource.Error(e.message ?: "Nah")
+                }
+                .collect { result ->
+                    Log.d("Debug View Model", "user ID: ${userId}")
+                    _userDataAdmin.value = result
                 }
         }
     }

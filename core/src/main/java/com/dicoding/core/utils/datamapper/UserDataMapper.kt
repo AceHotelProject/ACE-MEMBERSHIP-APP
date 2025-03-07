@@ -6,12 +6,13 @@ import com.dicoding.core.data.source.remote.response.user.ReferralTokenResponse
 import com.dicoding.core.data.source.remote.response.user.SubscriptionTypeResponse
 import com.dicoding.core.data.source.remote.response.user.UserListResponse
 import com.dicoding.core.data.source.remote.response.user.UserResponse
-import com.dicoding.core.domain.user.model.Membership
+import com.dicoding.core.domain.user.model.MembershipUser
 import com.dicoding.core.domain.user.model.Merchant
 import com.dicoding.core.domain.user.model.ReferralToken
 import com.dicoding.core.domain.user.model.SubscriptionType
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.domain.user.model.UserList
+import com.dicoding.core.domain.user.model.UserReferralToken
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -51,20 +52,21 @@ object UserDataMapper {
         androidId = input.androidId,
         couponUsed = input.couponUsed,
         point = input.point,
-        refferalPoint = input.refferalPoint,
         referralPoint = input.referralPoint,
         isEmailVerified = input.isEmailVerified,
         isNumberVerified = input.isNumberVerified,
         isPhoneVerified = input.isPhoneVerified,
         isValidated = input.isValidated,
         uniqueCode = input.uniqueCode,
-        referralToken = input.referralToken,
+        referralToken = input.referralToken?.let {
+            UserReferralToken(it.token, it.id)
+        },
         membership = input.membership?.let { mapMembershipToDomain(it) },
         isMember = input.isMember,
         createdAt = input.createdAt
     )
 
-    private fun mapMembershipToDomain(input: MembershipResponse): Membership = Membership(
+    private fun mapMembershipToDomain(input: MembershipResponse): MembershipUser = MembershipUser(
         userId = input.userId,
         verificatorId = input.verificatorId,
         subscriptionType = mapSubscriptionTypeToDomain(input.subscriptionType),

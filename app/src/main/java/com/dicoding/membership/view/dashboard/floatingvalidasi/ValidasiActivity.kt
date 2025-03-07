@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
@@ -39,6 +40,26 @@ class ValidasiActivity : AppCompatActivity() {
         handleMenuButton()
         setupImagePicker()
         setupObserver()
+        setupVerificatorObserver()
+    }
+
+    private fun setupVerificatorObserver() {
+        viewModel.userDataAdmin.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    // Already showing "Loading..." in the TextView
+                }
+                is Resource.Success -> {
+                    resource.data?.let { admin ->
+                        binding.tvVerifikator.text = admin.email ?: "Tidak diketahui"
+                    }
+                }
+                is Resource.Error -> {
+                    binding.tvVerifikator.text = "Tidak dapat memuat data verifikator"
+                }
+                is Resource.Message -> TODO()
+            }
+        }
     }
 
     private fun setupObserver() {
@@ -58,7 +79,6 @@ class ValidasiActivity : AppCompatActivity() {
                         } else {
                             updateUserDataUI(user)
                             updateMembershipDataUI(user)
-                            isButton(true)
                         }
                     }
                 }
@@ -82,6 +102,7 @@ class ValidasiActivity : AppCompatActivity() {
             tvMail.text = user.email
             tvTelepon.text = user.phone
             selectedUserId = user.id
+            isButton(!user.isValidated)
         }
     }
 
@@ -90,6 +111,14 @@ class ValidasiActivity : AppCompatActivity() {
             with(binding) {
                 // Update subscription type
                 labelMembershipType.text = membership.subscriptionType.type
+
+                if (membership.status == "pending") {
+                    labelStatus.background = ContextCompat.getDrawable(this@ValidasiActivity, R.drawable.chip_category_orange)
+                    labelStatus.setTextColor(ContextCompat.getColor(this@ValidasiActivity, R.color.orange_100))
+                } else {
+                    labelStatus.background = ContextCompat.getDrawable(this@ValidasiActivity, R.drawable.chip_category_green)
+                    labelStatus.setTextColor(ContextCompat.getColor(this@ValidasiActivity, R.color.green))
+                }
 
                 // Update status
                 labelStatus.text = membership.status
@@ -101,7 +130,18 @@ class ValidasiActivity : AppCompatActivity() {
                 tvExpMember.text = formatDateTime(membership.endDate)
 
                 // Update verificator ID
-                tvVerifikator.text = membership.verificatorId ?: "-"
+                if(membership.status == "pending"){
+                    tvVerifikator.text = "Belum di Verifikasi"
+                } else if(membership.status == "active") {
+                    // If verificator ID exists, fetch verificator name
+                    membership.verificatorId?.let { verificatorId ->
+                        tvVerifikator.text = "Loading..."
+                        viewModel.getUserDataAdmin(verificatorId)
+                    } ?: run {
+                        tvVerifikator.text = "-"
+                    }
+                }
+
 
                 // Update transaction date with formatted date
                 tvTglTransaksi.text = formatDateTime(membership.startDate)
@@ -202,10 +242,10 @@ class ValidasiActivity : AppCompatActivity() {
     }
 
     private fun setupImagePicker() {
-        binding.ivBuktipembayaran.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, IMAGE_PICK_CODE)
-        }
+//        binding.ivBuktipembayaran.setOnClickListener {
+//            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//            startActivityForResult(intent, IMAGE_PICK_CODE)
+//        }
     }
 
     private fun checkForms() {

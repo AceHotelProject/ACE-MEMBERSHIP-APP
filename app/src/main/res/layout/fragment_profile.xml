@@ -26,38 +26,43 @@
                 android:layout_marginEnd="24sp"
                 android:textColor="@color/black"/>
             <!-- PROMO BANNER hanya untuk role USER MEMBER dan NON MEMBER -->
-            <LinearLayout
-                android:id="@+id/ln_card_member_category"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/membership_card_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16sp"
-                android:layout_marginStart="24sp"
-                android:layout_marginEnd="24sp"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:background="@drawable/background_mini_ace_silver">
-                <TextView
-                    android:id="@+id/tv_card_category_member"
-                    style="@style/textStyleButton"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_width="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                app:cardCornerRadius="12dp">
+
+                <LinearLayout
+                    android:id="@+id/membership_card_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ace Silver"
-                    android:textSize="24sp"
-                    android:textColor="@color/white"/>
-                <TextView
-                    android:id="@+id/tv_expiry_date"
-                    style="@style/textStyleMedium_14"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="Exp 28 Desember 2023"
-                    android:textColor="@color/white"/>
-            </LinearLayout>
+                    android:background="@drawable/orange_card_half"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/membershipku_tier"
+                        style="@style/textStyleButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gabung Member"
+                        android:textColor="@color/white"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/membershipku_expiry"
+                        style="@style/textStyleMedium_14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16px"
+                        android:text="Nikmati banyak promo menarik"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_gunakan_promo"
@@ -282,7 +287,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="Refferalku"
+                        android:text="Referralku"
                         android:textColor="@color/dark_grey"  />
 
                     <ImageView

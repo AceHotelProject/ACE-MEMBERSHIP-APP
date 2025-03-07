@@ -16,6 +16,9 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityDetailValidasiBinding
+import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
+import com.dicoding.membership.view.status.StatusTemplate
+import com.dicoding.membership.view.status.StatusTemplateActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -28,15 +31,13 @@ import java.util.TimeZone
 class DetailValidasiActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailValidasiBinding
     private val viewModel: DetailValidasiViewModel by viewModels()
-    private var currentPhotoUri: Uri? = null
+    private var userId: String? = null
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                viewModel.selectedImageUri = uri
-                binding.ivBuktipembayaran.setImageURI(uri)
-            }
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            viewModel.selectedImageUri = it
+            binding.ivBuktipembayaran.setImageURI(it)
+            updateButtonState()
         }
     }
 
@@ -49,10 +50,13 @@ class DetailValidasiActivity : AppCompatActivity() {
         setupObserver()
         setupClickListeners()
         setupUploadObserver()
+        setupVerifyObserver()
+        updateButtonState()
 
         // Get user ID from intent and fetch data
-        intent.getStringExtra(EXTRA_USER_ID)?.let { userId ->
-            viewModel.getUserData(userId)
+        userId = intent.getStringExtra(EXTRA_USER_ID)
+        userId?.let { id ->
+            viewModel.getUserData(id)
         } ?: run {
             Toast.makeText(this, "User ID tidak ditemukan", Toast.LENGTH_SHORT).show()
             finish()
@@ -64,7 +68,6 @@ class DetailValidasiActivity : AppCompatActivity() {
             when (resource) {
                 is Resource.Loading -> {
                     showLoading(true)
-                    // Show loading if needed
                 }
                 is Resource.Success -> {
                     showLoading(false)
@@ -93,9 +96,14 @@ class DetailValidasiActivity : AppCompatActivity() {
                     showLoading(true)
                 }
                 is Resource.Success -> {
-                    showLoading(false)
-                    Toast.makeText(this, "Berhasil menyimpan data", Toast.LENGTH_SHORT).show()
-                    finish()
+                    // Don't hide loading here as we're proceeding to verify
+                    // We'll get response from verifyUserState instead
+                    resource.data?.let { fileUpload ->
+                        // Now verify the user with uploaded proof URL
+                        userId?.let { id ->
+                            viewModel.verifyUser(id, fileUpload.fileUrl)
+                        }
+                    }
                 }
                 is Resource.Error -> {
                     showLoading(false)
@@ -108,6 +116,46 @@ class DetailValidasiActivity : AppCompatActivity() {
                 is Resource.Message -> TODO()
             }
         }
+    }
+
+    private fun setupVerifyObserver() {
+        viewModel.verifyUserState.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
+                is Resource.Success -> {
+                    showLoading(false)
+                    resource.data?.let { user ->
+                        navigateToSuccessScreen(user)
+                    }
+                }
+                is Resource.Error -> {
+                    showLoading(false)
+                    Toast.makeText(
+                        this,
+                        resource.message ?: "Gagal melakukan verifikasi",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is Resource.Message -> TODO()
+            }
+        }
+    }
+
+    private fun navigateToSuccessScreen(user: User) {
+        val statusTemplate = StatusTemplate(
+            title = "Validasi Berhasil",
+            description = "Validasi terhadap user ${user.name} telah berhasil dilakukan!",
+            showCoupon = false,
+            buttonText = "Selesai"
+        )
+
+        val intent = Intent(this, StatusTemplateActivity::class.java).apply {
+            putExtra(StatusTemplateActivity.EXTRA_STATUS_TEMPLATE, statusTemplate)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun updateUserDataUI(user: User) {
@@ -132,7 +180,7 @@ class DetailValidasiActivity : AppCompatActivity() {
     private fun updateMembershipDataUI(user: User) {
         user.membership?.let { membership ->
             with(binding) {
-                labelMembershipType.text = membership.subscriptionType.type
+                labelMembershipType.text = membership.subscriptionType?.type ?: "-"
                 labelStatus.text = membership.status
                 tvHarga.text = formatCurrency(membership.payment)
                 tvExpMember.text = formatDateTime(membership.endDate)
@@ -150,20 +198,23 @@ class DetailValidasiActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateButtonState() {
+        binding.btnSimpan.isEnabled = viewModel.selectedImageUri != null
+    }
+
     private fun setupClickListeners() {
         binding.btnClose.setOnClickListener {
             onBackPressed()
         }
 
         binding.ivBuktipembayaran.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, IMAGE_PICK_CODE)
+            galleryLauncher.launch("image/*")
         }
 
         binding.btnSimpan.setOnClickListener {
             viewModel.selectedImageUri?.let { uri ->
-                showLoading(true)
-                viewModel.uploadFile(uri, this)
+                // Show confirmation dialog before proceeding
+                showConfirmationDialog(uri)
             } ?: run {
                 Toast.makeText(this, "Pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
             }
@@ -201,9 +252,28 @@ class DetailValidasiActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        const val EXTRA_USER_ID = "extra_user_id"
-        private const val IMAGE_PICK_CODE = 1000
+    private fun showConfirmationDialog(uri: Uri) {
+        val dialog = GlobalTwoButtonDialog().apply {
+            setDialogTitle("Konfirmasi Membership")
+            setDialogMessage("Apakah Anda yakin ingin memvalidasi user ini?")
+
+            setOnYesClickListener {
+                // User confirmed, proceed with upload and verification
+                showLoading(true)
+                userId?.let { id ->
+                    viewModel.uploadProofAndVerifyUser(id, uri, this@DetailValidasiActivity)
+                }
+            }
+
+            setOnNoClickListener {
+                // User canceled, do nothing
+            }
+        }
+
+        dialog.show(supportFragmentManager, "ConfirmationDialog")
     }
 
+    companion object {
+        const val EXTRA_USER_ID = "extra_user_id"
+    }
 }

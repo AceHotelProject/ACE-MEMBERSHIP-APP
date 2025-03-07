@@ -281,8 +281,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun createReferralToken(): Result<ReferralTokenResponse> = try {
-        val response = apiService.createReferralToken()
+    suspend fun createReferralToken(referralToken: String): Result<ReferralTokenResponse> = try {
+        val response = apiService.createReferralToken(referralToken)
         if (response.isSuccessful) {
             Result.success(response.body()!!)
         } else {
@@ -301,6 +301,22 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }
     } catch (e: Exception) {
         Result.failure(e)
+    }
+
+    suspend fun subscribe(subscriptionType: String?): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.subscribe(subscriptionType)
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
     }
 
     /////////////////////////////////////////////////////////////////////////////// MEMBERSHIP
@@ -400,6 +416,28 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             try {
                 val response = apiService.deleteMembership(id)
                 emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun verifyUser(
+        id: String,
+        paymentProof: String? = null
+    ): Flow<ApiResponse<UserResponse>> {
+        return flow {
+            try {
+                val response = apiService.verifyUser(
+                    id = id,
+                    paymentProof = paymentProof
+                )
+                if (response.id != null) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Timber.tag("RemoteDataSource").e(e.toString())

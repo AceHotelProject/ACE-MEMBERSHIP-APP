@@ -10,6 +10,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.dicoding.core.data.source.local.datastore.DatastoreManager
+import com.dicoding.core.data.source.local.room.membership.MembershipDao
+import com.dicoding.core.data.source.local.room.membership.MembershipDatabase
 import com.dicoding.core.data.source.local.room.test.StoryDao
 import com.dicoding.core.data.source.local.room.user.UserDao
 import com.dicoding.core.data.source.local.room.test.StoryDatabase
@@ -80,5 +82,21 @@ class DatabaseModule {
 
     companion object {
         const val TOKEN_MANAGER = "token_manager"
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): MembershipDatabase {
+        return Room.databaseBuilder(
+            context,
+            MembershipDatabase::class.java,
+            "app_database"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMembershipDao(database: MembershipDatabase): MembershipDao {
+        return database.membershipDao()
     }
 }

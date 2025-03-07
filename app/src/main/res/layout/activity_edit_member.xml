@@ -208,22 +208,13 @@ h
                 android:layout_height="wrap_content"
                 android:text="Foto Banner Besar" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/add_foto_banner_big_cv"
+            <ImageView
+                android:id="@+id/add_foto_banner_big"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp">
-
-                <ImageView
-                    android:id="@+id/add_foto_banner_big"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/image_empty" />
-
-            </androidx.cardview.widget.CardView>
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/orange_card" />
 
             <TextView
                 android:id="@+id/tv_banner_small"
@@ -232,22 +223,13 @@ h
                 android:layout_height="wrap_content"
                 android:text="Foto Banner Kecil" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/add_foto_banner_small_cv"
+            <ImageView
+                android:id="@+id/add_foto_banner_small"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp">
-
-                <ImageView
-                    android:id="@+id/add_foto_banner_small"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/image_empty" />
-
-            </androidx.cardview.widget.CardView>
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/orange_card_half" />
 
             <TextView
                 android:id="@+id/tv_syarat_ketentuan"

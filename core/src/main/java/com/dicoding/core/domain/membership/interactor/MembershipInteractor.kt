@@ -1,10 +1,13 @@
 package com.dicoding.core.domain.membership.interactor
 
+import androidx.lifecycle.LiveData
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
+import com.dicoding.core.domain.membership.model.MembershipLocal
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
+import com.dicoding.core.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -61,5 +64,34 @@ class MembershipInteractor @Inject constructor(
 
     override fun deleteMembership(id: String): Flow<Resource<Unit>> {
         return membershipRepository.deleteMembership(id)
+    }
+
+    //LOCAL
+
+
+    override fun getActiveMembership(): LiveData<MembershipLocal?> {
+        return membershipRepository.getActiveMembership()
+    }
+
+    // Store membership data
+    override suspend fun storeMembershipData(membership: Membership): Boolean {
+        return membershipRepository.storeMembershipData(membership)
+    }
+
+    // Check if membership is expired
+    override suspend fun checkMembershipExpiry(): Boolean {
+        return membershipRepository.checkMembershipExpiry()
+    }
+
+    override suspend fun deleteLocalMembership(id: String): Boolean {
+        return membershipRepository.deleteLocalMembership(id)
+    }
+
+    override suspend fun deleteAllLocalMemberships(): Boolean {
+        return membershipRepository.deleteAllLocalMemberships()
+    }
+
+    override suspend fun updateRemainingCoupons(membershipId: String, remainingCoupons: Int): Boolean {
+        return membershipRepository.updateRemainingCoupons(membershipId, remainingCoupons)
     }
 }

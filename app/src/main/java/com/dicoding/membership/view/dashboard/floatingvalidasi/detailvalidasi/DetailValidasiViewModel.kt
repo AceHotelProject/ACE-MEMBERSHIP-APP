@@ -56,6 +56,54 @@ class DetailValidasiViewModel @Inject constructor(
         }
     }
 
+    private val _verifyUserState = MutableLiveData<Resource<User>>()
+    val verifyUserState: LiveData<Resource<User>> = _verifyUserState
+
+    fun verifyUser(id: String, paymentProof: String? = null) {
+        viewModelScope.launch {
+            // Emit loading state
+            _verifyUserState.value = Resource.Loading()
+
+            userUseCase.verifyUser(id, paymentProof)
+                .catch { e ->
+                    _verifyUserState.value = Resource.Error(e.message ?: "Verification failed")
+                }
+                .collect { result ->
+                    _verifyUserState.value = result
+                }
+        }
+    }
+
+    fun uploadProofAndVerifyUser(userId: String, uri: Uri, context: Context) {
+        viewModelScope.launch {
+            // First upload the file
+            _uploadState.value = Resource.Loading()
+
+            uploadFile(uri, context)
+                .catch { e ->
+                    _uploadState.value = Resource.Error(e.message ?: "Upload failed")
+                    _verifyUserState.value = Resource.Error("Upload failed before verification")
+                }
+                .collect { uploadResult ->
+                    _uploadState.value = uploadResult
+
+                    when (uploadResult) {
+                        is Resource.Success -> {
+                            // Store the uploaded image URL
+                            uploadedImageUrl = uploadResult.data?.fileUrl
+
+                            // Now verify the user with the uploaded proof
+                            verifyUser(userId, uploadedImageUrl)
+                        }
+                        is Resource.Error -> {
+                            _verifyUserState.value = Resource.Error(uploadResult.message ?: "Upload failed")
+                        }
+                        else -> { /* Loading state is already set */ }
+                    }
+                }
+        }
+    }
+
     fun uploadFile(uri: Uri, context: Context): Flow<Resource<FileUploadDomain>> {
         return flow {
             emit(Resource.Loading())

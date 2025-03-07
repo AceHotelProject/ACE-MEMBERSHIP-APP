@@ -154,8 +154,8 @@ class UserRepository @Inject constructor(
         }.asFlow()
     }
 
-    override suspend fun createReferralToken(): Result<ReferralToken> {
-        return remoteDataSource.createReferralToken().map { response ->
+    override suspend fun createReferralToken(referralToken: String): Result<ReferralToken> {
+        return remoteDataSource.createReferralToken(referralToken).map { response ->
             UserDataMapper.mapReferralTokenToDomain(response)
         }
     }
@@ -164,5 +164,37 @@ class UserRepository @Inject constructor(
         return remoteDataSource.getReferralToken().map { response ->
             UserDataMapper.mapReferralTokenToDomain(response)
         }
+    }
+
+    override fun verifyUser(
+        id: String,
+        paymentProof: String?
+    ): Flow<Resource<User>> {
+        return object : NetworkBoundResource<User, UserResponse>() {
+            override suspend fun fetchFromApi(response: UserResponse): User {
+                return UserDataMapper.mapUserToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
+                return remoteDataSource.verifyUser(
+                    id = id,
+                    paymentProof = paymentProof
+                )
+            }
+        }.asFlow()
+    }
+
+    override fun subscribe(
+        subscriptionType: String?
+    ): Flow<Resource<User>> {
+        return object : NetworkBoundResource<User, UserResponse>() {
+            override suspend fun fetchFromApi(response: UserResponse): User {
+                return UserDataMapper.mapUserToDomain(response)
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<UserResponse>> {
+                return remoteDataSource.subscribe(subscriptionType)
+            }
+        }.asFlow()
     }
 }

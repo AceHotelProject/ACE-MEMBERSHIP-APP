@@ -23,6 +23,7 @@ class ProfileDetailActivity : AppCompatActivity(){
     private lateinit var binding: ActivityProfileDetailBinding
     private val viewModel: ProfileDetailViewModel by viewModels()
     private var currentUser: User? = null // Add this to store the current user
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +34,7 @@ class ProfileDetailActivity : AppCompatActivity(){
         buttonHandler()
         observeUserData()
 
-        val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
+        userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
         viewModel.getUserData(userId)
     }
 
@@ -70,8 +71,10 @@ class ProfileDetailActivity : AppCompatActivity(){
                     Log.d("Activity debug", "Data gathered: ${resource.data}")
                     resource.data?.let { user ->
                         currentUser = user // Store the current user
-                        if(user.isMember){
+                        if(user.isMember && user.isValidated){
                             updateUserUI(user)
+                        } else if(user.isMember && !user.isValidated){
+                            pendingMemberLayout()
                         } else {
                             nonMemberLayout()
                         }
@@ -155,6 +158,17 @@ class ProfileDetailActivity : AppCompatActivity(){
                     putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
                 })
             }
+        }
+
+    }
+    private fun pendingMemberLayout(){
+        binding.detailLayoutSv.visibility = View.GONE
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutNonMember.visibility = View.GONE
+        binding.layoutPending.visibility = View.VISIBLE
+        binding.btnRefresh.setOnClickListener {
+            binding.layoutPending.visibility = View.GONE
+            viewModel.getUserData(userId)
         }
 
     }

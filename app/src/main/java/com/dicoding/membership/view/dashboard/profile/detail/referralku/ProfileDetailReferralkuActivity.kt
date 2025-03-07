@@ -26,13 +26,14 @@ import kotlinx.coroutines.launch
 class ProfileDetailReferralkuActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileDetailReferralkuBinding
     private val viewModel: ProfileDetailReferralkuViewModel by viewModels()
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileDetailReferralkuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userId = intent.getStringExtra(ProfileDetailActivity.EXTRA_USER_ID) ?: return
+        userId = intent.getStringExtra(ProfileDetailActivity.EXTRA_USER_ID) ?: return
         viewModel.getUserData(userId)
 
         observeUserData()
@@ -80,6 +81,8 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         if(!user.isMember){
                             nonMemberLayout()
+                        } else if(!user.isValidated) {
+                            pendingMemberLayout()
                         } else {
                             setupSwipeRefresh()
                             observeReferralToken()
@@ -118,6 +121,17 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
                     putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
                 })
             }
+        }
+
+    }
+
+    private fun pendingMemberLayout(){
+        binding.linearLayout4.visibility = View.GONE
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutPending.visibility = View.VISIBLE
+        binding.btnRefreshPending.setOnClickListener {
+            binding.layoutPending.visibility = View.GONE
+            viewModel.getUserData(userId)
         }
 
     }

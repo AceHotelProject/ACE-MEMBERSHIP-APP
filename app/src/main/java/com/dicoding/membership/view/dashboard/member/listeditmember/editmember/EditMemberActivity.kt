@@ -187,11 +187,11 @@ class EditMemberActivity : AppCompatActivity() {
 
     // Modify setupImagePickers to use GetContent
     private fun setupImagePickers() {
-        binding.addFotoBannerBigCv.setOnClickListener {
+        binding.addFotoBannerBig.setOnClickListener {
             bigBannerGalleryLauncher.launch("image/*")
         }
 
-        binding.addFotoBannerSmallCv.setOnClickListener {
+        binding.addFotoBannerSmall.setOnClickListener {
             smallBannerGalleryLauncher.launch("image/*")
         }
     }

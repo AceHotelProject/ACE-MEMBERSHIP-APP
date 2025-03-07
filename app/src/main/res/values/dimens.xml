@@ -1,4 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="dialog_margin">24dp</dimen>
+    <dimen name="min_card_height">120dp</dimen>
 </resources>

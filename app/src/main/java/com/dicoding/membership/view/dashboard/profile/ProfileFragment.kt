@@ -1,6 +1,7 @@
 package com.dicoding.membership.view.dashboard.profile
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.dicoding.core.domain.auth.model.UserDomain
+import com.dicoding.core.domain.membership.model.MembershipLocal
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
@@ -25,6 +31,8 @@ import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.welcome.WelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -50,11 +58,87 @@ class ProfileFragment : Fragment() {
 
         setupClickListeners()
         observeUserData()
+        observeMembershipData()
         validateToken()
 
         checkUserRole()
 
         viewModel.getUserData()
+
+    }
+
+    private fun observeMembershipData() {
+        viewModel.activeMembership.observe(viewLifecycleOwner) { membership ->
+            if (membership != null) {
+                updateMembershipCard(membership)
+            } else {
+                // Set default appearance when no membership data is available
+                binding.membershipkuTier.text = "Gabung Member"
+                binding.membershipkuExpiry.text = "Nikmati banyak promo menarik"
+                binding.membershipCardLayout.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.orange_card_half
+                )
+            }
+        }
+    }
+
+    private fun updateMembershipCard(membership: MembershipLocal) {
+        // Update membership type/tier text
+        binding.membershipkuTier.text = membership.type ?: "Gabung Member"
+
+        // Update expiry date
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("id"))
+        val expiryDateText = membership.expiryDate?.let { "Exp ${dateFormat.format(it)}" }
+            ?: "Nikmati banyak promo menarik"
+        binding.membershipkuExpiry.text = expiryDateText
+
+        // Load image for membership card background
+        membership.image?.getOrNull(1)?.let { imageUrl ->
+            Log.d("ProfileFragment", "Loading membership image: $imageUrl")
+
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .into(object : CustomTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        binding.membershipCardLayout.background = resource
+
+                        // Adjust height based on image aspect ratio if needed
+                        val width = resource.intrinsicWidth
+                        val height = resource.intrinsicHeight
+                        val aspectRatio = height.toFloat() / width.toFloat()
+
+                        binding.membershipCardLayout.post {
+                            val layoutWidth = binding.membershipCardLayout.width
+                            val newHeight = (layoutWidth * aspectRatio).toInt()
+
+                            // Use the dimension resource instead of hardcoded value
+                            val minHeight = resources.getDimensionPixelSize(R.dimen.min_card_height)
+                            val params = binding.membershipCardLayout.layoutParams
+                            params.height = Math.max(newHeight, minHeight)
+                            binding.membershipCardLayout.layoutParams = params
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        binding.membershipCardLayout.background = ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.orange_card_half
+                        )
+                    }
+                })
+        } ?: run {
+            // Fallback if no image is available
+            binding.membershipCardLayout.background = ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.orange_card_half
+            )
+        }
+
+        // If you have coupon info in your membership data, update that too
+        membership.remainingCoupons?.let { remainingCoupons ->
+            binding.tvCouponCount.text = "$remainingCoupons kupon"
+        }
     }
 
     private fun setupClickListeners() {
@@ -111,10 +195,26 @@ class ProfileFragment : Fragment() {
                 }
             }.show(requireActivity().supportFragmentManager, "ConfirmationDialog")
         }
+        // Add this to your setupClickListeners method in ProfileFragment.kt
+        binding.membershipCardView.setOnClickListener {
+            // Check if active membership data exists in local database
+            if (viewModel.activeMembership.value == null) {
+                // No active membership in local database, redirect to membership plans
+                viewModel.userData.value?.let { loginDomain ->
+                    val intent = Intent(requireContext(), HomeMemberLevelActivity::class.java).apply {
+                        putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, loginDomain.user.id)
+                    }
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     private fun handleLogout() {
         showLoading(true)
+
+        // First clear membership data
+        viewModel.clearMembershipData()
 
         viewModel.getUser().observe(viewLifecycleOwner) { user ->
             user?.let {
@@ -153,7 +253,7 @@ class ProfileFragment : Fragment() {
 
 //            Testing
             val mockUserRole = UserRole.ADMIN
-            //setupUserVisibility(mockUserRole)
+            //setupUserVisibility(userRole)
 
 //            Use This For Real
 //            setupFabVisibility(userRole)
@@ -165,19 +265,19 @@ class ProfileFragment : Fragment() {
     private fun setupUserVisibility(userRole: UserRole) {
         when (userRole) {
             UserRole.ADMIN -> {
-                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.membershipCardView.visibility = View.GONE
                 binding.clGunakanPromo.visibility = View.GONE
                 binding.layoutMembershipku.visibility = View.GONE
                 binding.layoutManajemenMitra.visibility = View.VISIBLE
             }
             UserRole.MITRA, UserRole.RECEPTIONIST ->{
-                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.membershipCardView.visibility = View.GONE
                 binding.clGunakanPromo.visibility = View.GONE
                 binding.layoutMembershipku.visibility = View.GONE
                 binding.layoutManajemenMitra.visibility = View.GONE
             }
             UserRole.MEMBER -> {
-                binding.lnCardMemberCategory.visibility = View.VISIBLE
+                binding.membershipCardView.visibility = View.VISIBLE
                 binding.clGunakanPromo.visibility = View.VISIBLE
                 binding.layoutMembershipku.visibility = View.VISIBLE
                 binding.layoutManajemenMitra.visibility = View.GONE
@@ -185,18 +285,15 @@ class ProfileFragment : Fragment() {
                 binding.lnBackgroundMenu.background = null
             }
             UserRole.NONMEMBER -> {
-                binding.lnCardMemberCategory.visibility = View.VISIBLE
-                binding.tvCardCategoryMember.visibility = View.GONE
-                binding.tvExpiryDate.visibility = View.GONE
+                binding.membershipCardView.visibility = View.VISIBLE
                 binding.clGunakanPromo.visibility = View.VISIBLE
                 binding.layoutMembershipku.visibility = View.VISIBLE
                 binding.layoutManajemenMitra.visibility = View.GONE
 
-                binding.lnCardMemberCategory.setBackgroundResource(R.drawable.background_big_non_member)
                 binding.lnBackgroundMenu.background = null
             }
             else -> {
-                binding.lnCardMemberCategory.visibility = View.GONE
+                binding.membershipCardView.visibility = View.GONE
                 binding.clGunakanPromo.visibility = View.GONE
                 binding.layoutProfilDiri.visibility = View.GONE
                 binding.layoutMembershipku.visibility = View.GONE

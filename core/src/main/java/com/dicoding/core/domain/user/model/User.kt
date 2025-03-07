@@ -18,7 +18,7 @@ data class SubscriptionType(
 ) : Parcelable
 
 @Parcelize
-data class Membership(
+data class MembershipUser(
     val userId: String,
     val verificatorId: String?,
     val subscriptionType: SubscriptionType,
@@ -28,6 +28,12 @@ data class Membership(
     val startDate: String,
     val endDate: String,
     val createdAt: String,
+    val id: String
+) : Parcelable
+
+@Parcelize
+data class UserReferralToken(
+    val token: String,
     val id: String
 ) : Parcelable
 
@@ -45,15 +51,14 @@ data class User(
     val androidId: String?,
     val couponUsed: List<String>,
     val point: Int,
-    val refferalPoint: Int,
     val referralPoint: Int,
     val isEmailVerified: Boolean,
     val isNumberVerified: Boolean,
     val isPhoneVerified: Boolean,
     val isValidated: Boolean,
     val uniqueCode: String?,
-    val referralToken: String?,
-    val membership: Membership?,
+    val referralToken: UserReferralToken?,
+    val membership: MembershipUser?,
     val isMember: Boolean,
     val createdAt: String?
 ) : Parcelable

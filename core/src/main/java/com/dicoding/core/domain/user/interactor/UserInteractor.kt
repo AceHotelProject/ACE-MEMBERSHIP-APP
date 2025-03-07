@@ -86,11 +86,27 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         return userRepository.deleteUser(id)
     }
 
-    override suspend fun createReferralToken(): Result<ReferralToken> {
-        return userRepository.createReferralToken()
+    override suspend fun createReferralToken(referralToken: String): Result<ReferralToken> {
+        return userRepository.createReferralToken(referralToken)
     }
 
     override suspend fun getReferralToken(): Result<ReferralToken> {
         return userRepository.getReferralToken()
+    }
+
+    override fun verifyUser(
+        id: String,
+        paymentProof: String?
+    ): Flow<Resource<User>> {
+        return userRepository.verifyUser(
+            id = id,
+            paymentProof = paymentProof
+        )
+    }
+
+    override fun subscribe(
+        subscriptionType: String?
+    ): Flow<Resource<User>> {
+        return userRepository.subscribe(subscriptionType)
     }
 }

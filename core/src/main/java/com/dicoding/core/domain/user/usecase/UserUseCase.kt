@@ -46,8 +46,16 @@ interface UserUseCase {
 
     fun deleteUser(id: String): Flow<Resource<Unit>>
 
-    suspend fun createReferralToken(): Result<ReferralToken>
+    suspend fun createReferralToken(referralToken: String): Result<ReferralToken>
 
     suspend fun getReferralToken(): Result<ReferralToken>
 
+    fun verifyUser(
+        id: String,
+        paymentProof: String? = null
+    ): Flow<Resource<User>>
+
+    fun subscribe(
+        subscriptionType: String? = null
+    ): Flow<Resource<User>>
 }

@@ -201,12 +201,27 @@ interface ApiService {
         @Path("id") id: String
     ): Unit
 
+    @FormUrlEncoded
     @POST("v1/users/referral-token")
-    suspend fun createReferralToken(): Response<ReferralTokenResponse>
+    suspend fun createReferralToken(
+        @Field("referralToken") referralToken: String? = null
+    ): Response<ReferralTokenResponse>
 
     @GET("v1/users/referral-token")
     suspend fun getReferralToken(): Response<ReferralTokenResponse>
 
+    @FormUrlEncoded
+    @PATCH("v1/users/{id}/verify")
+    suspend fun verifyUser(
+        @Path("id") id: String,
+        @Field("paymentProof") paymentProof: String? = null
+    ): UserResponse
+
+    @FormUrlEncoded
+    @POST("v1/users/subscribe")
+    suspend fun subscribe(
+        @Field("subscriptionType") susbcriptionType: String? = null
+    ): UserResponse
 
     // Non Member
 
@@ -229,7 +244,7 @@ interface ApiService {
         @Path("id") id: String
     ): MembershipResponse
 
-    @PATCH("v1/subscriptions/{id}")
+    @PATCH("v1/subscriptions/type/{id}")
     @FormUrlEncoded
     suspend fun updateMembership(
         @Path("id") id: String,
@@ -241,7 +256,7 @@ interface ApiService {
         @Field("image[]") image: List<String>? = null
     ): MembershipResponse
 
-    @DELETE("v1/subscriptions/{id}")
+    @DELETE("v1/subscriptions/type/{id}")
     suspend fun deleteMembership(
         @Path("id") id: String
     ): Unit

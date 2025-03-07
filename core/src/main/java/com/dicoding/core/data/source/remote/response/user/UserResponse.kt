@@ -54,6 +54,13 @@
         ) : MerchantIdResponse()
     }
 
+    data class SimpleReferralTokenResponse(
+        @SerializedName("token")
+        val token: String = "",
+        @SerializedName("id")
+        val id: String = ""
+    )
+
     data class UserResponse(
         @SerializedName("id")
         val id: String? = null,
@@ -87,14 +94,12 @@
         val couponUsed: List<String> = emptyList(),
         @SerializedName("point")
         val point: Int = 0,
-        @SerializedName("refferalPoint")
-        val refferalPoint: Int = 0,
         @SerializedName("referralPoint")
         val referralPoint: Int = 0,
         @SerializedName("uniqueCode")
         val uniqueCode: String? = null,
         @SerializedName("referralToken")
-        val referralToken: String? = null,
+        val referralToken: SimpleReferralTokenResponse? = null,
         @SerializedName("membership")
         val membership: MembershipResponse? = null,
         @SerializedName("isMember")

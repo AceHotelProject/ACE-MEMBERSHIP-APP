@@ -363,7 +363,7 @@ class HomeMemberRegisterActivity : AppCompatActivity() {
                                     // Status Template Activity
                                     val statusTemplate = StatusTemplate(
                                         title = "Membership Berhasil",
-                                        description = "Anda telah memilih tipe membership id: ${memberType}.",
+                                        description = "Anda telah berhasil mendaftar sebagai membership. Silahkan hubungi admin untuk melanjutkan proses pembayaran anda.",
                                         showCoupon = false,
                                         promoCode = "",
                                         expiryTime = "",

@@ -65,6 +65,8 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         if(!user.isMember){
                             nonMemberLayout()
+                        } else if(!user.isValidated){
+                            pendingMemberLayout()
                         } else {
                             viewModel.getUserHistory(userId)
                             setupObservers()
@@ -197,6 +199,16 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                     putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, user.data?.id)
                 })
             }
+        }
+    }
+
+    private fun pendingMemberLayout() {
+        binding.loadingOverlay.visibility = View.GONE
+        binding.layoutPoinku.visibility = View.GONE
+        binding.layoutPending.visibility = View.VISIBLE
+        binding.btnRefreshPending.setOnClickListener {
+            binding.layoutPending.visibility = View.GONE
+            viewModel.getUserData(userId)
         }
     }
 
