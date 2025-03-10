@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.R
 import com.dicoding.membership.core.utils.showToast
@@ -37,9 +38,7 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
         viewModel.getUserData(userId)
 
         observeUserData()
-
-        buttonHandler() // Add this line
-        viewModel.getReferralToken()
+        buttonHandler()
     }
 
     private fun buttonHandler() {
@@ -49,12 +48,19 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
 
         binding.referralkuButtonCopy.setOnClickListener {
             val token = binding.referralkuKodeReferral.text.toString()
-            copyToClipboard(token)
+            if (token.isNotEmpty()) {
+                copyToClipboard(token)
+                showToast("Kode referral berhasil disalin")
+            } else {
+                showToast("Kode referral tidak tersedia")
+            }
         }
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+            showLoading(true)
             viewModel.getReferralToken()
         }
     }
@@ -62,9 +68,8 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
     private fun observeLoading() {
         lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                binding.swipeRefresh.isRefreshing = isLoading
-                //binding.linearLayout4.visibility = if(isLoading) View.GONE else View.VISIBLE
-                showLoading(true)
+                binding.swipeRefresh.isRefreshing = false
+                showLoading(isLoading)
             }
         }
     }
@@ -84,11 +89,16 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
                         } else if(!user.isValidated) {
                             pendingMemberLayout()
                         } else {
+                            updateReferralPointUI(user)
+
+                            // First set up the observers
                             setupSwipeRefresh()
                             observeReferralToken()
                             observeLoading()
-                        }
 
+                            // Then fetch the data
+                            viewModel.getReferralToken()
+                        }
                     }
                 }
                 is Resource.Error -> {
@@ -104,6 +114,14 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun updateReferralPointUI(user: User) {
+        // Format the referral point with thousand separators
+        val formattedPoints = user.referralPoint.toString()
+            .replace(Regex("\\B(?=(\\d{3})+(?!\\d))"), ".")
+
+        binding.referralkuKeuntunganReferralJumlah.text = formattedPoints
     }
 
     private fun showLoading(b: Boolean){
@@ -158,12 +176,6 @@ class ProfileDetailReferralkuActivity : AppCompatActivity() {
         val clip = ClipData.newPlainText("Referral Token", text)
         clipboard.setPrimaryClip(clip)
 
-        // Show feedback to user
-//        Toast.makeText(
-//            this,
-//            "Referral code copied to clipboard",
-//            Toast.LENGTH_SHORT
-//        ).show()
     }
     
     companion object {

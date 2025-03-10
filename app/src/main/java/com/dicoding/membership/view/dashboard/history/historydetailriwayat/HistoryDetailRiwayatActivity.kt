@@ -3,12 +3,14 @@ package com.dicoding.membership.view.dashboard.history.historydetailriwayat
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -26,7 +28,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
     private val viewModel: HistoryDetailMemberViewModel by viewModels()
     private var currentUser: User? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {  // Fixed the onCreate signature
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryDetailRiwayatBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -40,6 +42,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
         }
 
         observeUserData()
+        observeVerificatorData()
         observeDeleteResult()
         setupEditButton()
     }
@@ -107,12 +110,32 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                     resource.data?.let { user ->
                         currentUser = user
                         binding.apply {
+                            // Membership type
                             labelMembershipType.text = user.membership?.subscriptionType?.type ?: "Non-Member"
+
+                            // User data
                             tvUserNama.text = user.name
                             tvUserNIK.text = user.citizenNumber ?: "-"
                             tvUserPhone.text = user.phone ?: "-"
                             tvUserAddress.text = user.address ?: "-"
                             tvUserEmail.text = user.email
+                            labelStatus.text = user.membership?.status ?: "-"
+                            if(user.membership?.status?.equals("active", ignoreCase = true) == true) {
+                                // Active status - use green style
+                                labelStatus.setBackgroundResource(R.drawable.chip_category_green)
+                                labelStatus.setTextColor(ContextCompat.getColor(this@HistoryDetailRiwayatActivity, R.color.green))
+                            } else {
+                                // Inactive status - use red style
+                                labelStatus.setBackgroundResource(R.drawable.chip_category_red)
+                                labelStatus.setTextColor(ContextCompat.getColor(this@HistoryDetailRiwayatActivity, R.color.red))
+                            }
+
+                            // Format dates using the ViewModel's formatDate function
+                            tvExpMember.text = viewModel.formatDate(user.membership?.endDate)
+                            tvTglTransaksi.text = viewModel.formatDate(user.membership?.startDate)
+
+                            // Set default value for verificator while waiting for data
+                            tvVerifikator.text = "-"
 
                             // Load KTP image
                             Glide.with(this@HistoryDetailRiwayatActivity)
@@ -121,12 +144,47 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                                 .error(R.drawable.ktp_example)
                                 .centerCrop()
                                 .into(ivKtpImage)
+
+                            Glide.with(this@HistoryDetailRiwayatActivity)
+                                .load(user.membership?.paymentProof)
+                                .placeholder(R.drawable.image_empty)
+                                .error(R.drawable.image_empty)
+                                .centerCrop()
+                                .into(ivBuktipembayaran)
+
+
+                            // Log verificator ID for debugging
+                            Log.d("HistoryDetail", "VerificatorId: ${user.membership?.verificatorId}")
                         }
                     }
                 }
                 is Resource.Error -> {
                     binding.loadingOverlay.visibility = View.GONE
                     Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun observeVerificatorData() {
+        viewModel.verificatorData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    // You might want to show a loading indicator for the verificator field
+                    // but we'll keep it simple for now
+                }
+                is Resource.Success -> {
+                    resource.data?.let { verificator ->
+                        // Update the verificator name in the TextView
+                        binding.tvVerifikator.text = verificator.email
+                        Log.d("HistoryDetail", "Verificator name loaded: ${verificator.name}")
+                    }
+                }
+                is Resource.Error -> {
+                    // Keep the default value or show error message if needed
+                    binding.tvVerifikator.text = "Tidak ditemukan"
+                    Log.e("HistoryDetail", "Error fetching verificator: ${resource.message}")
                 }
                 else -> {}
             }

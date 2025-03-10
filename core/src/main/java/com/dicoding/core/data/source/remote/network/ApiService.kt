@@ -5,6 +5,7 @@ import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.membership.SubscriptionHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
@@ -260,6 +261,15 @@ interface ApiService {
     suspend fun deleteMembership(
         @Path("id") id: String
     ): Unit
+
+    @GET("v1/subscriptions/history")
+    suspend fun getSubscriptionHistory(
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null,
+        @Query("search") search: String? = null,
+    @Query("time") time: String? = null,
+    @Query("type") type: String? = null
+    ): SubscriptionHistoryResponse
 
     ////////////////////////////////////////////// Promo
     @FormUrlEncoded

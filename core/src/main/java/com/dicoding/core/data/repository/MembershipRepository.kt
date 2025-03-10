@@ -8,8 +8,10 @@ import com.dicoding.core.data.source.remote.RemoteDataSource
 import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.membership.SubscriptionHistoryResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.model.MembershipLocal
+import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.domain.user.model.User
 import com.dicoding.core.utils.datamapper.MembershipDataMapper
@@ -220,5 +222,21 @@ class MembershipRepository @Inject constructor(
         }
     }
 
+    override fun getSubscriptionHistory(
+        page: Int?,
+        limit: Int?,
+        search: String?,
+        time: String?,
+        type: String?
+    ): Flow<Resource<SubscriptionHistory>> {
+        return object : NetworkBoundResource<SubscriptionHistory, SubscriptionHistoryResponse>() {
+            override suspend fun fetchFromApi(response: SubscriptionHistoryResponse): SubscriptionHistory {
+                return MembershipDataMapper.mapSubscriptionHistoryResponseToDomain(response)
+            }
 
+            override suspend fun createCall(): Flow<ApiResponse<SubscriptionHistoryResponse>> {
+                return remoteDataSource.getSubscriptionHistory(page, limit, search, time, type)
+            }
+        }.asFlow()
+    }
 }

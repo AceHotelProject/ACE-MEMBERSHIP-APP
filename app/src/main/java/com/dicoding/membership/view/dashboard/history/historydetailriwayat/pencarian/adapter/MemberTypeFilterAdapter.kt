@@ -60,6 +60,10 @@ class MemberTypeFilterAdapter(
             onItemSelected(item)
         }
     }
-
+    // Add to MemberTypeFilterAdapter
+    fun resetSelection() {
+        selectedFilter = null
+        notifyDataSetChanged()
+    }
     override fun getItemCount(): Int = items.size
 }

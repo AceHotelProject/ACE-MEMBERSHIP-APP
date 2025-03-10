@@ -59,6 +59,12 @@ class DateFilterAdapter(
             onItemSelected(item)
         }
     }
+    // Add to DateFilterAdapter
+    fun resetSelection() {
+        selectedFilter = null
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount(): Int = items.size
 }

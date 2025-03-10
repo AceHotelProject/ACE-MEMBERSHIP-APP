@@ -1,6 +1,7 @@
 package com.dicoding.core.domain.membership.model
 
 import android.os.Parcelable
+import com.dicoding.core.domain.user.model.User
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -34,3 +35,37 @@ data class MembershipLocal(
     var remainingCoupons: Int? = null,
     var lastUpdatedAt: Date = Date()
 ) : Parcelable
+
+data class SubscriptionHistory(
+    val results: List<Subscription> = emptyList(),
+    val page: Int = 1,
+    val limit: Int = 10,
+    val totalPages: Int = 0,
+    val totalResults: Int = 0
+)
+
+data class Subscription(
+    val id: String,
+    val userId: SubscriptionUser?,
+    val verificatorId: SubscriptionUser?,
+    val subscriptionType: String,
+    val subscriptionTypeId: String,
+    val status: String,
+    val payment: Int?,
+    val paymentProof: String?,
+    val startDate: String,
+    val endDate: String,
+    val createdAt: String
+)
+
+// You can reuse the existing User model or create a simplified one
+data class SubscriptionUser(
+    val id: String,
+    val name: String,
+    val isMember: Boolean
+)
+
+data class MembershipStats(
+    val totalMembers: Int = 0,
+    val membershipCounts: Map<String, Int> = emptyMap()
+)

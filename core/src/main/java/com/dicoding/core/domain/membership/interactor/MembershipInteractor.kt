@@ -5,6 +5,7 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.model.MembershipLocal
+import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.membership.repository.IMembershipRepository
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
 import com.dicoding.core.domain.user.model.User
@@ -93,5 +94,15 @@ class MembershipInteractor @Inject constructor(
 
     override suspend fun updateRemainingCoupons(membershipId: String, remainingCoupons: Int): Boolean {
         return membershipRepository.updateRemainingCoupons(membershipId, remainingCoupons)
+    }
+
+    override fun getSubscriptionHistory(
+        page: Int?,
+        limit: Int?,
+        search: String?,
+        time: String?,
+        type: String?
+    ): Flow<Resource<SubscriptionHistory>> {
+        return membershipRepository.getSubscriptionHistory(page, limit, search, time, type)
     }
 }

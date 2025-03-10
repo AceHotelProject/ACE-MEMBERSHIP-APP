@@ -36,7 +36,8 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileDetailPoinkuBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        // Disable the SwipeRefreshLayout's default indicator
+        binding.swipeRefresh.isRefreshing = false
         userId = intent.getStringExtra(EXTRA_USER_ID) ?: return
         viewModel.getUserData(userId)
         observeUserData()
@@ -68,6 +69,7 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                         } else if(!user.isValidated){
                             pendingMemberLayout()
                         } else {
+                            viewModel.getUserPoints(userId) // Add this line
                             viewModel.getUserHistory(userId)
                             setupObservers()
                         }
@@ -91,6 +93,13 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
+            // When user swipes to refresh, reset the indicator immediately
+            binding.swipeRefresh.isRefreshing = false
+
+            // Show our custom loading overlay instead
+            showLoading(true)
+
+            // Get the data
             val userId = intent.getStringExtra(EXTRA_USER_ID) ?: return@setOnRefreshListener
             viewModel.refreshData(userId)
         }
@@ -104,7 +113,7 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
             // Observe loading state
             launch {
                 viewModel.isLoading.collect { isLoading ->
-                    binding.swipeRefresh.isRefreshing = isLoading
+                    binding.swipeRefresh.isRefreshing = false
                 }
             }
 
@@ -132,10 +141,19 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
                         is Resource.Loading -> showLoading(true)
                         is Resource.Success -> {
                             historyLoaded = true
-                            if (pointsLoaded) showLoading(false)
                             resource.data?.let { history ->
-                                historyAdapter.updateItems(history.history)
+                                if (history.history.isEmpty()) {
+                                    // Show empty state
+                                    binding.riwayatKosong.visibility = View.VISIBLE
+                                    binding.historyRecyclerview.visibility = View.GONE
+                                } else {
+                                    binding.riwayatKosong.visibility = View.GONE
+                                    binding.historyRecyclerview.visibility = View.VISIBLE
+                                    historyAdapter.updateItems(history.history)
+                                }
                             }
+                            if (pointsLoaded) showLoading(false)
+
                         }
                         is Resource.Error -> {
                             historyLoaded = true
@@ -167,11 +185,14 @@ class ProfileDetailPoinkuActivity : AppCompatActivity() {
         }
 
         binding.layoutTransferButton.setOnClickListener {
-            viewModel.points.value.data?.let { points ->
+            val currentPoints = viewModel.points.value.data
+            if (currentPoints != null) {
                 startActivity(Intent(this, TransferPoinActivity::class.java).apply {
                     putExtra(TransferPoinActivity.EXTRA_USER_ID, userId)
-                    putExtra(TransferPoinActivity.EXTRA_POINTS, points.points.toString())
+                    putExtra(TransferPoinActivity.EXTRA_POINTS, currentPoints.points.toString())
                 })
+            } else {
+                showToast("Point data is not yet available")
             }
         }
 

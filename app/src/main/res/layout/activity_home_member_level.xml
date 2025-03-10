@@ -43,7 +43,7 @@
             style="@style/textStyleMedium_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lorem ipsum dolor sit amet consectetur.\nTellus eget sed feugiat faucibus lectus vitae..."
+            android:text="Silahkan pilih jenis membership dibawah ini"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
             android:layout_marginBottom="24dp"

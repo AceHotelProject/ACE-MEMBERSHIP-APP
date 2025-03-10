@@ -118,14 +118,16 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/tv_member_2"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:text="Member Silver"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tv_member_silver"
+                        android:id="@+id/tv_member_2_count"
                         style="@style/textStyleSemIBold_24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,13 +152,15 @@
                     android:padding="10dp">
 
                     <TextView
+                        android:id="@+id/tv_member_3"
                         style="@style/textStyleMedium_14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:text="Member Gold" />
 
                     <TextView
-                        android:id="@+id/tv_member_gold"
+                        android:id="@+id/tv_member_3_count"
                         style="@style/textStyleSemIBold_24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -178,14 +182,16 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/tv_member_4"
                         style="@style/textStyleMedium_16"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:text="Member Silver"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/tv_member_platinum"
+                        android:id="@+id/tv_member_4_count"
                         style="@style/textStyleSemIBold_24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

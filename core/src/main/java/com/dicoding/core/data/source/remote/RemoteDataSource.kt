@@ -16,6 +16,7 @@ import com.dicoding.core.data.source.remote.response.promo.GetPromoHistoryRespon
 import com.dicoding.core.data.source.remote.response.promo.GetPromoResponse
 import com.dicoding.core.data.source.remote.response.file.FileUploadResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.membership.SubscriptionHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointHistoryResponseItem
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
@@ -445,6 +446,27 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getSubscriptionHistory(
+        page: Int? = null,
+        limit: Int? = null,
+        search: String? = null,
+        time: String? = null,
+        type: String? = null
+    ): Flow<ApiResponse<SubscriptionHistoryResponse>> {
+        return flow {
+            try {
+                val response = apiService.getSubscriptionHistory(page, limit, search, time, type)
+                if (response.results.isNotEmpty()) {
+                    emit(ApiResponse.Success(response))
+                } else {
+                    emit(ApiResponse.Empty)
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Timber.tag("RemoteDataSource").e(e.toString())
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
     ////////////////////////
 

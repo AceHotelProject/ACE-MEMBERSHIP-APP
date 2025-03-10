@@ -1,36 +1,30 @@
 package com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.membership.databinding.ActivityPencarianMemberBinding
-import com.dicoding.membership.databinding.ActivityPencarianPoinBinding
 import com.dicoding.membership.databinding.FilterPencarianMemberBinding
-import com.dicoding.membership.databinding.FilterPencarianPoinBinding
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.CategoryFilterAdapter
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.DateFilterAdapter
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.adapter.SearchPointHistoryAdapter
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.dataclass.CategoryFilter
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.dataclass.DateFilter
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.DateFilter
+import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.DateFilterAdapter
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.MemberTypeFilterAdapter
-import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.MembershipStatus
-import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.adapter.StatusFilterAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -38,12 +32,15 @@ import kotlinx.coroutines.launch
 class PencarianMemberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPencarianMemberBinding
     private val viewModel: PencarianMemberViewModel by viewModels()
-    private lateinit var memberAdapter: MemberSearchAdapter
+    private lateinit var subscriptionAdapter: SubscriptionSearchAdapter
 
     // Filter states
     private var selectedDateFilter: DateFilter? = null
-    private var selectedStatusFilter: MembershipStatus? = null
     private var selectedMemberType: String? = null
+    private var currentSearchQuery: String? = null
+
+    // Search debounce job
+    private var searchJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,43 +52,50 @@ class PencarianMemberActivity : AppCompatActivity() {
         setupOnClickListener()
         setupSearchView()
 
-        // Initial data load
-        viewModel.loadAllData()
-
+        // Initial data load with no filters
+        showLoading(true) // Show loading indicator for initial load
+        viewModel.searchSubscriptions()
     }
 
     private fun setupRecyclerView() {
-        memberAdapter = MemberSearchAdapter()
+        subscriptionAdapter = SubscriptionSearchAdapter()
         binding.rvPoin.apply {
-            adapter = memberAdapter
+            adapter = subscriptionAdapter
             layoutManager = LinearLayoutManager(this@PencarianMemberActivity)
         }
 
-        memberAdapter.setOnItemClickListener { user ->
-            // Start HistoryDetailRiwayatActivity with the selected user's ID
+        subscriptionAdapter.setOnItemClickListener { userId ->
             val intent = Intent(this, HistoryDetailRiwayatActivity::class.java).apply {
-                putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, user.id)
+                putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
             }
             startActivity(intent)
         }
     }
 
     private fun setupObservers() {
-        viewModel.userList.observe(this) { resource ->
+        viewModel.subscriptionHistory.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     showLoading(true)
                 }
                 is Resource.Success -> {
-                    resource.data?.let { userList ->
-                        memberAdapter.addData(userList.data)
+                    showLoading(false)
+                    resource.data?.let { history ->
+                        if (viewModel.currentPage == 1) {
+                            subscriptionAdapter.setData(history.results)
+                        }
+
+                        updateEmptyState(history.results.isEmpty())
                     }
                 }
                 is Resource.Error -> {
                     showLoading(false)
                     Toast.makeText(this, resource.message ?: "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
-                }
 
+                    // Clear adapter data and show empty state
+                    subscriptionAdapter.clearData()
+                    updateEmptyState(true)
+                }
                 else -> {}
             }
         }
@@ -106,15 +110,54 @@ class PencarianMemberActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateEmptyState(isEmpty: Boolean) {
+        binding.tvTidakAdaRiwayat.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.rvPoin.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
+
     private fun setupSearchView() {
-        binding.searchEditText.isEnabled = false // Disable until loading complete
+        // Handle keyboard search action
+        binding.searchEditText.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                // Hide keyboard
+                hideKeyboard()
+
+                // Get search query and perform search
+                currentSearchQuery = binding.searchEditText.text.toString().takeIf { it.isNotEmpty() }
+
+                // Show loading and search
+                showLoading(true)
+                applyFilters()
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
+        // Add text change watcher (optional, keeping it for live search functionality)
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                applyFilters(s?.toString())
+                // Cancel previous search job
+                searchJob?.cancel()
+
+                // Start new search job with debounce
+                searchJob = MainScope().launch {
+                    delay(800) // Longer debounce for typing (800ms)
+                    currentSearchQuery = s?.toString()?.takeIf { it.isNotEmpty() }
+
+                    // Show loading indicator before searching
+                    showLoading(true)
+                    applyFilters()
+                }
             }
         })
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
     private fun setupOnClickListener() {
@@ -137,23 +180,22 @@ class PencarianMemberActivity : AppCompatActivity() {
             selectedFilter = selectedDateFilter
         ) { dateFilter ->
             selectedDateFilter = if (selectedDateFilter == dateFilter) null else dateFilter
-            applyFilters()
         }
         filterBinding.filterTanggal.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = dateFilterAdapter
         }
 
-        // Setup status filter
-        val statusFilterAdapter = StatusFilterAdapter(
-            selectedFilter = selectedStatusFilter
-        ) { statusFilter ->
-            selectedStatusFilter = if (selectedStatusFilter == statusFilter) null else statusFilter
-            applyFilters()
-        }
-        filterBinding.filterKategori.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = statusFilterAdapter
+        // Hide the kategori section
+        filterBinding.filterKategori.visibility = View.GONE
+        // Try different approaches to find and hide the label
+        try {
+            val kategoriLabelId = resources.getIdentifier("kategori_label", "id", packageName)
+            if (kategoriLabelId != 0) {
+                filterBinding.root.findViewById<View>(kategoriLabelId)?.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+            // Ignore if the ID doesn't exist
         }
 
         // Setup member type filter
@@ -161,7 +203,6 @@ class PencarianMemberActivity : AppCompatActivity() {
             selectedFilter = selectedMemberType
         ) { memberType ->
             selectedMemberType = if (selectedMemberType == memberType) null else memberType
-            applyFilters()
         }
         filterBinding.filterTipeMember.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -173,47 +214,65 @@ class PencarianMemberActivity : AppCompatActivity() {
             memberTypeAdapter.setData(types)
         }
 
+        // Add apply filter button click listener
+        filterBinding.btnApplyFilter?.setOnClickListener {
+            // Dismiss dialog first
+            bottomSheetDialog.dismiss()
+
+            // IMPORTANT: Show loading before applying filters
+            showLoading(true)
+
+            // Apply filters with a slight delay to ensure loading is visible
+            MainScope().launch {
+                delay(100) // Small delay to ensure UI updates
+                applyFilters()
+            }
+        }
+
+        // Add reset filter button
+        filterBinding.btnResetFilter?.setOnClickListener {
+            selectedDateFilter = null
+            selectedMemberType = null
+
+            try {
+                // Use extension functions if available in the adapters
+                dateFilterAdapter.resetSelection()
+                memberTypeAdapter.resetSelection()
+            } catch (e: Exception) {
+                // If reset methods don't exist, just notify data changed
+                dateFilterAdapter.notifyDataSetChanged()
+                memberTypeAdapter.notifyDataSetChanged()
+            }
+        }
+
         bottomSheetDialog.show()
     }
 
-    private fun applyFilters(searchQuery: String? = null) {
-        memberAdapter.applyFilter { user ->
-            var matches = true
-
-            // Apply search
-            searchQuery?.let { query ->
-                if (query.isNotEmpty()) {
-                    matches = matches && (
-                            user.name.contains(query, ignoreCase = true) ||
-                                    user.email.contains(query, ignoreCase = true) ||
-                                    (user.phone?.contains(query, ignoreCase = true) ?: false)
-                            )
-                }
-            }
-
-            // Apply other filters
-            selectedDateFilter?.let { dateFilter ->
-                // Your date filter logic
-            }
-
-            selectedStatusFilter?.let { statusFilter ->
-                // Your status filter logic
-            }
-
-            selectedMemberType?.let { memberType ->
-                matches = matches && user.membership?.subscriptionType?.type == memberType
-            }
-
-            matches
+    private fun applyFilters() {
+        // Convert DateFilter to API parameter
+        val timeParam = when (selectedDateFilter) {
+            DateFilter.TODAY -> "today"
+            DateFilter.THIS_MONTH -> "this_month"
+            DateFilter.THIS_YEAR -> "this_year"
+            else -> null
         }
 
-        // Show/hide empty state
-        binding.tvTidakAdaRiwayat.visibility =
-            if (memberAdapter.itemCount == 0) View.VISIBLE else View.GONE
+        // Reset to page 1 and search with new filters
+        viewModel.searchSubscriptions(
+            search = currentSearchQuery,
+            time = timeParam,
+            type = selectedMemberType
+        )
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.rvPoin.visibility = if (isLoading) View.GONE else View.VISIBLE
+
+        // Always hide results during loading
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.rvPoin.visibility = View.GONE
+            binding.tvTidakAdaRiwayat.visibility = View.GONE
+        }
     }
 }

@@ -164,9 +164,10 @@
                     android:id="@+id/ll_body_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginTop="32dp"
-                    android:layout_marginBottom="32dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ll_body_1">
 
                     <TextView
@@ -180,18 +181,19 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:id="@+id/linearLayout5"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
                             android:background="@drawable/custom_button_green_25"
                             android:orientation="vertical"
                             android:padding="10dp">
+
                             <TextView
                                 style="@style/textStyleMedium_16"
                                 android:layout_width="match_parent"
@@ -199,14 +201,17 @@
                                 android:text="Poin Terima"
                                 android:textColor="@color/green"
                                 android:textSize="14sp" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
+
                                 <ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:layout_gravity="center"
-                                    android:src="@drawable/icon_copper_coin_green"/>
+                                    android:src="@drawable/icon_copper_coin_green" />
+
                                 <TextView
                                     android:id="@+id/poinku_poin_terima_jumlah"
                                     style="@style/textStyleSemIBold_24"
@@ -222,32 +227,36 @@
                             android:id="@+id/linearLayout6"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:background="@drawable/custom_button_light_grey"
                             android:orientation="vertical"
-                            android:layout_marginStart="6dp"
                             android:padding="10dp">
+
                             <TextView
                                 style="@style/textStyleMedium_16"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Poin Transfer"
                                 android:textSize="14sp" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
+
                                 <ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:layout_gravity="center"
-                                    android:src="@drawable/icon_copper_coin_black"/>
+                                    android:src="@drawable/icon_copper_coin_black" />
+
                                 <TextView
                                     android:id="@+id/poinku_poin_transfer_jumlah"
                                     style="@style/textStyleSemIBold_24"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="4dp"
-                                    android:text="200.000"/>
+                                    android:text="200.000" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -255,31 +264,36 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:layout_marginTop="12dp"
                         android:background="@drawable/custom_button_orange_accent"
-                        android:gravity="center"
-                        android:layout_gravity="center">
+                        android:gravity="center">
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="10dp">
+
                             <TextView
                                 style="@style/textStyleMedium_14"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Keuntungan Referral"
-                                android:textColor="@color/orange_100"/>
+                                android:textColor="@color/orange_100" />
+
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:layout_gravity="center">
+                                android:layout_gravity="center"
+                                android:gravity="center">
+
                                 <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
-                                    android:src="@drawable/icon_copper_coin_orange"/>
+                                    android:src="@drawable/icon_copper_coin_orange" />
+
                                 <TextView
                                     android:id="@+id/poinku_keuntungan_referral_jumlah"
                                     style="@style/textStyleSemIBold_24"
@@ -287,7 +301,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="4dp"
                                     android:text="200.000"
-                                    android:textColor="@color/orange_100"/>
+                                    android:textColor="@color/orange_100" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -297,8 +311,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:text="Riwayat Terkini"
                         android:layout_marginBottom="12dp"
+                        android:text="Riwayat Terkini"
                         android:textColor="@color/black" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -306,9 +320,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="32dp"
+                        android:visibility="gone"
                         tools:itemCount="2"
-                        tools:listitem="@layout/item_history_poin"/>
+                        tools:listitem="@layout/item_history_poin" />
 
+                    <TextView
+                        android:id="@+id/riwayat_kosong"
+                        style="@style/textStyleRegular_14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="Anda tidak memiliki riwayat."
+                        android:textColor="@color/dark_grey" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -407,7 +430,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginEnd="26dp"
-            android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
+            android:text="Silahkan bergabung member untuk mengakses fitur ini."
             android:textColor="@color/dark_grey"
             android:gravity="center"/>
         <Button

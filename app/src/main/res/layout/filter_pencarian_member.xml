@@ -45,6 +45,7 @@
             tools:listitem="@layout/item_filter_chip"/>
 
         <TextView
+            android:id="@+id/kategori_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -75,6 +76,39 @@
             android:layout_marginTop="8dp"
             tools:itemCount="1"
             tools:listitem="@layout/item_filter_chip"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/textStyleButton2"
+                android:id="@+id/btn_reset_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/custom_button_light_grey"
+                android:text="Reset"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textColor="@color/white" />
+
+            <Button
+                style="@style/textStyleButton2"
+                android:id="@+id/btn_apply_filter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/custom_button"
+                android:text="Terapkan"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textColor="@color/white" />
+        </LinearLayout>
     </LinearLayout>
 
 

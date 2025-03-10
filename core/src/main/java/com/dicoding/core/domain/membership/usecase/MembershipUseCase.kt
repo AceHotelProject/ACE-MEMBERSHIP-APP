@@ -5,6 +5,7 @@ import com.dicoding.core.data.source.Resource
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.model.MembershipLocal
+import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.user.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -50,4 +51,11 @@ interface MembershipUseCase {
 
     suspend fun updateRemainingCoupons(membershipId: String, remainingCoupons: Int): Boolean
 
+    fun getSubscriptionHistory(
+        page: Int? = null,
+        limit: Int? = null,
+        search: String? = null,
+        time: String? = null,
+        type: String? = null
+    ): Flow<Resource<SubscriptionHistory>>
 }

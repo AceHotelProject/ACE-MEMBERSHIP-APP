@@ -225,9 +225,20 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/referralku_recyclerview"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     tools:listitem="@layout/item_history_poin"/>
+
+                <TextView
+                    android:id="@+id/riwayat_kosong"
+                    style="@style/textStyleRegular_14"
+                    android:layout_marginTop="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Anda tidak memiliki riwayat."
+                    android:layout_marginBottom="12dp"
+                    android:textColor="@color/dark_grey"/>
 
             </LinearLayout>
         </ScrollView>
@@ -323,7 +334,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginEnd="26dp"
-            android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
+            android:text="Silahkan bergabung member untuk mengakses fitur ini."
             android:textColor="@color/dark_grey"
             android:gravity="center"/>
         <Button

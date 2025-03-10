@@ -3,25 +3,20 @@ package com.dicoding.membership.view.dashboard.member
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
-import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMemberBinding
-import com.dicoding.membership.databinding.FragmentMitraBinding
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
-import com.dicoding.membership.view.dashboard.member.detailmember.DetailMemberActivity
 import com.dicoding.membership.view.dashboard.member.listeditmember.ListEditMemberActivity
-import com.dicoding.membership.view.dashboard.mitra.MitraViewModel
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,7 +25,7 @@ class MemberFragment : Fragment() {
 
     private var _binding: FragmentMemberBinding? = null
     private val binding get() = _binding!!
-    private lateinit var memberAdapter: MemberAdapter
+    private lateinit var subscriptionAdapter: SubscriptionAdapter
 
     private val memberViewModel: MemberViewModel by viewModels()
 
@@ -48,39 +43,73 @@ class MemberFragment : Fragment() {
 
         // RecyclerView implementation
         setupRecyclerView()
-        observeData()
-        memberViewModel.getAllUsers()
+
+        // Observe data
+        observeSubscriptionData()
+        observeMembershipStats()
+
+        // Load data
+        memberViewModel.getSubscriptionHistory()
 
         validateToken()
         handleMenuButton()
     }
 
-    private fun observeData() {
-        memberViewModel.userList.observe(viewLifecycleOwner) { resource ->
+    private fun observeSubscriptionData() {
+        memberViewModel.subscriptionHistory.observe(viewLifecycleOwner) { resource ->
             when(resource) {
                 is Resource.Loading -> showLoading(true)
                 is Resource.Success -> {
                     showLoading(false)
-                    resource.data?.let { userList ->
-                        if (memberViewModel.currentPage == 1) {
-                            memberAdapter.setData(userList.data)
+                    resource.data?.let { subscriptionHistory ->
+                        if (memberViewModel.subscriptionPage == 1) {
+                            subscriptionAdapter.setData(subscriptionHistory.results)
                         } else {
-                            memberAdapter.addData(userList.data)
+                            subscriptionAdapter.addData(subscriptionHistory.results)
                         }
                     }
                 }
                 is Resource.Error -> {
                     showLoading(false)
+                    Toast.makeText(requireContext(), "Error: ${resource.message}", Toast.LENGTH_SHORT).show()
                 }
+                else -> { showLoading(false) }
+            }
+        }
+    }
 
-                else -> {}
+    private fun observeMembershipStats() {
+        memberViewModel.membershipStats.observe(viewLifecycleOwner) { stats ->
+            // Set total members
+            binding.tvTotalMember.text = stats.totalMembers.toString()
+
+            // Get top 3 membership types by count
+            val topMemberships = stats.membershipCounts
+                .entries
+                .sortedByDescending { it.value }
+                .take(3)
+                .toList()
+
+            // Fill the stats boxes
+            if (topMemberships.isNotEmpty()) {
+                binding.tvMember2.text = "Member ${topMemberships[0].key}"
+                binding.tvMember2Count.text = topMemberships[0].value.toString()
+            }
+
+            if (topMemberships.size > 1) {
+                binding.tvMember3.text = "Member ${topMemberships[1].key}"
+                binding.tvMember3Count.text = topMemberships[1].value.toString()
+            }
+
+            if (topMemberships.size > 2) {
+                binding.tvMember4.text = "Member ${topMemberships[2].key}"
+                binding.tvMember4Count.text = topMemberships[2].value.toString()
             }
         }
     }
 
     private fun setupRecyclerView() {
-        memberAdapter = MemberAdapter().apply {
-            // Add click listener implementation
+        subscriptionAdapter = SubscriptionAdapter().apply {
             setOnItemClickListener { userId ->
                 val intent = Intent(requireContext(), HistoryDetailRiwayatActivity::class.java).apply {
                     putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
@@ -88,6 +117,7 @@ class MemberFragment : Fragment() {
                 startActivity(intent)
             }
         }
+
         binding.listMemberRecyclerview.apply {
             setHasFixedSize(false)
             setItemViewCacheSize(20)
@@ -95,16 +125,15 @@ class MemberFragment : Fragment() {
             layoutManager = LinearLayoutManager(context).apply {
                 isAutoMeasureEnabled = true
             }
-            adapter = memberAdapter
+            adapter = subscriptionAdapter
         }
 
-        // Modified scroll listener with threshold
+        // Update scroll listener for pagination
         binding.svBody.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
-            // Check if scrolling down and near bottom
             if (scrollY > oldScrollY) { // Scrolling down
                 val bottomReached = scrollY + v.height >= v.getChildAt(0).height - 150 // 150dp threshold
                 if (bottomReached) {
-                    memberViewModel.loadMoreUsers()
+                    memberViewModel.loadMoreSubscriptions()
                 }
             }
         })

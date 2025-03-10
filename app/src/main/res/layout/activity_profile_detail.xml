@@ -329,7 +329,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginEnd="26dp"
-            android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
+            android:text="Silahkan bergabung member untuk mengakses fitur ini."
             android:textColor="@color/dark_grey"
             android:gravity="center"/>
         <Button

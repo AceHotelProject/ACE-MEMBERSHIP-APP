@@ -7,6 +7,8 @@ import com.dicoding.core.data.source.local.entity.membership.MembershipEntity
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
+import com.dicoding.core.data.source.remote.response.membership.SubscriptionHistoryResponse
+import com.dicoding.core.data.source.remote.response.membership.SubscriptionItem
 import com.dicoding.core.data.source.remote.response.user.UserResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
@@ -15,6 +17,9 @@ import com.dicoding.core.domain.auth.model.TokensFormat
 import com.dicoding.core.domain.auth.model.UserDomain
 import com.dicoding.core.domain.membership.model.Membership
 import com.dicoding.core.domain.membership.model.MembershipLocal
+import com.dicoding.core.domain.membership.model.Subscription
+import com.dicoding.core.domain.membership.model.SubscriptionHistory
+import com.dicoding.core.domain.membership.model.SubscriptionUser
 import com.dicoding.core.domain.user.model.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -144,6 +149,44 @@ object MembershipDataMapper {
             isActive = true, // New memberships are active by default
             remainingCoupons = membership.maxCoupon, // Start with max coupons
             lastUpdatedAt = Date() // Current time
+        )
+    }
+
+    fun mapSubscriptionHistoryResponseToDomain(input: SubscriptionHistoryResponse): SubscriptionHistory {
+        return SubscriptionHistory(
+            results = input.results.map { mapSubscriptionItemToDomain(it) },
+            page = input.page,
+            limit = input.limit,
+            totalPages = input.totalPages,
+            totalResults = input.totalResults
+        )
+    }
+
+    private fun mapSubscriptionItemToDomain(input: SubscriptionItem): Subscription {
+        return Subscription(
+            id = input.id ?: "",
+            userId = input.userId?.let {
+                SubscriptionUser(
+                    id = it.id ?: "",
+                    name = it.name ?: "",
+                    isMember = it.isMember
+                )
+            },
+            verificatorId = input.verificatorId?.let {
+                SubscriptionUser(
+                    id = it.id ?: "",
+                    name = it.name ?: "",
+                    isMember = it.isMember
+                )
+            },
+            subscriptionType = input.subscriptionType?.type ?: "",
+            subscriptionTypeId = input.subscriptionType?.id ?: "",
+            status = input.status ?: "",
+            payment = input.payment,
+            paymentProof = input.paymentProof,
+            startDate = input.startDate ?: "",
+            endDate = input.endDate ?: "",
+            createdAt = input.createdAt ?: ""
         )
     }
 
