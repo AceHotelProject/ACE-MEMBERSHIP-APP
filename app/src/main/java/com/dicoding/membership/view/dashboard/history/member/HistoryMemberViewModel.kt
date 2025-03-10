@@ -7,27 +7,22 @@ import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
+import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
-import com.dicoding.core.domain.points.model.UserPointHistory
-import com.dicoding.core.domain.points.usecase.PointsUseCase
-import com.dicoding.core.domain.user.model.UserList
-import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HistoryMemberViewModel @Inject constructor(
-    private val userUseCase: UserUseCase,
+    private val membershipUseCase: MembershipUseCase,
     private val authUseCase: AuthUseCase
 ): ViewModel() {
     private val _userData = MutableLiveData<LoginDomain>()
     val userData: LiveData<LoginDomain> = _userData
 
-    private val _userList = MutableLiveData<Resource<UserList>>()
-    val userList: LiveData<Resource<UserList>> = _userList
+    private val _subscriptionHistory = MutableLiveData<Resource<SubscriptionHistory>>()
+    val subscriptionHistory: LiveData<Resource<SubscriptionHistory>> = _subscriptionHistory
 
     var currentPage = 1
         private set
@@ -41,19 +36,19 @@ class HistoryMemberViewModel @Inject constructor(
         }
     }
 
-    fun getAllUsers(isRefresh: Boolean = false) {
+    fun getSubscriptionHistory(isRefresh: Boolean = false) {
         if (isRefresh) currentPage = 1
 
         viewModelScope.launch {
-            userUseCase.getAllUsersData(currentPage)
+            membershipUseCase.getSubscriptionHistory(currentPage)
                 .collect { result ->
-                    _userList.value = result
+                    _subscriptionHistory.value = result
                 }
         }
     }
 
     fun loadNextPage() {
         currentPage++
-        getAllUsers()
+        getSubscriptionHistory()
     }
 }

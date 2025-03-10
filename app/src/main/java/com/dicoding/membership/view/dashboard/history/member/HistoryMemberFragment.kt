@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
 import com.dicoding.membership.databinding.FragmentHistoryMemberBinding
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
-import com.dicoding.membership.view.dashboard.member.detailmember.DetailMemberActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,7 +39,7 @@ class HistoryMemberFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
 
-        viewModel.getAllUsers(isRefresh = true)
+        viewModel.getSubscriptionHistory(isRefresh = true)
     }
 
     private fun setupRecyclerView() {
@@ -65,7 +64,7 @@ class HistoryMemberFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.userList.observe(viewLifecycleOwner) { resource ->
+        viewModel.subscriptionHistory.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     isLoading = true
@@ -77,14 +76,14 @@ class HistoryMemberFragment : Fragment() {
                 is Resource.Success -> {
                     isLoading = false
                     showLoading(false)
-                    resource.data?.let { userList ->
-                        hasMorePages = viewModel.currentPage < userList.totalPages
+                    resource.data?.let { history ->
+                        hasMorePages = viewModel.currentPage < history.totalPages
 
                         binding.tvTidakAdaRiwayat.visibility =
-                            if (userList.data.isEmpty() && viewModel.currentPage == 1) View.VISIBLE else View.GONE
+                            if (history.results.isEmpty() && viewModel.currentPage == 1) View.VISIBLE else View.GONE
 
                         adapter.submitList(
-                            userList.data,
+                            history.results,
                             isRefresh = viewModel.currentPage == 1
                         )
                     }
@@ -98,7 +97,6 @@ class HistoryMemberFragment : Fragment() {
                     }
                     // You might want to show an error message here
                 }
-
                 else -> {}
             }
         }
@@ -112,6 +110,5 @@ class HistoryMemberFragment : Fragment() {
     private fun showLoading(boolean: Boolean){
         binding.loadingOverlay.visibility = if(boolean) View.VISIBLE else View.GONE
         binding.recyclerViewHistoryMember.visibility = if(!boolean) View.VISIBLE else View.GONE
-
     }
 }
