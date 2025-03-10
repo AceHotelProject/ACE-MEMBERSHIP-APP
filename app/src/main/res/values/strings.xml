@@ -19,7 +19,7 @@
     <string name="diff_password">Pastikan password tidak sama</string>
     <string name="register">Daftar</string>
     <string name="title_welcome_page">Selamat Datang</string>
-    <string name="message_welcome_page">Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitae sem donec consequat</string>
+    <string name="message_welcome_page">Jadilah bagian keluarga ACE, temukan keistimewaan spesial, rayakan setiap momennya.</string>
     <string name="check_internet">Pastikan kembali jaringan internet anda</string>
     <string name="check_data">Pastikan email dan password telah benar</string>
     <string name="login_success">Login telah berhasil</string>

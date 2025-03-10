@@ -43,15 +43,12 @@ class NetworkModule {
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(
-                // Hanya tampilkan log detail di mode debug
                 if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.BASIC
             ))
             .addInterceptor(authInterceptor)
             .authenticator(authAuthenticator)
-            // Tambahkan Certificate Pinning
             .certificatePinner(certificatePinner)
-            // Atur timeout
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .build()

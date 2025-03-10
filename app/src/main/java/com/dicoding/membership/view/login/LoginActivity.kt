@@ -22,6 +22,7 @@ import com.dicoding.core.utils.isInternetAvailable
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityLoginBinding
 import com.dicoding.membership.view.dashboard.MainActivity
+import com.dicoding.membership.view.register.RegisterActivity
 import com.dicoding.membership.view.verification.VerificationActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.nio.charset.StandardCharsets
@@ -163,6 +164,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleButtonLogin() {
+        binding.tvRegister.setOnClickListener{
+            navigateToRegisterActivity()
+        }
         binding.btnLogin.setOnClickListener {
 
             hideKeyboard()
@@ -299,6 +303,12 @@ class LoginActivity : AppCompatActivity() {
         currentFocus?.let {
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
+    }
+
+    private fun navigateToRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
     companion object {

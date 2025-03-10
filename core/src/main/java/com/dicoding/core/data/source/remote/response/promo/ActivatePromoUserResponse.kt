@@ -23,7 +23,7 @@ data class ActivatePromoUserResponse(
 	val promoCategory: String? = null,
 
 	@field:SerializedName("merchant_name")
-	val merchantName: Any? = null,
+	val merchantName: String? = null,
 
 	@field:SerializedName("merchant")
 	val merchant: String? = null,
@@ -50,5 +50,17 @@ data class ActivatePromoUserResponse(
 	val user: String? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String? = null,
+
+	@field:SerializedName("activated_by_name")
+	val activatedByName: String? = null,
+
+	@field:SerializedName("activated_by_id")
+	val activatedById: String? = null,
+
+	@field:SerializedName("expired_date")
+	val expiredDate: String? = null,
+
+	@field:SerializedName("createdAt")
+	val createdAt: String? = null
 )

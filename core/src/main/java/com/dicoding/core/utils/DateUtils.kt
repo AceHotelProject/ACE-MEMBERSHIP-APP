@@ -18,7 +18,7 @@ object DateUtils {
 
     fun convertToIndonesianDateTime(dateStr: String): String {
         val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val desiredFormat = SimpleDateFormat("HH:mm 'WIB.' EEEE, d MMMM yyyy", Locale("id", "ID"))
+        val desiredFormat = SimpleDateFormat("HH:mm 'WIB', d MMMM yyyy", Locale("id", "ID"))
 
         sourceFormat.timeZone = TimeZone.getTimeZone("UTC") // Input dianggap UTC
         desiredFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta") // Output untuk zona waktu Indonesia
@@ -62,7 +62,7 @@ object DateUtils {
             val minute = String.format("%02d", wibDate.minute)
 
             // Return string yang sudah diformat
-            "EXP $hour:$minute WIB, $date $month $year"
+            "EXP $hour:$minute WIB"
         } catch (e: Exception) {
             "Format tanggal tidak valid"
         }

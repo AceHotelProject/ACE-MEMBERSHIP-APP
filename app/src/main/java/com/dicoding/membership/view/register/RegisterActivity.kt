@@ -170,7 +170,11 @@ class RegisterActivity : AppCompatActivity() {
                         if (!isInternetAvailable(this)) {
                             showToast(getString(R.string.check_internet))
                         } else {
-                            showToast("Pastikan email dan password telah benar")
+                            result.message?.let { errorMessage ->
+                                showToast(errorMessage)
+                            } ?: showToast("Terjadi kesalahan saat registrasi")
+
+                            Log.d("RegisterActivity", "Sending registration with androidId: $androidId")
                         }
                     }
 

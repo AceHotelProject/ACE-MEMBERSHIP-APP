@@ -6,6 +6,7 @@ import com.dicoding.core.data.source.remote.network.ApiResponse
 import com.dicoding.core.data.source.remote.network.ApiService
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
+import com.dicoding.core.data.source.remote.response.auth.RegisterRequest
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.promo.ActivatePromoResepsionisResponse
@@ -109,9 +110,15 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     suspend fun register(email: String, password: String, androidId: String): Flow<ApiResponse<RegisterResponse>> {
         return flow {
             try {
-                Log.d(TAG, "Register attempt for email: $email")
-                val response = apiService.register(email, password, androidId)
+                Log.d(TAG, "Register attempt for email: $email, androidId: $androidId")
+                // Buat objek request
+                val registerRequest = RegisterRequest(email, password, androidId)
+                val response = apiService.register(registerRequest)
                 emit(ApiResponse.Success(response))
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e(TAG, "Register failed with HTTP ${e.code()}: $errorBody", e)
+                emit(ApiResponse.Error(errorBody ?: e.toString()))
             } catch (e: Exception) {
                 Log.e(TAG, "Register failed: ${e.message}", e)
                 emit(ApiResponse.Error(e.toString()))
@@ -651,7 +658,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             put("limit", limit.toString())
             name?.takeIf { it.isNotEmpty() }?.let { put("promo_name", it) }
             category?.takeIf { it.isNotEmpty() }?.let { put("promo_category", it) }
-            status?.takeIf { it.isNotEmpty() }?.let { put("promo_status", it) }
+            status?.takeIf { it.isNotEmpty() }?.let { put("status", it) }
             expiredDate?.takeIf { it.isNotEmpty() }?.let { put("expired_date", it) }
         }
     }
