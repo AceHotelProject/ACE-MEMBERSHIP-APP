@@ -82,3 +82,9 @@ data class MerchantIdResponse(
 	@field:SerializedName("id")
 	val id: String? = null
 ) : Parcelable
+
+data class RegisterRequest(
+	val email: String,
+	val password: String,
+	val androidId: String
+)

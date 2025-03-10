@@ -2,6 +2,7 @@ package com.dicoding.core.data.source.remote.network
 
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
+import com.dicoding.core.data.source.remote.response.auth.RegisterRequest
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipListResponse
 import com.dicoding.core.data.source.remote.response.membership.MembershipResponse
@@ -86,12 +87,9 @@ interface ApiService {
         @Field("androidId") androidId: String
     ): LoginResponse
 
-    @FormUrlEncoded
     @POST("v1/auth/register")
     suspend fun register(
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("androidId") androidId: String
+        @Body registerRequest: RegisterRequest
     ): RegisterResponse
 
     @POST("v1/auth/send-otp")

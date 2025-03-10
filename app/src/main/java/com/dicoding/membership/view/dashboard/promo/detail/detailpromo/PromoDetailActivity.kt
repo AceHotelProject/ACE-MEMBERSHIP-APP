@@ -92,7 +92,7 @@ class PromoDetailActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 ////            Testing
-//            val mockUserRole = UserRole.ADMIN
+//            val userRole = UserRole.MEMBER
 //            setupUserVisibility(mockUserRole, promo)
 
                         //            True
@@ -412,7 +412,7 @@ class PromoDetailActivity : AppCompatActivity() {
                                 title = "Promo Digunakan",
                                 description = "Promo telah berhasil diaktifkan segera hubungi resepsionis untuk menggunakan promo sesuai dengan tanggal yang telah ditentukan",
                                 tokenCode = result.data?.tokenCode ?: "",
-                                activationDate = result.data?.activationDate ?: "",
+                                expiredDate = result.data?.expiredDate ?: "",
                                 showCoupon = true
                             )
                         }
@@ -446,7 +446,7 @@ class PromoDetailActivity : AppCompatActivity() {
                                 title = "Promo Disetujui",
                                 description = "Promo telah berhasil disetujui dan akan segera aktif sesuai dengan tanggal yang telah ditentukan",
                                 tokenCode = result.data?.tokenCode ?: "",
-                                activationDate = result.data?.activationDate ?: "",
+                                expiredDate = result.data?.activationDate ?: "",
                                 showCoupon = false
                             )
                         }
@@ -499,11 +499,11 @@ class PromoDetailActivity : AppCompatActivity() {
         title: String,
         description: String,
         tokenCode: String = "",
-        activationDate: String = "",
+        expiredDate: String = "",
         showCoupon : Boolean
     ) {
 
-        val formattedDate = DateUtils.convertToIndonesianDateTime(activationDate)
+        val formattedDate = DateUtils.convertToIndonesianDateTime(expiredDate)
 
         val statusTemplate = StatusTemplate(
             title = title,

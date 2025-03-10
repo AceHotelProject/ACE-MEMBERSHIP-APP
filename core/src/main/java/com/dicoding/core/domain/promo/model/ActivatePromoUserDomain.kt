@@ -20,5 +20,9 @@ data class ActivatePromoUserDomain(
     val tokenCode: String,
     val promoMemberType: String,
     val user: String,
-    val status: String
+    val status: String,
+    val activatedByName: String,
+    val activatedById: String,
+    val expiredDate: String,
+    val createdAt: String
 ): Parcelable

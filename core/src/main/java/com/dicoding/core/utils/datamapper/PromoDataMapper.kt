@@ -190,7 +190,7 @@ object PromoDataMapper {
             userName = input.userName.orEmpty(),
             promoName = input.promoName.orEmpty(),
             promoCategory = input.promoCategory.orEmpty(),
-            merchantName = input.merchantName?.toString().orEmpty(),
+            merchantName = input.merchantName.orEmpty(),
             merchant = input.merchant.orEmpty(),
             promoTnc = input.promoTnc?.filterNotNull()?.map { it } ?: emptyList(),
             token = input.token.orEmpty(),
@@ -198,7 +198,11 @@ object PromoDataMapper {
             tokenCode = input.tokenCode.orEmpty(),
             promoMemberType = input.promoMemberType.orEmpty(),
             user = input.user.orEmpty(),
-            status = input.status.orEmpty()
+            status = input.status.orEmpty(),
+            activatedByName = input.activatedByName.orEmpty(),
+            activatedById = input.activatedById.orEmpty(),
+            expiredDate = input.expiredDate.orEmpty(),
+            createdAt = input.createdAt.orEmpty()
         )
     }
 }

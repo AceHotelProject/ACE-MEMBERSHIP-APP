@@ -139,6 +139,9 @@ class AddPegawaiActivity : AppCompatActivity() {
                 addPegawaiTeleponResepsionis.error = "Nomor telepon harus 10-13 digit"
             } else if (!receptionistTelepon.matches(Regex("^[0-9]+$"))) {
                 addPegawaiTeleponResepsionis.error = "Nomor telepon hanya boleh angka"
+            } else if (receptionistTelepon == ownerTelepon && ownerTelepon.isNotEmpty()) {
+                // Validasi nomor telepon tidak boleh sama dengan owner
+                addPegawaiTeleponResepsionis.error = "Nomor telepon tidak boleh sama dengan owner"
             }
 
             // Password validation for receptionist
@@ -164,6 +167,7 @@ class AddPegawaiActivity : AppCompatActivity() {
                         receptionistTelepon.isNotEmpty() &&
                         receptionistTelepon.length in 10..13 &&
                         receptionistTelepon.matches(Regex("^[0-9]+$")) &&
+                        receptionistTelepon != ownerTelepon && // Validasi nomor tidak boleh sama
                         receptionistPassword.length >= 8 &&
                         receptionistConfirmPassword.isNotEmpty() &&
                         receptionistPassword == receptionistConfirmPassword
@@ -227,6 +231,7 @@ class AddPegawaiActivity : AppCompatActivity() {
             }
             is Resource.Error -> {
                 hideLoading()
+                // Pesan error sudah diformat dari RemoteDataSource
                 showToast(result.message ?: "Terjadi kesalahan")
             }
             is Resource.Message -> {
