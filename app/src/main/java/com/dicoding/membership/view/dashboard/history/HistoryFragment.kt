@@ -66,14 +66,28 @@ class HistoryFragment : Fragment() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupFabVisibility(mockUserRole)
-            setupViewPager(mockUserRole)
+//            val mockUserRole = UserRole.ADMIN
+//            setupFabVisibility(mockUserRole)
+//            setupViewPager(mockUserRole)
 
-//            Use This For Real
-//            setupFabVisibility(userRole)
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            setupFabVisibility(finalUserRole)
+            setupViewPager(finalUserRole)
 
-            Log.d("HomeFragment", "User Role: ${userRole.display}")
+            Log.d("HomeFragment", "User Role: ${finalUserRole.display}")
         }
     }
 

@@ -16,12 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
 import com.dicoding.membership.R
-import com.dicoding.membership.core.utils.DateUtils
+import com.dicoding.core.utils.DateUtils
 import com.dicoding.membership.core.utils.showToast
 import com.dicoding.membership.databinding.ActivityManajemenMitraBinding
 import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.admin.addmitra.AddMitraActivity
-import com.dicoding.membership.view.dashboard.admin.detailmitra.DetailMitraActivity
 import com.dicoding.membership.view.dialog.GlobalTwoButtonDialog
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.status.StatusTemplate

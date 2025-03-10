@@ -9,13 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
@@ -23,6 +24,7 @@ import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentPromoBinding
 import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearch.PromoSearchActivity
+import com.dicoding.membership.view.dashboard.promo.active.ActivePromoBottomSheet.Companion.PROMO_SOURCE_MITRA
 import com.dicoding.membership.view.dashboard.promo.detail.detailpromo.PromoDetailActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,8 +42,9 @@ class PromoFragment : Fragment() {
 
     private lateinit var promoCategoryAdapter: PromoCategoryAdapter
 
-    private val promoViewModel: PromoViewModel by viewModels()
 //    private lateinit var storyPagingAdapter: StoryPagingAdapter
+
+    private var _currentUserRole: UserRole = UserRole.NONMEMBER
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,12 +66,12 @@ class PromoFragment : Fragment() {
 
         setupRecyclerViews()
 
-        observePromos()
+//        observePromos()
 
 //        setupRecyclerView()
 //
 //        lifecycleScope.launch {
-//            promoViewModel.getStories("default_filter", false).collectLatest { pagingData ->
+//            viewModel.getStories("default_filter", false).collectLatest { pagingData ->
 //                storyPagingAdapter.submitData(pagingData)
 //            }
 //        }
@@ -157,6 +160,20 @@ class PromoFragment : Fragment() {
 
     private fun navigateToDetail(data: PromoDomain, source: String) {
         val intent = Intent(requireContext(), PromoDetailActivity::class.java).apply {
+            Log.d("PromoAdapter", """
+                Item clicked details:
+                ID: ${data.id}
+                Name: ${data.name}
+                Category: ${data.category}
+                Detail: ${data.detail}
+                Token: ${data.token}
+                Merchant ID: ${data.merchantId}
+                Pictures: ${data.pictures}
+                Used: ${data.used}
+                Max Use: ${data.maximalUse}
+                Expired Date: ${data.expiredDate}
+                Is Active: ${data.isActive}
+            """.trimIndent())
             putExtra(PromoDetailActivity.EXTRA_PROMO, data)
             putExtra(PromoDetailActivity.EXTRA_SOURCE, source)
         }
@@ -221,6 +238,7 @@ class PromoFragment : Fragment() {
                             Log.d("PromoFragment", "Promo Mitra Ready")
 
                             if (promoMitraAdapter.itemCount == 0) {
+                                Log.d("PromoFragment", "Showing tvTidakAdaRiwayatAjuan")
                                 binding.tvTidakAdaRiwayatMitra.visibility = View.VISIBLE
                                 binding.rvPromoMitra.visibility = View.GONE
                             } else {
@@ -245,7 +263,9 @@ class PromoFragment : Fragment() {
                 viewModel.getPromos(
                     category = "", // Kosong untuk ajuan promo
                     status = "draft", // Filter status draft langsung di API
-                    name = "" // Kosong karena tidak ada pencarian
+                    name = "", // Kosong karena tidak ada pencarian
+                    expiredDate = "",
+                    merchantName = ""
                 ).collect { pagingData ->
                     ajuanPromoAdapter.submitData(pagingData)
                 }
@@ -260,8 +280,64 @@ class PromoFragment : Fragment() {
         }
     }
 
+    private fun handleAjuanPromoLoadState(loadState: CombinedLoadStates) {
+        when (loadState.refresh) {
+            is LoadState.Loading -> {
+                showLoading()
+                binding.scrollView2.visibility = View.GONE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+            }
+            is LoadState.NotLoading -> {
+                hideLoading()
+                binding.scrollView2.visibility = View.VISIBLE
+
+                if (ajuanPromoAdapter.itemCount == 0) {
+                    binding.tvTidakAdaRiwayatAjuan.visibility = View.VISIBLE
+                    binding.rvAjuanPromo.visibility = View.GONE
+                } else {
+                    binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                    binding.rvAjuanPromo.visibility = View.VISIBLE
+                }
+            }
+            is LoadState.Error -> {
+                hideLoading()
+                binding.scrollView2.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+                showError((loadState.refresh as LoadState.Error).error.message)
+            }
+        }
+    }
+
+    private fun handlePromoMitraLoadState(loadState: CombinedLoadStates) {
+        when (loadState.refresh) {
+            is LoadState.Loading -> {
+                showLoading()
+                binding.scrollView2.visibility = View.GONE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+            }
+            is LoadState.NotLoading -> {
+                hideLoading()
+                binding.scrollView2.visibility = View.VISIBLE
+
+                if (promoMitraAdapter.itemCount == 0) {
+                    binding.tvTidakAdaRiwayatMitra.visibility = View.VISIBLE
+                    binding.rvPromoMitra.visibility = View.GONE
+                } else {
+                    binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+                    binding.rvPromoMitra.visibility = View.VISIBLE
+                }
+            }
+            is LoadState.Error -> {
+                hideLoading()
+                binding.scrollView2.visibility = View.VISIBLE
+                binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+                showError((loadState.refresh as LoadState.Error).error.message)
+            }
+        }
+    }
+
     private fun validateToken() {
-        promoViewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
+        viewModel.getRefreshToken().observe(viewLifecycleOwner) { token ->
             if (token.isEmpty() || token == "") {
                 TokenExpiredDialog().show(parentFragmentManager, "Token Expired Dialog")
             }
@@ -270,22 +346,37 @@ class PromoFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun checkUserRole() {
-        promoViewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole)
+//            val mockUserRole = UserRole.ADMIN
+//            setupUserVisibility(mockUserRole)
 
-            Log.d("PromoFragment", "Current User Role: ${mockUserRole.name}")
+//            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
 
-//            Use This For Real
-//            setupFabVisibility(userRole)
+            _currentUserRole = finalUserRole
 
-            ajuanPromoAdapter.setUserRole(mockUserRole)
-            promoMitraAdapter.setUserRole(mockUserRole)
+            setupUserVisibility(finalUserRole)
 
-            Log.d("PromoFragment", "Role set to adapters: ${mockUserRole.name}")
+            Log.d("PromoFragment", "Current User Role: ${finalUserRole.name}")
+
+            ajuanPromoAdapter.setUserRole(finalUserRole)
+            promoMitraAdapter.setUserRole(finalUserRole)
+            Log.d("PromoFragment", "Role set to adapters: ${finalUserRole.name}")
         }
     }
 
@@ -299,6 +390,43 @@ class PromoFragment : Fragment() {
                 binding.rvPromoMitra.visibility = View.VISIBLE
                 binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
                 binding.tvTidakAdaRiwayatMitra.visibility = View.GONE
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    // Observe Ajuan Promo
+                    launch {
+                        ajuanPromoAdapter.loadStateFlow.collect { loadState ->
+                            handleAjuanPromoLoadState(loadState)
+                        }
+                    }
+
+                    // Observe Promo Mitra
+                    launch {
+                        promoMitraAdapter.loadStateFlow.collect { loadState ->
+                            handlePromoMitraLoadState(loadState)
+                        }
+                    }
+
+                    // Collect data untuk Ajuan Promo
+                    launch {
+                        viewModel.getPromos(
+                            category = "",
+                            status = "draft",
+                            name = "",
+                            expiredDate = "",
+                            merchantName = ""
+                        ).collect { pagingData ->
+                            ajuanPromoAdapter.submitData(pagingData)
+                        }
+                    }
+
+                    // Collect data untuk Promo Mitra
+                    launch {
+                        viewModel.promos.collect { pagingData ->
+                            promoMitraAdapter.submitData(pagingData)
+                        }
+                    }
+                }
+
 
                 (activity as? MainActivity)?.apply {
                     setShouldShowBannerOnNavigation(true)
@@ -317,6 +445,23 @@ class PromoFragment : Fragment() {
                 binding.tvPromoMitra.visibility = View.GONE
                 binding.rvPromoMitra.visibility = View.VISIBLE
                 binding.tvTidakAdaRiwayatAjuan.visibility = View.GONE
+
+                // Hanya observe Promo Mitra untuk member dan non-member
+                viewLifecycleOwner.lifecycleScope.launch {
+                    // Observe Promo Mitra
+                    launch {
+                        promoMitraAdapter.loadStateFlow.collect { loadState ->
+                            handlePromoMitraLoadState(loadState)
+                        }
+                    }
+
+                    // Collect data untuk Promo Mitra
+                    launch {
+                        viewModel.promos.collect { pagingData ->
+                            promoMitraAdapter.submitData(pagingData)
+                        }
+                    }
+                }
 
                 (activity as? MainActivity)?.apply {
                     setShouldShowBannerOnNavigation(true)
@@ -386,15 +531,13 @@ class PromoFragment : Fragment() {
     private fun hideLoading() {
         binding.apply {
             progressBar.visibility = View.GONE
-            // Tampilkan text sesuai role setelah loading selesai
             setTextVisibilityBasedOnLoading(false, getCurrentUserRole())
         }
     }
 
     // Helper function untuk mendapatkan current user role
     private fun getCurrentUserRole(): UserRole {
-        // Gunakan mockUserRole untuk testing
-        return UserRole.ADMIN // Sesuaikan dengan kebutuhan
+        return _currentUserRole
     }
 
     private fun showError(message: String?) {

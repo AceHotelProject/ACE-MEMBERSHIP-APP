@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.utils.constants.UserRole
+import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.FragmentMitraBinding
 import com.dicoding.membership.view.dashboard.admin.addmitra.AddMitraActivity
@@ -48,11 +50,68 @@ class MitraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkUserRole()
+
         setupImageAdapter()
 
-        validateTokenAndProceed()
-
         handleMenuButton()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkUserRole() {
+        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+            val userRole = mapToUserRole(loginDomain.user.role)
+
+            Log.d("MitraFragment", "User Data: ${loginDomain.user.role}")
+            Log.d("MitraFragment", "Merchant ID Data: ${loginDomain.user.merchantId}")
+
+////            Testing
+//            val mockUserRole = UserRole.RECEPTIONIST
+//            setupUserLogic(mockUserRole)
+
+//            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+
+            setupUserLogic(finalUserRole)
+
+            Log.d("MitraFragment", "Current User Role: ${finalUserRole.name}")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupUserLogic(userRole: UserRole) {
+        when (userRole) {
+            UserRole.USER, UserRole.MEMBER, UserRole.NONMEMBER -> {
+                Log.d("MitraFragment", "User is ${userRole.name}, skipping merchant data loading")
+            }
+            UserRole.RECEPTIONIST, UserRole.MITRA -> {
+                viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+                    if (loginDomain.user.merchantId?.id.isNullOrEmpty()) {
+                        Log.e("MitraFragment", "Merchant ID not found")
+                    } else {
+                        loadMerchantData(loginDomain.user.merchantId?.id.toString())
+                    }
+                }
+            }
+            UserRole.ADMIN -> {
+                validateTokenAndProceed()
+            }
+            else -> {
+                Log.e("MitraFragment", "Invalid user role")
+            }
+        }
     }
 
     private fun setupImageAdapter() {
@@ -131,10 +190,16 @@ class MitraFragment : Fragment() {
                             }
                         }
                         is LoadState.Error -> {
-                            Log.e("MitraFragment", "Error loading merchants: ${(loadState.refresh as LoadState.Error).error.message}")
-                            if (isDataEmpty) {
-                                navigateToAddMitra()
+                            val error = (loadState.refresh as LoadState.Error).error
+                            Log.e("MitraFragment", "Error loading merchants: ${error.message}")
+
+                            // Instead of navigating, show a toast message
+                            val errorMessage = if (error is retrofit2.HttpException && error.code() == 401) {
+                                "Authentication failed. Please login again."
+                            } else {
+                                "Failed to load merchant data: ${error.message ?: "Unknown error"}"
                             }
+                            showErrorMessage(errorMessage)
                         }
                         else -> {
                             // Loading state, do nothing
@@ -148,6 +213,12 @@ class MitraFragment : Fragment() {
                 Log.d("MitraFragment", "Submitting paging data")
                 tempAdapter.submitData(pagingData)
             }
+        }
+    }
+
+    private fun showErrorMessage(message: String) {
+        context?.let {
+            android.widget.Toast.makeText(it, message, android.widget.Toast.LENGTH_LONG).show()
         }
     }
 
@@ -187,6 +258,27 @@ class MitraFragment : Fragment() {
                 is Resource.Error -> {
                     hideLoading()
                     Log.e("MitraFragment", "Failed to load merchant: ${result.message}")
+                }
+                else -> { }
+            }
+        }
+
+        viewModel.getMerchantStatistic(merchantId).observe(viewLifecycleOwner) { result ->
+            when(result) {
+                is Resource.Success -> {
+                    result.data?.let { statistic ->
+                        binding.apply {
+                            Log.d("MitraFragment", "Successfully loaded merchant statistics")
+                            tvMitraPromo.text = statistic.totalPromo.toString()
+                            tvMitraPromoUse.text = statistic.totalPromoUsed.toString()
+                            tvMitraPoin.text = statistic.totalPoint.toString()
+                            tvMitraPoinTerima.text = statistic.pointIn.toString()
+                            tvMitraPoinTransfer.text = statistic.pointOut.toString()
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    Log.e("MitraFragment", "Failed to load merchant statistics: ${result.message}")
                 }
                 else -> { }
             }

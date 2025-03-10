@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,14 +27,31 @@ class NetworkModule {
     }
 
     @Provides
+    fun provideCertificatePinner(): CertificatePinner {
+        val hostname = BuildConfig.BASE_URL.replace("https://", "").replace("/", "")
+
+        return CertificatePinner.Builder()
+            .add(hostname, "sha256/6dUoy56RTnvuYedwmdGBbKMPEK531PHEuoLTATx/J7c=")
+            .build()
+    }
+
+    @Provides
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
-        authAuthenticator: AuthAuthenticator
+        authAuthenticator: AuthAuthenticator,
+        certificatePinner: CertificatePinner
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addInterceptor(HttpLoggingInterceptor().setLevel(
+                // Hanya tampilkan log detail di mode debug
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.BASIC
+            ))
             .addInterceptor(authInterceptor)
             .authenticator(authAuthenticator)
+            // Tambahkan Certificate Pinning
+            .certificatePinner(certificatePinner)
+            // Atur timeout
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .build()

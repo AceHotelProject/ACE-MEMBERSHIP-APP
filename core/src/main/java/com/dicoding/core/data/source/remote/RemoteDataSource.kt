@@ -22,6 +22,7 @@ import com.dicoding.core.data.source.remote.response.points.PointHistoryResponse
 import com.dicoding.core.data.source.remote.response.points.PointsResponse
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantRequest
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantStatistic
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.MerchantData
@@ -522,13 +523,14 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         endDate: String,
         memberType: String,
         maximalUse: Int,
+        merchant: String
     ): Flow<ApiResponse<CreatePromoResponse>> {
         return flow {
             try {
                 val response = apiService.createPromo(
                     name, category, detail, pictures, tnc,
                     startDate, endDate, memberType,
-                    maximalUse
+                    maximalUse, merchant
                 )
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
@@ -543,11 +545,13 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         limit: Int,
         category: String = "",
         status: String = "",
-        name: String = ""
+        name: String = "",
+        expiredDate: String = "",
+        merchantName: String = "",
     ): Flow<ApiResponse<GetPromoResponse>> {
         return flow {
             try {
-                val queryMap = createQueryMap(page, limit, category, status, name)
+                val queryMap = createQueryMap(page, limit, category, status, name, expiredDate, merchantName)
                 Log.d("RemoteDataSource", "Query Map: $queryMap")
                 val response = apiService.getPromos(queryMap)
                 if (response.results?.isNotEmpty() == true) {
@@ -567,13 +571,17 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         limit: Int,
         category: String,
         status: String,
-        name: String
+        name: String,
+        expiredDate: String = "",
+        merchantName: String = "",
     ): Map<String, String> = buildMap {
         put("page", page.toString())
         put("limit", limit.toString())
         if (category.isNotEmpty()) put("category", category)
         if (status.isNotEmpty()) put("status", status)
         if (name.isNotEmpty()) put("name", name)
+        if (expiredDate.isNotEmpty()) put("expired_date", expiredDate)
+        if (merchantName.isNotEmpty()) put("merchant_name", merchantName)
     }
 
     suspend fun getProposalPromos(): Flow<ApiResponse<GetPromoResponse>> {
@@ -599,7 +607,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         endDate: String,
         memberType: String,
         maximalUse: Int,
-        isActive: Boolean
+        isActive: Boolean,
     ): Flow<ApiResponse<EditPromoResponse>> {
         return flow {
             try {
@@ -613,7 +621,7 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
                     end_date = endDate,
                     member_type = memberType,
                     maximal_use = maximalUse,
-                    is_active = isActive
+                    is_active = isActive,
                 )
                 val response = apiService.editPromo(id, request)
                 emit(ApiResponse.Success(response))
@@ -709,13 +717,14 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     suspend fun getPromoHistory(
         page: Int,
         limit: Int,
-        promoName: String = "",
-        promoCategory: String = "",
-        status: String = ""
+        name: String = "",
+        category: String = "",
+        status: String = "",
+        expiredDate: String = "",
     ): Flow<ApiResponse<GetPromoHistoryResponse>> {
         return flow {
             try {
-                val queryMap = createHistoryQueryMap(page, limit, promoName, promoCategory, status)
+                val queryMap = createHistoryQueryMap(page, limit, name, category, status, expiredDate)
                 val response = apiService.getPromoHistory(queryMap)
                 emit(ApiResponse.Success(response))
             } catch (e: Exception) {
@@ -728,16 +737,18 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     private fun createHistoryQueryMap(
         page: Int,
         limit: Int,
-        promoName: String?,
-        promoCategory: String?,
-        status: String?
+        name: String?,
+        category: String?,
+        status: String?,
+        expiredDate: String?,
     ): Map<String, String> {
         return mutableMapOf<String, String>().apply {
             put("page", page.toString())
             put("limit", limit.toString())
-            promoName?.takeIf { it.isNotEmpty() }?.let { put("promo_name", it) }
-            promoCategory?.takeIf { it.isNotEmpty() }?.let { put("promo_category", it) }
-            status?.takeIf { it.isNotEmpty() }?.let { put("status", it) }
+            name?.takeIf { it.isNotEmpty() }?.let { put("promo_name", it) }
+            category?.takeIf { it.isNotEmpty() }?.let { put("promo_category", it) }
+            status?.takeIf { it.isNotEmpty() }?.let { put("promo_status", it) }
+            expiredDate?.takeIf { it.isNotEmpty() }?.let { put("expired_date", it) }
         }
     }
 
@@ -829,6 +840,18 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             } catch (e: Exception) {
                 Log.e(TAG, "Delete merchant error: ${e.message}", e)
                 emit(ApiResponse.Error("Gagal menghapus merchant"))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getMerchantStatistic(id: String): Flow<ApiResponse<GetMerchantStatistic>> {
+        return flow {
+            try {
+                val response = apiService.getMerchantStatistic(id)
+                emit(ApiResponse.Success(response))
+            } catch (e: Exception) {
+                emit(ApiResponse.Error(e.toString()))
+                Log.e(TAG, "Get merchant by ID error: ${e.message}", e)
             }
         }.flowOn(Dispatchers.IO)
     }

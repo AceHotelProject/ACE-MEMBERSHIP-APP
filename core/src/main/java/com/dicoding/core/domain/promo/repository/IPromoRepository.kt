@@ -2,7 +2,6 @@ package com.dicoding.core.domain.promo.repository
 
 import androidx.paging.PagingData
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.data.source.remote.response.promo.ActivatePromoUserResponse
 import com.dicoding.core.domain.promo.model.ActivatePromoResepsionisDomain
 import com.dicoding.core.domain.promo.model.ActivatePromoUserDomain
 import com.dicoding.core.domain.promo.model.GetPromosDomain
@@ -21,12 +20,15 @@ interface IPromoRepository {
         endDate: String,
         memberType: String,
         maximalUse: Int,
+        merchant: String
     ): Flow<Resource<PromoDomain>>
 
     fun getPromos(
         category: String,
         status: String,
-        name: String
+        name: String,
+        expiredDate: String,
+        merchantName: String,
     ): Flow<PagingData<PromoDomain>>
 
     fun getProposalPromos(): Flow<Resource<GetPromosDomain>>
@@ -42,7 +44,7 @@ interface IPromoRepository {
         endDate: String,
         memberType: String,
         maximalUse: Int,
-        isActive: Boolean
+        isActive: Boolean,
     ): Flow<Resource<PromoDomain>>
 
     fun deletePromo(id: String): Flow<Resource<Unit>>
@@ -54,8 +56,9 @@ interface IPromoRepository {
     fun redeemPromo(token: String): Flow<Resource<Unit>>
 
     fun getPromoHistory(
-        promoName: String,
-        promoCategory: String,
-        status: String
+        name: String,
+        category: String,
+        status: String,
+        expiredDate: String,
     ): Flow<PagingData<PromoHistoryDomain>>
 }

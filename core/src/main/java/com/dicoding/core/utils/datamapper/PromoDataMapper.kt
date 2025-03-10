@@ -36,7 +36,9 @@ object PromoDataMapper {
             status = input.status ?: "",
             createdBy = input.createdBy,
             updatedBy = input.updatedBy,
-            token = input.tokenId
+            token = input.tokenId,
+            expiredDate = null,
+            merchantName = toString(),
         )
     }
 
@@ -64,7 +66,9 @@ object PromoDataMapper {
                     isActive = it.isActive ?: false,
                     createdBy = it.createdBy,
                     updatedBy = it.updatedBy,
-                    token = it.token
+                    token = it.tokenCode,
+                    expiredDate = it.expiredDate,
+                    merchantName = it.merchantName ?: ""
                 )
             } ?: emptyList()
         )
@@ -88,7 +92,9 @@ object PromoDataMapper {
             status = input.status ?: "",
             createdBy = input.createdBy,        // tetap nullable
             updatedBy = input.updatedBy,        // tetap nullable
-            token = null                        // tidak ada di response
+            token = null,                        // tidak ada di response
+            expiredDate = null,
+            merchantName = toString()
         )
     }
 
@@ -128,9 +134,26 @@ object PromoDataMapper {
                         userName = item.userName ?: "Anonymous",
                         tokenCode = item.tokenCode ?: "",
                         merchantName = item.merchantName ?: "Unknown Merchant",
+                        merchantId = item.merchantId ?: "",
+                        activatedByName = item.activatedByName ?: "",
+                        activatedById = item.activatedById ?: "",
                         activationDate = item.activationDate ?: "",
+                        redeemedByName = item.redeemedByName,
+                        redeemedById = item.redeemedById,
+                        redeemedDate = item.redeemedDate,
+                        draftDate = item.draftDate ?: "",
+                        draftedByName = item.draftedByName ?: "",
+                        draftedById = item.draftedById ?: "",
+                        validatedByName = item.validatedByName ?: "",
+                        validatedById = item.validatedById ?: "",
+                        validatedDate = item.validatedDate ?: "",
                         status = item.status ?: "",
-                        id = item.id ?: ""
+                        id = item.id ?: "",
+                        maximalUse = item.maximalUse ?: 0,
+                        duration = item.duration ?: 0,
+                        expiredDate = item.expiredDate ?: "",
+                        createdAt = item.createdAt ?: "",
+                        count = item.count ?: 0
                     )
                 }
             } ?: emptyList()

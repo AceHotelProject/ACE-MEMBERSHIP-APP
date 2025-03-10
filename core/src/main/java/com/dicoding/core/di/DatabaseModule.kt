@@ -9,12 +9,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import androidx.security.crypto.MasterKey
 import com.dicoding.core.data.source.local.datastore.DatastoreManager
 import com.dicoding.core.data.source.local.room.membership.MembershipDao
 import com.dicoding.core.data.source.local.room.membership.MembershipDatabase
 import com.dicoding.core.data.source.local.room.test.StoryDao
-import com.dicoding.core.data.source.local.room.user.UserDao
 import com.dicoding.core.data.source.local.room.test.StoryDatabase
+import com.dicoding.core.data.source.local.room.user.UserDao
 import com.dicoding.core.data.source.local.room.user.UserDatabase
 import dagger.Module
 import dagger.Provides
@@ -33,6 +34,10 @@ class DatabaseModule {
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): DataStore<Preferences> {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
@@ -46,11 +51,22 @@ class DatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): StoryDatabase {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        val passphrase = "secure_story_database_passphrase".toByteArray()
+
+        val factory = net.sqlcipher.database.SupportFactory(passphrase)
+
         return Room.databaseBuilder(
             context,
             StoryDatabase::class.java,
             "StoryDatabase.db"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .openHelperFactory(factory) // Tambahkan factory untuk enkripsi
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
@@ -58,15 +74,28 @@ class DatabaseModule {
         return database.storyDao()
     }
 
-
     @Singleton
     @Provides
     fun provideUserDatabase(@ApplicationContext context: Context): UserDatabase {
+        // Buat MasterKey untuk enkripsi database
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        // Buat passphrase yang aman (berbeda dari StoryDatabase)
+        val passphrase = "secure_user_database_passphrase".toByteArray()
+
+        // Buat SupportFactory dengan passphrase
+        val factory = net.sqlcipher.database.SupportFactory(passphrase)
+
         return Room.databaseBuilder(
             context,
             UserDatabase::class.java,
             "UserDatabase.db"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .openHelperFactory(factory) // Tambahkan factory untuk enkripsi
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Singleton
@@ -74,7 +103,6 @@ class DatabaseModule {
     fun provideUserDao(database: UserDatabase): UserDao {
         return database.userDao()
     }
-
 
     @Provides
     fun provideTokenManager(dataStore: DataStore<Preferences>): DatastoreManager =

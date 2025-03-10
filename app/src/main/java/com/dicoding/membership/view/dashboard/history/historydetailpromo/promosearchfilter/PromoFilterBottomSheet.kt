@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
@@ -30,8 +29,16 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private lateinit var statusAdapter: FilterChipAdapter
     private lateinit var categoryAdapter: FilterChipAdapter
 
-    private val dates = listOf("Semua", "Hari Ini", "Bulan Ini", "Tahun Ini")
-    private val statuses = listOf("Semua", "active", "redeemed")
+    private val dates = listOf(
+        "Semua",
+        "Hari Ini",
+        "Minggu Ini",
+        "Bulan Ini",
+        "Tahun Ini"
+    )
+    private val adminMitraStatuses = listOf("Semua", "draft", "valid", "active", "redeemed")
+    private val receptionistStatuses = listOf("Semua", "draft", "valid", "redeemed")
+    private val memberStatuses = listOf("Semua", "active", "redeemed")
     private val categories = listOf(
         "Semua", "Hotel", "Penginapan", "Market", "Restoran",
         "Hiburan", "Sekolah", "Kesehatan", "Pariwisata", "Gym"
@@ -59,129 +66,135 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private fun checkUserRole() {
         viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
             val userRole = mapToUserRole(loginDomain.user.role)
-            //            Testing
-            val mockUserRole = UserRole.MEMBER
+//            //            Testing
+//            val mockUserRole = UserRole.MEMBER
 
-            setupFiltersByRole(mockUserRole)
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+
+            setupFiltersByRole(finalUserRole)
+
+//            setupFiltersByRole(mockUserRole)
         }
     }
 
     private fun setupFiltersByRole(userRole: UserRole) {
         when (userRole) {
-            UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> {
+            UserRole.ADMIN, UserRole.MITRA -> {
                 binding.apply {
                     if (isFromHistory) {
                         tvDateFilter.visibility = View.VISIBLE
                         filterRecyclerviewDate.visibility = View.VISIBLE
-
-                        // valid (Admin, Mitra) & draft (Receptionist)
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
                         tvCategoryFilter.visibility = View.GONE
                         filterRecyclerviewCategory.visibility = View.GONE
+
+                        setupRecyclerViews(showStatusFilter = true, statusList = adminMitraStatuses)
                     } else {
                         tvDateFilter.visibility = View.GONE
                         filterRecyclerviewDate.visibility = View.GONE
-
-                        // Status valid
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
                         tvCategoryFilter.visibility = View.VISIBLE
                         filterRecyclerviewCategory.visibility = View.VISIBLE
+
+                        setupRecyclerViews(showStatusFilter = true, statusList = adminMitraStatuses)
                     }
                 }
-                setupRecyclerViews(showStatusFilter = true)
             }
 
-            UserRole.MEMBER, UserRole.NONMEMBER -> {
+            UserRole.RECEPTIONIST -> {
                 binding.apply {
                     if (isFromHistory) {
                         tvDateFilter.visibility = View.VISIBLE
                         filterRecyclerviewDate.visibility = View.VISIBLE
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
+                        tvCategoryFilter.visibility = View.GONE
+                        filterRecyclerviewCategory.visibility = View.GONE
 
-                        // redeemed (member) & no status (nonmember)
+                        setupRecyclerViews(showStatusFilter = true, statusList = receptionistStatuses)
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+
+                        setupRecyclerViews(showStatusFilter = true, statusList = receptionistStatuses)
+                    }
+                }
+            }
+
+            UserRole.MEMBER -> {
+                binding.apply {
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
+                        tvStatusFilter.visibility = View.VISIBLE
+                        filterRecyclerviewStatus.visibility = View.VISIBLE
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
+
+                        setupRecyclerViews(showStatusFilter = true, statusList = memberStatuses)
+                    } else {
+                        tvDateFilter.visibility = View.GONE
+                        filterRecyclerviewDate.visibility = View.GONE
                         tvStatusFilter.visibility = View.GONE
                         filterRecyclerviewStatus.visibility = View.GONE
+                        tvCategoryFilter.visibility = View.VISIBLE
+                        filterRecyclerviewCategory.visibility = View.VISIBLE
 
+                        setupRecyclerViews(showStatusFilter = false)
+                    }
+                }
+            }
+
+            UserRole.NONMEMBER -> {
+                binding.apply {
+                    if (isFromHistory) {
+                        tvDateFilter.visibility = View.VISIBLE
+                        filterRecyclerviewDate.visibility = View.VISIBLE
+                        tvStatusFilter.visibility = View.GONE
+                        filterRecyclerviewStatus.visibility = View.GONE
                         tvCategoryFilter.visibility = View.VISIBLE
                         filterRecyclerviewCategory.visibility = View.VISIBLE
                     } else {
                         tvDateFilter.visibility = View.GONE
                         filterRecyclerviewDate.visibility = View.GONE
-
-                        // Status valid
                         tvStatusFilter.visibility = View.GONE
                         filterRecyclerviewStatus.visibility = View.GONE
-
                         tvCategoryFilter.visibility = View.VISIBLE
                         filterRecyclerviewCategory.visibility = View.VISIBLE
                     }
                 }
                 setupRecyclerViews(showStatusFilter = false)
             }
-            UserRole.UNDEFINED -> {
-                // Same as Member & NonMember
-                binding.apply {
-                    if (isFromHistory) {
-                        tvDateFilter.visibility = View.VISIBLE
-                        filterRecyclerviewDate.visibility = View.VISIBLE
-
-                        // redeemed (member) & no status (nonmember)
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    } else {
-                        tvDateFilter.visibility = View.GONE
-                        filterRecyclerviewDate.visibility = View.GONE
-
-                        // Status valid
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    }
-                }
-                setupRecyclerViews(showStatusFilter = false)
-            }
-            UserRole.USER -> {
-                binding.apply {
-                    if (isFromHistory) {
-                        tvDateFilter.visibility = View.VISIBLE
-                        filterRecyclerviewDate.visibility = View.VISIBLE
-
-                        // redeemed (member) & no status (nonmember)
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    } else {
-                        tvDateFilter.visibility = View.GONE
-                        filterRecyclerviewDate.visibility = View.GONE
-
-                        // Status valid
-                        tvStatusFilter.visibility = View.GONE
-                        filterRecyclerviewStatus.visibility = View.GONE
-
-                        tvCategoryFilter.visibility = View.VISIBLE
-                        filterRecyclerviewCategory.visibility = View.VISIBLE
-                    }
-                }
+            else -> {
+                // Handle undefined case similar to NONMEMBER
                 setupRecyclerViews(showStatusFilter = false)
             }
         }
     }
 
-
-    private fun setupRecyclerViews(showStatusFilter: Boolean) {
+    private fun setupRecyclerViews(showStatusFilter: Boolean, statusList: List<String> = emptyList()) {
         setupDateFilter()
         if (showStatusFilter) {
-            setupStatusFilter()
+            setupStatusFilter(statusList)
         }
         setupCategoryFilter()
     }
@@ -205,7 +218,7 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupStatusFilter() {
+    private fun setupStatusFilter(statusList: List<String>) {
         statusAdapter = FilterChipAdapter { selectedStatus ->
             onFilterSelected?.invoke(FilterType.STATUS, selectedStatus)
             viewModel.setStatusPosition(statusAdapter.getSelectedPosition())
@@ -217,7 +230,7 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
                 justifyContent = JustifyContent.FLEX_START
             }
             adapter = statusAdapter
-            statusAdapter.submitList(statuses)
+            statusAdapter.submitList(statusList)
         }
         viewModel.selectedStatusPosition.value.let { position ->
             statusAdapter.setSelectedPosition(position)

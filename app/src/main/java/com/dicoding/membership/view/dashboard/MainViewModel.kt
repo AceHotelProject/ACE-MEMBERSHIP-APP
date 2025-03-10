@@ -40,7 +40,9 @@ class MainViewModel @Inject constructor(
             getPromos(
                 category = category,
                 status = "active",
-                name = ""
+                name = "",
+                activationDate = "",
+                merchantName = ""
             )
         }
         .cachedIn(viewModelScope)
@@ -49,6 +51,6 @@ class MainViewModel @Inject constructor(
         _selectedCategory.value = category
     }
 
-    private fun getPromos(category: String, status: String, name: String) =
-        promoUseCase.getPromos(category, status, name)
+    private fun getPromos(category: String, status: String, name: String, activationDate: String, merchantName: String) =
+        promoUseCase.getPromos(category, status, name, activationDate, merchantName)
 }

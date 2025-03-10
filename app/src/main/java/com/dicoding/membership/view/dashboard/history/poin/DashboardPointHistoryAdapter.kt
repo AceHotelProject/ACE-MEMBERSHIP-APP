@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.domain.points.model.PointHistory
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemHistoryPoinBinding
-import com.dicoding.membership.view.dashboard.history.poin.detail.HistoryDetailPoinActivity
+import com.dicoding.membership.view.dashboard.history.historydetailpoin.HistoryDetailPoinActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone

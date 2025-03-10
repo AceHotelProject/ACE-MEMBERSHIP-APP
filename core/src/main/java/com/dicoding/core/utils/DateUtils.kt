@@ -1,4 +1,4 @@
-package com.dicoding.membership.core.utils
+package com.dicoding.core.utils
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -29,6 +29,42 @@ object DateUtils {
         } catch (e: Exception) {
             e.printStackTrace()
             ""
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatToWIB(dateString: String?): String {
+        // Return teks default jika dateString null atau kosong
+        if (dateString.isNullOrBlank()) {
+            return "Tidak ada tanggal"
+        }
+
+        return try {
+            // Parse tanggal ISO 8601
+            val utcDate = ZonedDateTime.parse(dateString)
+
+            // Konversi ke zona waktu WIB
+            val wibDate = utcDate.withZoneSameInstant(ZoneId.of("Asia/Jakarta"))
+
+            // Array nama hari dalam Bahasa Indonesia
+            val days = arrayOf("Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu")
+
+            // Array nama bulan dalam Bahasa Indonesia
+            val months = arrayOf("Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember")
+
+            // Ambil komponen waktu
+            val day = days[wibDate.dayOfWeek.value % 7]
+            val date = wibDate.dayOfMonth
+            val month = months[wibDate.monthValue - 1]
+            val year = wibDate.year
+            val hour = String.format("%02d", wibDate.hour)
+            val minute = String.format("%02d", wibDate.minute)
+
+            // Return string yang sudah diformat
+            "EXP $hour:$minute WIB, $date $month $year"
+        } catch (e: Exception) {
+            "Format tanggal tidak valid"
         }
     }
 

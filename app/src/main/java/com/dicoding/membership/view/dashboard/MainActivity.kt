@@ -21,7 +21,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
-import com.dicoding.core.data.source.Resource
 import com.dicoding.core.utils.constants.UserRole
 import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
@@ -32,6 +31,7 @@ import com.dicoding.membership.view.dashboard.floatingcoupon.reedemcoupon.Redeem
 import com.dicoding.membership.view.dashboard.floatingpromo.StaffAddPromoActivity
 import com.dicoding.membership.view.dashboard.floatingvalidasi.ValidasiActivity
 import com.dicoding.membership.view.dashboard.promo.PromoAdapter
+import com.dicoding.membership.view.dashboard.promo.active.ActivePromoBottomSheet
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitinstall.SplitInstallManager
@@ -60,7 +60,7 @@ class  MainActivity : AppCompatActivity() {
     private var fragmentScrollStates = mutableMapOf<Int, Boolean>()
     private var lastFragmentId: Int? = null
 
-    private var currentUserRole: UserRole = UserRole.USER // Default value
+    private var currentUserRole: UserRole = UserRole.MEMBER
 
 //    private var fabMenuState: FabMenuState = FabMenuState.COLLAPSED
 
@@ -137,7 +137,7 @@ class  MainActivity : AppCompatActivity() {
 
     private fun showPromoBanner(resetNavigation: Boolean = false) {
 
-        if (currentUserRole != UserRole.USER) return
+        if (currentUserRole != UserRole.MEMBER) return
 
         if (!isPromoBannerVisible || resetNavigation) {
             val screenWidth = resources.displayMetrics.widthPixels.toFloat()
@@ -162,8 +162,22 @@ class  MainActivity : AppCompatActivity() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
             //            Testing
-            val mockUserRole = UserRole.ADMIN
-            //            3C8F61
+//            val mockUserRole = UserRole.MEMBER
+
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            Log.d("HomeFragment", "User Role: ${finalUserRole.display}")
 
             // Setup navigation graph
             val navHostFragment = supportFragmentManager
@@ -173,15 +187,15 @@ class  MainActivity : AppCompatActivity() {
 
             // Set start destination berdasarkan role
             navGraph.setStartDestination(
-                when (mockUserRole) { // Ganti dengan userRole untuk production
+                when (finalUserRole) { // Ganti dengan userRole untuk production
                     UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> R.id.mitraFragment
-                    UserRole.USER -> R.id.homeFragment
+                    UserRole.MEMBER, UserRole.NONMEMBER -> R.id.homeFragment
                     else -> R.id.homeFragment
                 }
             )
 
-            setupBottomNavbar(mockUserRole)
-            setupFabVisibility(mockUserRole)
+            setupBottomNavbar(finalUserRole)
+            setupFabVisibility(finalUserRole)
 
 //            Use This For Real
 //            setupBottomNavbar(userRole)
@@ -192,7 +206,7 @@ class  MainActivity : AppCompatActivity() {
             // Set graph ke nav controller
             navController.graph = navGraph
 
-            Log.d("MainActivity", "Navigation setup complete for role: ${mockUserRole.display}")
+            Log.d("MainActivity", "Navigation setup complete for role: ${finalUserRole.display}")
         }
     }
 
@@ -206,13 +220,13 @@ class  MainActivity : AppCompatActivity() {
                 binding.bottomNavbar.visibility = View.VISIBLE
             }
 
-            UserRole.USER -> {
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
                 binding.lnFab1.visibility = View.GONE
                 binding.bottomNavbar.visibility = View.VISIBLE
 
                 showPromoBanner(resetNavigation = true)
                 isPromoBannerVisible = true
-                // Observe inactive promos
+
                 val promoAdapter = PromoAdapter()
                 lifecycleScope.launch {
                     mainViewModel.promos.collect { pagingData ->
@@ -220,7 +234,6 @@ class  MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Observe adapter load states to update UI
                 lifecycleScope.launch {
                     promoAdapter.loadStateFlow.collect { loadState ->
                         when (loadState.refresh) {
@@ -230,8 +243,7 @@ class  MainActivity : AppCompatActivity() {
 
                             is LoadState.NotLoading -> {
                                 val validPromos = promoAdapter.snapshot().items.size
-                                // Check if current role is USER before showing banner
-                                if (currentUserRole == UserRole.USER && validPromos > 0) {
+                                if (currentUserRole == UserRole.MEMBER && validPromos > 0) {
                                     binding.promoBanner.apply {
                                         visibility = View.VISIBLE
                                         binding.tvTotalPromo.apply {
@@ -263,6 +275,13 @@ class  MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+                }
+                binding.promoBanner.setOnClickListener {
+                    Log.d("MainActivity", "Promo banner clicked")
+                    ActivePromoBottomSheet().show(
+                        supportFragmentManager,
+                        ActivePromoBottomSheet.TAG
+                    )
                 }
             }
 
@@ -298,7 +317,7 @@ class  MainActivity : AppCompatActivity() {
                 setupStaffNavigation(navView, navViewController)
                 Log.d("BottomNav", "Inflated staff menu")
             }
-            UserRole.USER -> {
+            UserRole.MEMBER, UserRole.NONMEMBER -> {
                 navView.visibility = View.VISIBLE  // Pastikan visibility diset
                 navView.inflateMenu(R.menu.customer_bottom_nav_menu)
                 setupCustomerNavigation(navView, navViewController)
@@ -483,17 +502,14 @@ class  MainActivity : AppCompatActivity() {
             fab.setOnClickListener {
                 when (fab) {
                     binding.fbCoupon -> {
-                        showToast("FAB Coupon clicked!")
                         val intent = Intent(this, RedeemCouponCodeActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbValidMembership -> {
-                        showToast("FAB Valid Membership clicked!")
                         val intent = Intent(this, ValidasiActivity::class.java)
                         startActivity(intent)
                     }
                     binding.fbAddPromo -> {
-                        showToast("FAB Add Promo clicked!")
                         val intent = Intent(this, StaffAddPromoActivity::class.java).apply {
                             putExtra(StaffAddPromoActivity.EXTRA_IS_EDIT, false)
                         }

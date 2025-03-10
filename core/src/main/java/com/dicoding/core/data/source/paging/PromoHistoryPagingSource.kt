@@ -11,9 +11,10 @@ import javax.inject.Inject
 
 class PromoHistoryPagingSource @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val promoName: String = "",
-    private val promoCategory: String = "",
-    private val status: String = ""
+    private val name: String = "",
+    private val category: String = "",
+    private val status: String = "",
+    private val expiredDate: String = "",
 ) : PagingSource<Int, PromoHistoryDomain>() {
 
     override fun getRefreshKey(state: PagingState<Int, PromoHistoryDomain>): Int? {
@@ -28,17 +29,19 @@ class PromoHistoryPagingSource @Inject constructor(
             val position = params.key ?: START_PAGE_INDEX
 
             val filterParams = mutableMapOf<String, String>().apply {
-                promoName.takeIf { it.isNotEmpty() }?.let { this["promo_name"] = it }
-                promoCategory.takeIf { it.isNotEmpty() }?.let { this["promo_category"] = it }
+                name.takeIf { it.isNotEmpty() }?.let { this["name"] = it }
+                category.takeIf { it.isNotEmpty() }?.let { this["category"] = it }
                 status.takeIf { it.isNotEmpty() }?.let { this["status"] = it }
+                expiredDate.takeIf { it.isNotEmpty() }?.let { this["expired_date"] = it }
             }
 
             val response = remoteDataSource.getPromoHistory(
                 page = position,
                 limit = params.loadSize,
-                promoName = filterParams["promo_name"] ?: "",
-                promoCategory = filterParams["promo_category"] ?: "",
-                status = filterParams["status"] ?: ""
+                name = filterParams["name"] ?: "",
+                category = filterParams["category"] ?: "",
+                status = filterParams["status"] ?: "",
+                expiredDate = filterParams["expired_date"] ?: "",
             ).first()
 
             when (response) {

@@ -19,8 +19,8 @@ class HomeViewModel @Inject constructor (
 
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
-    fun getPromos(category: String, status: String, name: String) =
-        promoUseCase.getPromos(category, status, name).cachedIn(viewModelScope)
+    fun getPromos(category: String, status: String, name: String, expiredDate: String, merchantName: String) =
+        promoUseCase.getPromos(category, status, name, expiredDate, merchantName).cachedIn(viewModelScope)
 
     fun getProposalPromos() = promoUseCase.getProposalPromos().asLiveData()
 }

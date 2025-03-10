@@ -1,6 +1,7 @@
 package com.dicoding.core.utils.datamapper
 
 import com.dicoding.core.data.source.remote.response.merchants.CreateMerchantResponse
+import com.dicoding.core.data.source.remote.response.merchants.GetMerchantStatistic
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsByIdResponse
 import com.dicoding.core.data.source.remote.response.merchants.GetMerchantsResponse
 import com.dicoding.core.data.source.remote.response.merchants.Merchant
@@ -12,6 +13,7 @@ import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantsDomain
 import com.dicoding.core.domain.merchants.model.MerchantDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
+import com.dicoding.core.domain.merchants.model.MerchantStatisticDomain
 import com.dicoding.core.domain.merchants.model.MerchantUser
 import com.dicoding.core.domain.merchants.model.OwnerDomain
 import com.dicoding.core.domain.merchants.model.ReceptionistDomain
@@ -161,6 +163,17 @@ object MerchantDataMapper {
             merchantType = response.merchantType.orEmpty(),
             point = response.point ?: 0,
             refferalPoint = response.refferalPoint ?: 0
+        )
+    }
+
+    fun mapGetMerchantStatisticResponseToDomain(response: GetMerchantStatistic): MerchantStatisticDomain {
+        return MerchantStatisticDomain(
+            totalPoint = response.totalPoint ?: 0,
+            pointOut = response.pointOut ?: 0,
+            totalPromoUsed = response.totalPromoUsed ?: 0,
+            pointIn = response.pointIn ?: 0,
+            totalPromo = response.totalPromo ?: 0,
+            pointReferral = response.pointReferral ?: 0
         )
     }
 }

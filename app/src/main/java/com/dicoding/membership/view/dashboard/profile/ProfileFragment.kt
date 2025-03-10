@@ -233,8 +233,8 @@ class ProfileFragment : Fragment() {
 
     private fun showLoading(boolean: Boolean) {
         binding.apply {
-            progressBar.visibility = View.VISIBLE
-            loadingOverlay.visibility = View.VISIBLE
+            //progressBar.visibility = View.VISIBLE
+            //loadingOverlay.visibility = View.VISIBLE
         }
     }
 
@@ -254,11 +254,27 @@ class ProfileFragment : Fragment() {
 //            Testing
             val mockUserRole = UserRole.ADMIN
             //setupUserVisibility(userRole)
+////            Testing
+//            val mockUserRole = UserRole.ADMIN
+//            setupUserVisibility(mockUserRole)
 
-//            Use This For Real
-//            setupFabVisibility(userRole)
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            setupUserVisibility(finalUserRole)
 
-            Log.d("HomeFragment", "User Role: ${userRole.display}")
+            Log.d("ProfileFragment", "User Role: ${finalUserRole.display}")
         }
     }
 

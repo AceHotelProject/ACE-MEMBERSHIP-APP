@@ -15,11 +15,13 @@ data class PromoDomain(
     val endDate: String,
     val memberType: String,
     val merchantId: String,
+    val merchantName: String,
     val maximalUse: Int,
     val used: Int,
     val isActive: Boolean,
     val status: String,
     val createdBy: String?,
     val updatedBy: String?,
-    val token: String?
+    val token: String?,
+    val expiredDate: String?
 ) : Parcelable

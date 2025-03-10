@@ -7,6 +7,7 @@ import com.dicoding.core.data.source.remote.response.merchants.MerchantData
 import com.dicoding.core.domain.merchants.model.CreateMerchantDomain
 import com.dicoding.core.domain.merchants.model.GetMerchantByIdDomain
 import com.dicoding.core.domain.merchants.model.MerchantResultDomain
+import com.dicoding.core.domain.merchants.model.MerchantStatisticDomain
 import com.dicoding.core.domain.merchants.model.UpdateMerchantDomain
 import com.dicoding.core.domain.merchants.repository.IMerchantRepository
 import com.dicoding.core.domain.merchants.usecase.MerchantUseCase
@@ -30,4 +31,8 @@ class MerchantInteractor @Inject constructor(
 
     override fun deleteMerchant(id: String): Flow<Resource<Unit>> =
         merchantRepository.deleteMerchant(id)
+
+    override fun getMerchantStatistic(id: String): Flow<Resource<MerchantStatisticDomain>> =
+        merchantRepository.getMerchantStatistic(id)
+
 }

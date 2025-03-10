@@ -2,8 +2,8 @@ package com.dicoding.core.utils.constants
 
 enum class UserRole(val role: String, val display: String) {
     ADMIN("admin", "Admin"),
-    MITRA("mitra", "Mitra"),
-    RECEPTIONIST("receptionist", "Receptionist"),
+    MITRA("merchant_owner", "Mitra"),
+    RECEPTIONIST("merchant_receptionist", "Receptionist"),
     MEMBER("member", "Member"),
     NONMEMBER("nonmember", "NonMember"),
     USER("user", "User"),

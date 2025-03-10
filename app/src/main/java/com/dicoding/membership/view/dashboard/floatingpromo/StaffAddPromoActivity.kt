@@ -10,14 +10,15 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -26,9 +27,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.merchants.model.MerchantResultDomain
 import com.dicoding.core.domain.promo.model.PromoDomain
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivityAdminAddPromoBinding
@@ -38,9 +43,13 @@ import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import com.dicoding.membership.view.status.StatusTemplate
 import com.dicoding.membership.view.status.StatusTemplateActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -73,6 +82,8 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
         setupTipeMemberDropdown()
 
+        setupMitraDropdown()
+
         setupCategoryPromoDropdown()
 
         isButtonEnabled(false)
@@ -93,6 +104,139 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
         setupViews()
 
+    }
+
+    private fun setupMitraDropdown() {
+        binding.tvIdMitra.visibility = View.GONE
+        binding.edIdMitra.visibility = View.GONE
+
+        Log.d("SetupMitra", "setupMitraDropdown called")
+
+        staffAddPromoViewModel.getUser().observe(this) { user ->
+            Log.d("SetupMitra", "User data received: ${user?.user?.merchantId?.id}")
+
+            val isAdmin = user?.user?.merchantId?.id == null
+            Log.d("SetupMitra", "Is Admin: $isAdmin")
+
+            if (isAdmin) {
+                binding.tvIdMitra.visibility = View.VISIBLE
+                binding.edIdMitra.visibility = View.VISIBLE
+
+                // Buat adapter terpisah
+                val adapter = ArrayAdapter<String>(
+                    this@StaffAddPromoActivity,
+                    android.R.layout.simple_dropdown_item_1line,
+                    mutableListOf()
+                )
+
+                binding.acIdMitra.setAdapter(adapter)
+
+                // Siapkan click listener
+                binding.acIdMitra.apply {
+                    inputType = 0
+                    isLongClickable = false
+                    keyListener = null
+
+                    isFocusable = true
+                    isFocusableInTouchMode = false
+
+                    // Atur behavior saat diklik
+                    setOnClickListener {
+                        showDropDown()
+                        Log.d("SetupMitra", "Dropdown clicked")
+                    }
+
+                    // Tangani pemilihan item
+                    setOnItemClickListener { _, _, position, _ ->
+                        val selectedMerchant = adapter.getItem(position) ?: ""
+                        Log.d("SetupMitra", "Selected merchant: $selectedMerchant")
+                        val merchantMap = tag as? Map<String, String>
+                        val merchantId = merchantMap?.get(selectedMerchant)
+                        Log.d("SetupMitra", "Selected merchant ID: $merchantId")
+                    }
+                }
+
+                // Gunakan metode berbeda untuk mengumpulkan data
+                lifecycleScope.launch {
+                    val merchants = mutableListOf<MerchantResultDomain>()
+                    val merchantMap = mutableMapOf<String, String>()
+
+                    try {
+                        // Buat adapter paging khusus untuk mengumpulkan data
+                        val pagingAdapter = object : PagingDataAdapter<MerchantResultDomain, RecyclerView.ViewHolder>(
+                            object : DiffUtil.ItemCallback<MerchantResultDomain>() {
+                                override fun areItemsTheSame(oldItem: MerchantResultDomain, newItem: MerchantResultDomain): Boolean {
+                                    return oldItem.id == newItem.id
+                                }
+
+                                override fun areContentsTheSame(oldItem: MerchantResultDomain, newItem: MerchantResultDomain): Boolean {
+                                    return oldItem == newItem
+                                }
+                            }
+                        ) {
+                            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                                // Tidak digunakan, hanya untuk memenuhi syarat abstrak
+                                return object : RecyclerView.ViewHolder(View(parent.context)) {}
+                            }
+
+                            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                                // Tidak digunakan, hanya untuk memenuhi syarat abstrak
+                            }
+                        }
+
+                        // Kumpulkan data menggunakan adapter
+                        val job = launch {
+                            staffAddPromoViewModel.getMerchants().collectLatest { pagingData ->
+                                pagingAdapter.submitData(pagingData)
+                            }
+                        }
+
+                        // Amati loadState untuk mengetahui kapan data sudah dimuat
+                        launch {
+                            pagingAdapter.loadStateFlow.collectLatest { loadStates ->
+                                if (loadStates.refresh is LoadState.NotLoading &&
+                                    loadStates.append is LoadState.NotLoading &&
+                                    loadStates.prepend is LoadState.NotLoading) {
+
+                                    // Kumpulkan data dari adapter
+                                    for (i in 0 until pagingAdapter.itemCount) {
+                                        pagingAdapter.peek(i)?.let { merchant ->
+                                            Log.d("SetupMitra", "Merchant found: ${merchant.name} - ${merchant.id}")
+                                            merchants.add(merchant)
+                                            merchantMap[merchant.name] = merchant.id
+                                        }
+                                    }
+
+                                    // Update adapter di UI thread
+                                    withContext(Dispatchers.Main) {
+                                        val merchantNames = merchants.map { it.name }.distinct()
+                                        Log.d("SetupMitra", "Total merchants found: ${merchantNames.size}")
+
+                                        if (merchantNames.isNotEmpty()) {
+                                            adapter.clear()
+                                            adapter.addAll(merchantNames)
+                                            adapter.notifyDataSetChanged()
+                                            binding.acIdMitra.tag = merchantMap
+                                            Log.d("SetupMitra", "Adapter updated with ${merchantNames.size} items")
+                                        }
+                                    }
+
+                                    // Hentikan pengumpulan data
+                                    job.cancel()
+                                }
+                            }
+                        }
+
+                        // Beri batas waktu (opsional)
+                        delay(10000)
+                        job.cancel()
+
+                    } catch (e: Exception) {
+                        Log.e("SetupMitra", "Error collecting merchants: ${e.message}", e)
+                    }
+                }
+            }
+        }
     }
 
     private fun checkAndRequestPermissions() {
@@ -234,8 +378,53 @@ class StaffAddPromoActivity : AppCompatActivity() {
     }
 
     private fun setupTipeMemberDropdown() {
+        staffAddPromoViewModel.getMemberships()
+
+        staffAddPromoViewModel.memberships.observe(this) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val data = resource.data
+                    if (data != null) {
+                        val membershipTypes = data.results
+                            .mapNotNull { it.type }
+                            .distinct()
+
+                        if (membershipTypes.isNotEmpty()) {
+                            val adapter = ArrayAdapter(
+                                this,
+                                android.R.layout.simple_dropdown_item_1line,
+                                membershipTypes
+                            )
+                            binding.acTipeMember.setAdapter(adapter)
+                        } else {
+                            setDefaultMembershipTypes()
+                        }
+                    } else {
+                        setDefaultMembershipTypes()
+                    }
+                }
+                is Resource.Error -> {
+                    Log.e("StaffAddPromoActivity", "Error loading memberships: ${resource.message}")
+                    setDefaultMembershipTypes()
+                }
+                is Resource.Loading -> {
+
+                }
+
+                else -> {
+
+                }
+            }
+        }
+    }
+
+    private fun setDefaultMembershipTypes() {
         val tipeMitraOptions = arrayOf("Platinum", "Gold", "Silver")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tipeMitraOptions)
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            tipeMitraOptions
+        )
         binding.acTipeMember.setAdapter(adapter)
     }
 
@@ -326,6 +515,14 @@ class StaffAddPromoActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
+            override fun afterTextChanged(p0: Editable?) {
+                checkForms()
+            }
+        })
+
+        binding.acIdMitra.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 checkForms()
             }
@@ -599,16 +796,29 @@ class StaffAddPromoActivity : AppCompatActivity() {
         }
     }
 
-//    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
+    //    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
             data?.let { intent ->
                 if (intent.clipData != null) {
+                    // Create a list to store selected URIs with their dates
+                    val imagesWithDates = mutableListOf<ImageWithDate>()
+
+                    // Get all selected URIs and their dates
                     val count = intent.clipData!!.itemCount
                     for (i in 0 until count) {
                         val uri = intent.clipData!!.getItemAt(i).uri
-                        handleImageUpload(uri)
+                        val date = getImageDate(uri)
+                        imagesWithDates.add(ImageWithDate(uri, date))
+                    }
+
+                    // Sort by date in descending order (newest first)
+                    imagesWithDates.sortByDescending { it.date }
+
+                    // Process each URI in order of newest to oldest
+                    imagesWithDates.forEach { imageWithDate ->
+                        handleImageUpload(imageWithDate.uri)
                     }
                 } else if (intent.data != null) {
                     handleImageUpload(intent.data!!)
@@ -616,6 +826,24 @@ class StaffAddPromoActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun getImageDate(uri: Uri): Long {
+        val projection = arrayOf(MediaStore.Images.Media.DATE_MODIFIED)
+        var date: Long = 0
+
+        contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
+                date = cursor.getLong(dateColumn)
+            }
+        }
+        return date
+    }
+
+    data class ImageWithDate(
+        val uri: Uri,
+        val date: Long
+    )
 
     private fun handleImageUpload(uri: Uri) {
         lifecycleScope.launch {
@@ -711,6 +939,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
     }
 
     private fun submitForm() {
+
         val name = binding.edAddPromo.text.toString()
         val memberType = binding.acTipeMember.text.toString()
         val category = binding.acCategoryPromo.text.toString()
@@ -753,47 +982,81 @@ class StaffAddPromoActivity : AppCompatActivity() {
 
             val imageUris = selectedImages.mapNotNull { it.toString() }
 
-            // Get token and create promo
-            staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
-                if (token.isNotEmpty()) {
-                    staffAddPromoViewModel.createPromo(
-                        name = name,
-                        category = category,
-                        detail = description,
-                        pictures = imageUris, // Will be handled separately
-                        tnc = tncList,
-                        startDate = startDate,
-                        endDate = endDate,
-                        memberType = memberType,
-                        maximalUse = maxUse,
-                    ).observe(this) { result ->
-                        when(result) {
-                            is Resource.Success -> {
-                                hideLoading()
-                                showToast("Promo berhasil dibuat")
-                                navigateToStatus()
-                            }
-                            is Resource.Loading -> {
-                                showLoading()
-                            }
-                            is Resource.Message -> {
-                                hideLoading()
-                                showToast(result.message ?: "Unknown message")
-                            }
-                            is Resource.Error -> {
-                                hideLoading()
-                                showToast(result.message ?: "Terjadi kesalahan")
-                            }
-                            else -> {
-                                showToast(result.message ?: "Unknown message")
+            // Get merchant from user data
+            staffAddPromoViewModel.getUser().observe(this) { user ->
+                Log.d("MerchantDebug", "User data received: $user")
+                Log.d("MerchantDebug", "Merchant ID: ${user.user.merchantId?.id}")
+                Log.d("MerchantDebug", "Full user properties:")
+                user?.let {
+                    it.javaClass.declaredFields.forEach { field ->
+                        field.isAccessible = true
+                        Log.d("MerchantDebug", "${field.name}: ${field.get(it)}")
+                    }
+                }
+
+                // Tentukan merchant ID yang akan digunakan
+                var merchant = user.user.merchantId?.id
+
+                // Jika merchant null dan dropdown merchant ditampilkan (untuk ADMIN), ambil ID dari selection
+                if (merchant == null && binding.tvIdMitra.visibility == View.VISIBLE) {
+                    val selectedMerchantName = binding.acIdMitra.text.toString()
+                    val merchantMap = binding.acIdMitra.tag as? Map<String, String>
+
+                    merchant = merchantMap?.get(selectedMerchantName)
+                    Log.d("MerchantDebug", "Admin selected merchant: $selectedMerchantName, ID: $merchant")
+                }
+
+                // Jika masih null, beri pesan error
+                if (merchant == null) {
+                    showToast("Merchant tidak valid, silakan pilih merchant")
+                    return@observe
+                }
+
+                Log.d("MerchantDebug", "Final merchant value to be used: $merchant")
+
+
+                // Get token and create promo
+                staffAddPromoViewModel.getRefreshToken().observe(this) { token ->
+                    if (token.isNotEmpty()) {
+                        staffAddPromoViewModel.createPromo(
+                            name = name,
+                            category = category,
+                            detail = description,
+                            pictures = imageUris,
+                            tnc = tncList,
+                            startDate = startDate,
+                            endDate = endDate,
+                            memberType = memberType,
+                            maximalUse = maxUse,
+                            merchant = merchant
+                        ).observe(this) { result ->
+                            when(result) {
+                                is Resource.Success -> {
+                                    hideLoading()
+                                    showToast("Promo berhasil dibuat")
+                                    navigateToStatus()
+                                }
+                                is Resource.Loading -> {
+                                    showLoading()
+                                }
+                                is Resource.Message -> {
+                                    hideLoading()
+                                    showToast(result.message ?: "Unknown message")
+                                }
+                                is Resource.Error -> {
+                                    hideLoading()
+                                    showToast(result.message ?: "Terjadi kesalahan")
+                                }
+                                else -> {
+                                    showToast(result.message ?: "Unknown message")
+                                }
                             }
                         }
+                    } else {
+                        showToast("Token tidak valid")
                     }
-                } else {
-                    showToast("Token tidak valid")
                 }
             }
-
         } catch (e: Exception) {
             showToast("Format tanggal tidak valid: ${e.message}")
         }
@@ -802,7 +1065,6 @@ class StaffAddPromoActivity : AppCompatActivity() {
     private fun setupSubmitButton() {
         binding.btnSimpan.setOnClickListener {
             if (binding.btnSimpan.isEnabled) {
-                // Sembunyikan keyboard setelah button ditekan
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 currentFocus?.let { view ->
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -1157,7 +1419,7 @@ class StaffAddPromoActivity : AppCompatActivity() {
                         endDate = endDate,
                         memberType = memberType,
                         maximalUse = maxUse,
-                        isActive = true
+                        isActive = true,
                     ).observe(this) { result ->
                         when(result) {
                             is Resource.Success -> {
@@ -1178,7 +1440,10 @@ class StaffAddPromoActivity : AppCompatActivity() {
                                 Log.e("EditPromo", "Error: ${result.message}")
                             }
 
-                            else -> {}
+                            else -> {
+
+                            }
+
                         }
                     }
                 } else {

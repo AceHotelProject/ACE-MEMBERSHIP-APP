@@ -39,7 +39,7 @@ data class PromoHistoryItem(
     @field:SerializedName("promo_tnc")
     val promoTnc: List<String>? = null,
 
-    @field:SerializedName("promo_member_type")
+    @field:SerializedName("member_type")
     val promoMemberType: String? = null,
 
     @field:SerializedName("user_name")
@@ -51,8 +51,44 @@ data class PromoHistoryItem(
     @field:SerializedName("merchant_name")
     val merchantName: String? = null,
 
+    @field:SerializedName("merchant_id")
+    val merchantId: String? = null,
+
+    @field:SerializedName("activated_by_name")
+    val activatedByName: String? = null,
+
+    @field:SerializedName("activated_by_id")
+    val activatedById: String? = null,
+
     @field:SerializedName("activation_date")
     val activationDate: String? = null,
+
+    @field:SerializedName("redeemed_by_name")
+    val redeemedByName: String? = null,
+
+    @field:SerializedName("redeemed_by_id")
+    val redeemedById: String? = null,
+
+    @field:SerializedName("redeemed_date")
+    val redeemedDate: String? = null,
+
+    @field:SerializedName("draft_date")
+    val draftDate: String? = null,
+
+    @field:SerializedName("drafted_by_name")
+    val draftedByName: String? = null,
+
+    @field:SerializedName("drafted_by_id")
+    val draftedById: String? = null,
+
+    @field:SerializedName("validated_by_name")
+    val validatedByName: String? = null,
+
+    @field:SerializedName("validated_by_id")
+    val validatedById: String? = null,
+
+    @field:SerializedName("validated_date")
+    val validatedDate: String? = null,
 
     @field:SerializedName("status")
     val status: String? = null,
@@ -70,5 +106,20 @@ data class PromoHistoryItem(
     val user: String? = null,
 
     @field:SerializedName("id")
-    val id: String? = null
+    val id: String? = null,
+
+    @field:SerializedName("maximal_use")
+    val maximalUse: Int? = null,
+
+    @field:SerializedName("duration")
+    val duration: Int? = null,
+
+    @field:SerializedName("expired_date")
+    val expiredDate: String? = null,
+
+    @field:SerializedName("createdAt")
+    val createdAt: String? = null,
+
+    @field:SerializedName("count")
+    val count: Int? = null
 ) : Parcelable

@@ -1,4 +1,4 @@
-package com.dicoding.membership.view.dashboard.promo
+package com.dicoding.membership.view.dashboard.promo.active
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -17,13 +17,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class PromoViewModel @Inject constructor(
+class ActivePromoBottomSheetViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val promoUseCase: PromoUseCase
 //    private val storyUseCase: StoryUseCaseTester
 ) : ViewModel() {
-
-    fun getUser() = authUseCase.getUser().asLiveData()
 
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
@@ -34,7 +32,7 @@ class PromoViewModel @Inject constructor(
         .flatMapLatest { category ->
             getPromos(
                 category = category,
-                status = "valid",
+                status = "active",
                 name = "",
                 expiredDate = "",
                 merchantName = ""
@@ -48,10 +46,4 @@ class PromoViewModel @Inject constructor(
 
     fun getPromos(category: String, status: String, name: String, expiredDate: String, merchantName: String) =
         promoUseCase.getPromos(category, status, name, expiredDate, merchantName)
-
-//    fun getProposalPromos() = promoUseCase.getProposalPromos().asLiveData()
-
-//    fun getStories(filterDate: String, isFinished: Boolean): Flow<PagingData<StoryDomainTester>> {
-//        return storyUseCase.getStories(filterDate, isFinished).cachedIn(viewModelScope)
-//    }
 }

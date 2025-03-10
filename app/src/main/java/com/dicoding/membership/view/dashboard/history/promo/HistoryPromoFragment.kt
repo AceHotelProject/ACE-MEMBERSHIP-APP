@@ -75,24 +75,39 @@ class HistoryPromoFragment : Fragment() {
             val userRole = mapToUserRole(loginDomain.user.role)
 
 //            Testing
-            val mockUserRole = UserRole.ADMIN
-            setupUserVisibility(mockUserRole)
+//            val mockUserRole = UserRole.ADMIN
+//            setupUserVisibility(mockUserRole)
 
-            // Only load promo history for authorized roles
-            when (mockUserRole) {
-                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER, UserRole.USER -> {
+                        //            True
+            val finalUserRole = when (userRole) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            setupUserVisibility(finalUserRole)
+
+            // Ini ganti final UserRole kalo udah selesai debugging
+            when (finalUserRole) {
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
                     setupRecyclerView()
                     setupSwipeRefresh()
                     validateToken()
                     loadPromoHistory()
                 }
                 else -> {
-                    // Don't load data for unauthorized roles
-                    Log.d("HistoryPromoFragment", "Unauthorized role: ${mockUserRole.name}, skipping data load")
+                    Log.d("HistoryPromoFragment", "Unauthorized role: ${finalUserRole.name}, skipping data load")
                 }
             }
 
-            Log.d("HistoryPromoFragment", "Current User Role: ${mockUserRole.name}")
+            Log.d("HistoryPromoFragment", "Current User Role: ${finalUserRole.name}")
         }
     }
 
@@ -190,7 +205,7 @@ class HistoryPromoFragment : Fragment() {
                 lifecycleScope.launch {
                     launch {
                         viewModel.getPromoHistory(
-                            promoCategory = viewModel.selectedCategory.value
+                            category = viewModel.selectedCategory.value
                         ).collect { pagingData ->
                             historyAdapter.submitData(pagingData)
                         }

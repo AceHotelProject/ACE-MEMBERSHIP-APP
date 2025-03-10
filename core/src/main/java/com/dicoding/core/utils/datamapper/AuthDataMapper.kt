@@ -1,11 +1,13 @@
 package com.dicoding.core.utils.datamapper
 
+import com.dicoding.core.data.source.local.entity.auth.MerchantIdEntity
 import com.dicoding.core.data.source.local.entity.auth.TokenEntity
 import com.dicoding.core.data.source.local.entity.auth.UserEntity
 import com.dicoding.core.data.source.remote.response.auth.LoginResponse
 import com.dicoding.core.data.source.remote.response.auth.OtpResponse
 import com.dicoding.core.data.source.remote.response.auth.RegisterResponse
 import com.dicoding.core.domain.auth.model.LoginDomain
+import com.dicoding.core.domain.auth.model.MerchantIdDomain
 import com.dicoding.core.domain.auth.model.OtpDomain
 import com.dicoding.core.domain.auth.model.RegisterDomain
 import com.dicoding.core.domain.auth.model.TokensDomain
@@ -13,7 +15,6 @@ import com.dicoding.core.domain.auth.model.TokensFormat
 import com.dicoding.core.domain.auth.model.UserDomain
 
 object AuthDataMapper {
-
     fun mapAuthToEntity(domain: LoginDomain): UserEntity {
         return UserEntity(
             userId = domain.user.id,
@@ -26,7 +27,14 @@ object AuthDataMapper {
                 accessTokenExpire = domain.tokens.accessToken.expires,
                 refreshToken = domain.tokens.refreshToken.token,
                 refreshTokenExpire = domain.tokens.refreshToken.expires
-            )
+            ),
+            merchantInfo = domain.user.merchantId?.let { merchant ->
+                MerchantIdEntity(
+                    id = merchant.id,
+                    point = merchant.point,
+                    referralPoint = merchant.referralPoint
+                )
+            }
         )
     }
 
@@ -45,12 +53,19 @@ object AuthDataMapper {
                 citizenNumber = response.user?.citizenNumber,
                 pathKTP = response.user?.pathKTP,
                 androidId = response.user?.androidId,
-                merchantId = response.user?.merchantId,
+                merchantId = response.user?.merchantId?.let { merchant ->
+                    MerchantIdDomain(
+                        id = merchant.id.orEmpty(),
+                        point = merchant.point ?: 0,
+                        referralPoint = merchant.referralPoint ?: 0
+                    )
+                },
                 couponUsed = response.user?.couponUsed ?: listOf(),
                 point = response.user?.point ?: 0,
                 refferalPoint = response.user?.refferalPoint ?: 0,
                 isNumberVerified = response.user?.isNumberVerified ?: false,
-                createdAt = response.user?.createdAt.orEmpty()
+                createdAt = response.user?.createdAt.orEmpty(),
+                isMember = response.user?.isMember ?: false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -80,12 +95,19 @@ object AuthDataMapper {
                 citizenNumber = response.user?.citizenNumber,
                 pathKTP = response.user?.pathKTP,
                 androidId = response.user?.androidId,
-                merchantId = response.user?.merchantId,
+                merchantId = response.user?.merchantId?.let { merchant ->
+                    MerchantIdDomain(
+                        id = merchant.id.orEmpty(),
+                        point = merchant.point ?: 0,
+                        referralPoint = merchant.referralPoint ?: 0
+                    )
+                },
                 couponUsed = response.user?.couponUsed ?: listOf(),
                 point = response.user?.point ?: 0,
                 refferalPoint = response.user?.refferalPoint ?: 0,
                 isNumberVerified = response.user?.isNumberVerified ?: false,
-                createdAt = response.user?.createdAt.orEmpty()
+                createdAt = response.user?.createdAt.orEmpty(),
+                isMember = response.user?.isMember ?: false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(
@@ -116,12 +138,19 @@ object AuthDataMapper {
                     citizenNumber = null,
                     pathKTP = null,
                     androidId = null,
-                    merchantId = null,
+                    merchantId = it.merchantInfo?.let { merchant ->
+                        MerchantIdDomain(
+                            id = merchant.id.orEmpty(),
+                            point = merchant.point ?: 0,
+                            referralPoint = merchant.referralPoint ?: 0
+                        )
+                    },
                     couponUsed = listOf(),
                     point = 0,
                     refferalPoint = 0,
                     isNumberVerified = false,
-                    createdAt = ""
+                    createdAt = "",
+                    isMember = false
                 ),
                 tokens = TokensDomain(
                     accessToken = TokensFormat(
@@ -153,7 +182,8 @@ object AuthDataMapper {
                 point = 0,
                 refferalPoint = 0,
                 isNumberVerified = false,
-                createdAt = ""
+                createdAt = "",
+                isMember = false
             ),
             tokens = TokensDomain(
                 accessToken = TokensFormat(token = null, expires = null),

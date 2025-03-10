@@ -1,6 +1,6 @@
 package com.dicoding.core.utils.constants
 
-import com.dicoding.membership.core.utils.DateUtils
+import com.dicoding.core.utils.DateUtils
 
 enum class FilterDate(val value: String, val display: String) {
     NOW(DateUtils.getDateThisDay(), "Hari Ini"),
