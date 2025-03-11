@@ -202,7 +202,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/custom_edit_text_border_dark_grey"
                         android:hint="Masukkan kode pengguna"
-                        android:inputType="text"
+                        android:inputType="number"
                         android:padding="16dp"
                         android:textColorHint="@color/dark_grey"
                         android:textSize="14sp" />

@@ -20,6 +20,8 @@ import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.databinding.FragmentHistoryPromoBinding
 import com.dicoding.membership.view.dashboard.MainActivity
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity
+import com.dicoding.membership.view.dashboard.home.member.mlevel.HomeMemberLevelActivity
+import com.dicoding.membership.view.dashboard.profile.detail.membershipku.ProfileDetailMembershipkuActivity
 import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -79,11 +81,14 @@ class HistoryPromoFragment : Fragment() {
 //            setupUserVisibility(mockUserRole)
 
                         //            True
+            Log.d("debug1","Is member: ${loginDomain.user.isMember}, Is validated: ${loginDomain.user.isValidated}")
             val finalUserRole = when (userRole) {
                 UserRole.USER -> {
                     // If the role is USER, check isMember status
-                    if (loginDomain.user.isMember) {
+                    if (loginDomain.user.isMember && loginDomain.user.isValidated) {
                         UserRole.MEMBER
+                    } else if(loginDomain.user.isMember){
+                        UserRole.PENDINGMEMBER
                     } else {
                         UserRole.NONMEMBER
                     }
@@ -115,17 +120,47 @@ class HistoryPromoFragment : Fragment() {
         when (userRole) {
             UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.USER, UserRole.MEMBER -> {
                 binding.apply {
+                    Log.d("debug1", "MEMBER")
                     swipeRefresh.visibility = View.VISIBLE
                     layoutNonMember.visibility = View.GONE
+                    layoutPending.visibility = View.GONE
                 }
             }
-           UserRole.NONMEMBER -> {
-               binding.apply {
-                   swipeRefresh.visibility = View.GONE
-                   layoutNonMember.visibility = View.VISIBLE
-                   rvPromoHistory.visibility = View.GONE
-                   tvTidakAdaRiwayat.visibility = View.GONE
-               }
+            UserRole.PENDINGMEMBER -> {
+                binding.apply {
+                    Log.d("debug1", "NMEMBER")
+                    swipeRefresh.visibility = View.GONE
+                    layoutNonMember.visibility = View.GONE
+                    layoutPending.visibility = View.VISIBLE
+                    rvPromoHistory.visibility = View.GONE
+                    tvTidakAdaRiwayat.visibility = View.GONE
+                    btnRefreshPending.setOnClickListener {
+                        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+                            val intent = Intent(requireContext(), ProfileDetailMembershipkuActivity::class.java).apply {
+                                putExtra(ProfileDetailMembershipkuActivity.EXTRA_USER_ID, loginDomain.user.id)
+                            }
+                            startActivity(intent)
+                        }
+                    }
+                }
+            }
+            UserRole.NONMEMBER -> {
+                binding.apply {
+                    Log.d("debug1", "NMEMBER")
+                    swipeRefresh.visibility = View.GONE
+                    layoutNonMember.visibility = View.VISIBLE
+                    rvPromoHistory.visibility = View.GONE
+                    tvTidakAdaRiwayat.visibility = View.GONE
+                    layoutPending.visibility = View.GONE
+                    btnDaftar.setOnClickListener {
+                        viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
+                            val intent = Intent(requireContext(), HomeMemberLevelActivity::class.java).apply {
+                                putExtra(HomeMemberLevelActivity.EXTRA_USER_ID, loginDomain.user.id)
+                            }
+                            startActivity(intent)
+                        }
+                    }
+                }
             }
             else -> {
                 binding.apply {
@@ -133,6 +168,7 @@ class HistoryPromoFragment : Fragment() {
                     layoutNonMember.visibility = View.GONE
                     rvPromoHistory.visibility = View.GONE
                     tvTidakAdaRiwayat.visibility = View.GONE
+                    layoutPending.visibility = View.GONE
                 }
             }
         }

@@ -5,6 +5,7 @@ enum class UserRole(val role: String, val display: String) {
     MITRA("merchant_owner", "Mitra"),
     RECEPTIONIST("merchant_receptionist", "Receptionist"),
     MEMBER("member", "Member"),
+    PENDINGMEMBER("member", "PendingMember"),
     NONMEMBER("nonmember", "NonMember"),
     USER("user", "User"),
     UNDEFINED("role", "Role")
@@ -22,6 +23,9 @@ fun mapToUserRole(role: String): UserRole = when (role) {
     }
     UserRole.MEMBER.role -> {
         UserRole.MEMBER
+    }
+    UserRole.PENDINGMEMBER.role -> {
+        UserRole.PENDINGMEMBER
     }
     UserRole.NONMEMBER.role -> {
         UserRole.NONMEMBER

@@ -1,11 +1,13 @@
 package com.dicoding.membership.view.dashboard.profile.detail.poinku.transfer
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +49,9 @@ class TransferPoinActivity : AppCompatActivity() {
         }
 
         binding.buttonCek.setOnClickListener {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.transferMasukkanKodePenggunaVal.windowToken, 0)
+
             val kodePengguna = binding.transferMasukkanKodePenggunaVal.text.toString()
 
             if (kodePengguna.isBlank()) {
@@ -83,14 +88,13 @@ class TransferPoinActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     showLoadingDataPengguna(false)
+                    clearUserDataUI(true)
                     // Show error message
                     Toast.makeText(
                         this,
                         resource.message ?: "Terjadi kesalahan",
                         Toast.LENGTH_SHORT
                     ).show()
-                    // Clear the UI data on error
-                    clearUserDataUI()
                 }
                 is Resource.Message -> TODO()
             }
@@ -187,17 +191,25 @@ class TransferPoinActivity : AppCompatActivity() {
         )
     }
 
-    private fun clearUserDataUI() {
+    private fun clearUserDataUI(notFound: Boolean = false) {
         with(binding) {
-            transferPenggunaEmail.text = ""
-            transferPenggunaNomorHp.text = ""
-            selectedUserId = null
+            if(notFound){
+                transferPenggunaEmail.text = "User not found"
+                transferPenggunaNomorHp.visibility = View.GONE
+            } else {
+                transferPenggunaEmail.text = "empty"
+                transferPenggunaNomorHp.visibility = View.VISIBLE
+                transferPenggunaNomorHp.text = "-"
+                selectedUserId = null
+            }
+
         }
     }
 
     private fun updateUserDataUI(user: User) {
         with(binding) {
             transferPenggunaEmail.text = user.email
+            transferPenggunaNomorHp.visibility = View.VISIBLE
             transferPenggunaNomorHp.text = user.phone
             selectedUserId = user.id
         }

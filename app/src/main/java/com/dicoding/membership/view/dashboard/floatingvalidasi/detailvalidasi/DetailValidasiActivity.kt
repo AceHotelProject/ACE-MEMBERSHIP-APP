@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
@@ -32,6 +33,7 @@ class DetailValidasiActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailValidasiBinding
     private val viewModel: DetailValidasiViewModel by viewModels()
     private var userId: String? = null
+    private var done: Boolean = false
 
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
@@ -126,9 +128,13 @@ class DetailValidasiActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     showLoading(false)
-                    resource.data?.let { user ->
-                        navigateToSuccessScreen(user)
+                    if(!done){
+                        resource.data?.let { user ->
+                            navigateToSuccessScreen(user)
+                        }
+                        done = !done
                     }
+
                 }
                 is Resource.Error -> {
                     showLoading(false)
@@ -181,6 +187,13 @@ class DetailValidasiActivity : AppCompatActivity() {
         user.membership?.let { membership ->
             with(binding) {
                 labelMembershipType.text = membership.subscriptionType?.type ?: "-"
+                if (membership.status == "pending") {
+                    labelStatus.background = ContextCompat.getDrawable(this@DetailValidasiActivity, R.drawable.chip_category_red)
+                    labelStatus.setTextColor(ContextCompat.getColor(this@DetailValidasiActivity, R.color.red))
+                } else {
+                    labelStatus.background = ContextCompat.getDrawable(this@DetailValidasiActivity, R.drawable.chip_category_green)
+                    labelStatus.setTextColor(ContextCompat.getColor(this@DetailValidasiActivity, R.color.green))
+                }
                 labelStatus.text = membership.status
                 tvHarga.text = formatCurrency(membership.payment)
                 tvExpMember.text = formatDateTime(membership.endDate)

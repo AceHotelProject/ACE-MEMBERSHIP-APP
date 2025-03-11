@@ -54,8 +54,8 @@ class SubscriptionSearchAdapter : RecyclerView.Adapter<SubscriptionSearchAdapter
                     labelPeriodType.setBackgroundResource(R.drawable.chip_category_green)
                     labelPeriodType.setTextColor(ContextCompat.getColor(root.context, R.color.green))
                 } else {
-                    labelPeriodType.setBackgroundResource(R.drawable.chip_category_orange)
-                    labelPeriodType.setTextColor(ContextCompat.getColor(root.context, R.color.orange_100))
+                    labelPeriodType.setBackgroundResource(R.drawable.chip_category_red)
+                    labelPeriodType.setTextColor(ContextCompat.getColor(root.context, R.color.red))
                 }
 
                 // Set user information

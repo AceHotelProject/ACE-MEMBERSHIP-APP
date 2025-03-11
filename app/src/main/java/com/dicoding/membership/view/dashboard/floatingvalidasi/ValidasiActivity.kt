@@ -1,12 +1,15 @@
 package com.dicoding.membership.view.dashboard.floatingvalidasi
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -69,6 +72,7 @@ class ValidasiActivity : AppCompatActivity() {
                     showLoadingDataPengguna(true)
                 }
                 is Resource.Success -> {
+                    Log.d("debug","Not found!")
                     showLoadingDataPengguna(false)
                     resource.data?.let { user ->
                         if (user.id == intent.getStringExtra(EXTRA_USER_ID)) {
@@ -89,7 +93,8 @@ class ValidasiActivity : AppCompatActivity() {
                         resource.message ?: "Terjadi kesalahan",
                         Toast.LENGTH_SHORT
                     ).show()
-                    clearUserDataUI()
+                    Log.d("debug","Not found?")
+                    clearUserDataUI(true)
                     clearMembershipDataUI()
                 }
                 is Resource.Message -> TODO()
@@ -100,9 +105,10 @@ class ValidasiActivity : AppCompatActivity() {
     private fun updateUserDataUI(user: User) {
         with(binding) {
             tvMail.text = user.email
+            tvTelepon.visibility = View.VISIBLE
             tvTelepon.text = user.phone
             selectedUserId = user.id
-            isButton(!user.isValidated)
+            isButton(user.membership?.status == "pending")
         }
     }
 
@@ -113,8 +119,8 @@ class ValidasiActivity : AppCompatActivity() {
                 labelMembershipType.text = membership.subscriptionType.type
 
                 if (membership.status == "pending") {
-                    labelStatus.background = ContextCompat.getDrawable(this@ValidasiActivity, R.drawable.chip_category_orange)
-                    labelStatus.setTextColor(ContextCompat.getColor(this@ValidasiActivity, R.color.orange_100))
+                    labelStatus.background = ContextCompat.getDrawable(this@ValidasiActivity, R.drawable.chip_category_red)
+                    labelStatus.setTextColor(ContextCompat.getColor(this@ValidasiActivity, R.color.red))
                 } else {
                     labelStatus.background = ContextCompat.getDrawable(this@ValidasiActivity, R.drawable.chip_category_green)
                     labelStatus.setTextColor(ContextCompat.getColor(this@ValidasiActivity, R.color.green))
@@ -189,11 +195,19 @@ class ValidasiActivity : AppCompatActivity() {
         binding.btnContinue.isEnabled = b
     }
 
-    private fun clearUserDataUI() {
+    private fun clearUserDataUI(notFound: Boolean = false) {
         with(binding) {
-            tvMail.text = "Empty"
-            tvTelepon.text = "Empty"
-            selectedUserId = null
+            if(notFound){
+                tvMail.text = "User not found"
+                tvTelepon.visibility = View.GONE
+                selectedUserId = null
+            } else {
+                tvMail.text = "Empty"
+                tvTelepon.visibility = View.VISIBLE
+                tvTelepon.text = "Empty"
+                selectedUserId = null
+            }
+
         }
     }
 
@@ -220,6 +234,9 @@ class ValidasiActivity : AppCompatActivity() {
         }
 
         binding.buttonCek.setOnClickListener {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.masukkanKodePenggunaVal.windowToken, 0)
+
             val kodePengguna = binding.masukkanKodePenggunaVal.text.toString()
 
             if(kodePengguna.isBlank()) {

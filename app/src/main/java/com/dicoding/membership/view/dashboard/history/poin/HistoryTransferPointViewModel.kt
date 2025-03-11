@@ -3,6 +3,7 @@ package com.dicoding.membership.view.dashboard.history.poin
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.auth.model.LoginDomain
@@ -43,4 +44,9 @@ class HistoryTransferPointViewModel @Inject constructor(
         }
     }
 
+    // Added for direct access to user data through LiveData
+    fun getUser() = authUseCase.getUser().asLiveData()
+
+    // Added to get refresh token if needed
+    fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 }

@@ -32,6 +32,52 @@
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <!-- Pending member  -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_pending"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginStart="26dp"
+            android:layout_marginEnd="26dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="26dp"
+                android:layout_gravity="center"
+                android:text="Membership"
+                style="@style/textStyleSemIBold_32"
+                android:textSize="30sp"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="26dp"
+                android:text="Membership anda sedang dalam proses validasi. Mohon hubungi admin untuk proses pembayaran."
+                android:textColor="@color/dark_grey"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/btn_refresh_pending"
+                style="@style/textStyleSemIBold_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                android:layout_marginTop="12dp"
+                android:text="Refresh Data Membership"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:background="@drawable/custom_button"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <!--    NONMEMBER History -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_non_member"
@@ -39,49 +85,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
             <TextView
-                android:id="@+id/tv_daftar_membership"
-                style="@style/textStyleSemIBold_32"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="26dp"
                 android:text="Daftar Membership"
-                android:textColor="@color/black" />
-
+                style="@style/textStyleSemIBold_32"
+                android:textColor="@color/black"/>
             <TextView
-                android:id="@+id/tv_description"
-                style="@style/textStyleRegular_12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="40dp"
-                android:text="Lorem ipsum dolor sit amet consectetur. Tellus eget sed feugiat faucibus lectus vitaea"
-                android:textAlignment="center"
-                android:textColor="@color/dark_grey" />
-
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="26dp"
+                android:text="Silahkan bergabung member untuk mengakses fitur ini."
+                android:textColor="@color/dark_grey"
+                android:gravity="center"/>
             <Button
-                android:id="@+id/btn_daftar_sekarang"
+                android:id="@+id/btn_daftar"
                 style="@style/textStyleButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
                 android:background="@drawable/custom_button"
                 android:elevation="0dp"
                 android:padding="10dp"
-                android:text="Daftar Sekarang" />
+                android:textSize="24sp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp"
+                android:text="Daftar Sekarang"
+                android:textAllCaps="false" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

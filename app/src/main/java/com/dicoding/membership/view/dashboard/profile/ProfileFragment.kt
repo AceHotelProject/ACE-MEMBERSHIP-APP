@@ -298,7 +298,6 @@ class ProfileFragment : Fragment() {
                 binding.layoutMembershipku.visibility = View.VISIBLE
                 binding.layoutManajemenMitra.visibility = View.GONE
 
-                binding.lnBackgroundMenu.background = null
             }
             UserRole.NONMEMBER -> {
                 binding.membershipCardView.visibility = View.VISIBLE
@@ -306,7 +305,6 @@ class ProfileFragment : Fragment() {
                 binding.layoutMembershipku.visibility = View.VISIBLE
                 binding.layoutManajemenMitra.visibility = View.GONE
 
-                binding.lnBackgroundMenu.background = null
             }
             else -> {
                 binding.membershipCardView.visibility = View.GONE
