@@ -6,12 +6,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.dashboard.mitra.MitraFragment">
 
-    <ScrollView
-        android:id="@+id/layout_Mitra"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        android:scrollbars="none"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
@@ -19,215 +17,165 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <!--    Mitra and Admin Section-->
-        <LinearLayout
-            android:id="@+id/linearLayoutAdminMitra"
+        <ScrollView
+            android:id="@+id/layout_Mitra"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_mitra_owner"
-                style="@style/textStyleSemIBold_20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hi, Admin 👋"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_mitra_selected"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_multiple_image_upload_2" />
-
-
-
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <!--    Mitra and Admin Section-->
             <LinearLayout
-                android:id="@+id/layoutDots"
+                android:id="@+id/linearLayoutAdminMitra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/rv_promo_selected" />
-
-            <TextView
-                android:id="@+id/tvMitraType"
-                style="@style/textStyleMedium_14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/custom_item_promo_type"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="5dp"
-                android:text="Hotel"
-                android:textColor="@color/orange_100"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tv_mitra_name"
-                style="@style/textStyleSemIBold_20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hotel Ace Indonesia"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imgHotel" />
-
-            <TextView
-                android:id="@+id/tvStatistik"
-                style="@style/textStyleSemIBold_20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:text="Statistik Mitra"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvHotelName" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
-                <!-- Section 1: Promo Mitra and Promo Digunakan -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_mitra_owner"
+                    style="@style/textStyleSemIBold_20"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:text="Hi, Admin 👋"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/custom_background_light_grey"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <TextView
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Promo Mitra" />
-
-                        <TextView
-                            android:id="@+id/tv_mitra_promo"
-                            style="@style/textStyleSemIBold_20"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/custom_background_light_grey"
-                        android:orientation="vertical"
-                        android:padding="10dp">
-
-                        <TextView
-                            style="@style/textStyleMedium_14"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Promo Digunakan" />
-
-                        <TextView
-                            style="@style/textStyleSemIBold_20"
-                            android:id="@+id/tv_mitra_promo_use"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="32" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Section 2: Poin Mitra -->
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_mitra_selected"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/custom_background_light_grey"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_multiple_image_upload_2" />
 
-                    <TextView
-                        style="@style/textStyleMedium_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Poin Mitra" />
 
-                    <TextView
-                        style="@style/textStyleSemIBold_20"
-                        android:id="@+id/tv_mitra_poin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/icons_point"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/black"
-                        android:text="400.000" />
-                </LinearLayout>
 
-                <!-- Section 3: Poin Terima and Poin Transfer -->
                 <LinearLayout
+                    android:id="@+id/layoutDots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/rv_promo_selected" />
 
+                <TextView
+                    android:id="@+id/tvMitraType"
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/custom_item_promo_type"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="5dp"
+                    android:text="Hotel"
+                    android:textColor="@color/orange_100"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_mitra_name"
+                    style="@style/textStyleSemIBold_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hotel Ace Indonesia"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/imgHotel" />
+
+                <TextView
+                    android:id="@+id/tvStatistik"
+                    style="@style/textStyleSemIBold_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Statistik Mitra"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvHotelName" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <!-- Section 1: Promo Mitra and Promo Digunakan -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/custom_background_light_green"
-                        android:orientation="vertical"
-                        android:padding="10dp">
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-                        <TextView
-                            style="@style/textStyleMedium_14_selected_green"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Poin Terima"
-                            android:textColor="@color/green" />
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_background_light_grey"
+                            android:orientation="vertical"
+                            android:padding="10dp">
 
-                        <TextView
-                            style="@style/textStyleSemIBold_20_selected_green"
-                            android:id="@+id/tv_mitra_poin_terima"
-                            android:layout_width="wrap_content"
+                            <TextView
+                                style="@style/textStyleMedium_14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Promo Mitra" />
+
+                            <TextView
+                                android:id="@+id/tv_mitra_promo"
+                                style="@style/textStyleSemIBold_20"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="12" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:drawableStart="@drawable/icons_point"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@color/green"
-                            android:text="200.000" />
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_background_light_grey"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                style="@style/textStyleMedium_14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Promo Digunakan" />
+
+                            <TextView
+                                style="@style/textStyleSemIBold_20"
+                                android:id="@+id/tv_mitra_promo_use"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="32" />
+                        </LinearLayout>
                     </LinearLayout>
 
+                    <!-- Section 2: Poin Mitra -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/custom_background_light_grey"
+                        android:gravity="center"
                         android:orientation="vertical"
                         android:padding="10dp">
 
@@ -235,42 +183,103 @@
                             style="@style/textStyleMedium_14"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Poin Transfer" />
+                            android:text="Poin Mitra" />
 
                         <TextView
                             style="@style/textStyleSemIBold_20"
-                            android:id="@+id/tv_mitra_poin_transfer"
+                            android:id="@+id/tv_mitra_poin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/icons_point"
                             android:drawablePadding="8dp"
                             android:drawableTint="@color/black"
-                            android:text="200.000" />
+                            android:text="400.000" />
+                    </LinearLayout>
+
+                    <!-- Section 3: Poin Terima and Poin Transfer -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_background_light_green"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                style="@style/textStyleMedium_14_selected_green"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Poin Terima"
+                                android:textColor="@color/green" />
+
+                            <TextView
+                                style="@style/textStyleSemIBold_20_selected_green"
+                                android:id="@+id/tv_mitra_poin_terima"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/icons_point"
+                                android:drawablePadding="8dp"
+                                android:drawableTint="@color/green"
+                                android:text="200.000" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/custom_background_light_grey"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                style="@style/textStyleMedium_14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Poin Transfer" />
+
+                            <TextView
+                                style="@style/textStyleSemIBold_20"
+                                android:id="@+id/tv_mitra_poin_transfer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/icons_point"
+                                android:drawablePadding="8dp"
+                                android:drawableTint="@color/black"
+                                android:text="200.000" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
+
+                <TextView
+                    style="@style/textStyleMedium_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Deskripsi">
+
+                </TextView>
+
+                <TextView
+                    style="@style/textStyleMedium_14"
+                    android:id="@+id/tv_mitra_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/lorem_ipsum"
+                    android:textColor="@color/dark_grey">
+
+                </TextView>
             </LinearLayout>
-
-            <TextView
-                style="@style/textStyleMedium_14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Deskripsi">
-
-            </TextView>
-
-            <TextView
-                style="@style/textStyleMedium_14"
-                android:id="@+id/tv_mitra_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lorem_ipsum"
-                android:textColor="@color/dark_grey">
-
-            </TextView>
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <View
         android:id="@+id/loadingOverlay"

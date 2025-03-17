@@ -32,6 +32,57 @@ class MerchantPagingAdapter : PagingDataAdapter<MerchantResultDomain, MerchantPa
         notifyItemChanged(oldPosition)
     }
 
+    fun setSelectedMerchantId(merchantId: String) {
+        // Temukan posisi dari merchant dengan ID yang sesuai
+        val position = snapshot().indexOfFirst { it?.id == merchantId }
+        if (position != -1) {
+            setSelectedPosition(position)
+            Log.d("MerchantAdapter", "Selected merchant set to position $position with ID $merchantId")
+        } else {
+            Log.d("MerchantAdapter", "Merchant with ID $merchantId not found in current list")
+        }
+    }
+
+    // Fungsi untuk mengatur item terpilih berdasarkan posisi
+    fun setSelectedPosition(position: Int) {
+        if (position >= 0 && position < itemCount) {
+            val oldPosition = selectedPosition
+            selectedPosition = position
+            // Perbarui tampilan item yang sebelumnya terpilih dan item yang baru dipilih
+            notifyItemChanged(oldPosition)
+            notifyItemChanged(selectedPosition)
+            Log.d("MerchantAdapter", "Selected position set to $position")
+        }
+    }
+
+    // Fungsi untuk mendapatkan ID merchant yang sedang dipilih
+    fun getSelectedMerchantId(): String? {
+        return if (selectedPosition != -1 && selectedPosition < itemCount) {
+            getItem(selectedPosition)?.id
+        } else {
+            null
+        }
+    }
+
+    // Fungsi untuk mendapatkan ID merchant berdasarkan posisi
+    fun getItemIdAt(position: Int): String? {
+        return if (position >= 0 && position < itemCount) {
+            // Akses snapshot() yang public daripada protected getItem()
+            snapshot()[position]?.id
+        } else {
+            null
+        }
+    }
+
+    // Fungsi untuk mendapatkan merchant pada posisi tertentu
+    fun getMerchantAt(position: Int): MerchantResultDomain? {
+        return if (position >= 0 && position < itemCount) {
+            snapshot()[position]
+        } else {
+            null
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MerchantViewHolder {
         val binding = ItemManajemenMitraBinding.inflate(
             LayoutInflater.from(parent.context),

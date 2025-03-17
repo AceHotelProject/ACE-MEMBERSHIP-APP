@@ -102,13 +102,12 @@ class VerificationActivity : AppCompatActivity() {
                     result.data?.let { response ->
                         Toast.makeText(this, "Kode OTP: ${response.token}", Toast.LENGTH_LONG).show()
                     }
-                    Toast.makeText(this, "Kode OTP baru telah dikirim", Toast.LENGTH_SHORT).show()
                     startTimer()
                 }
                 is Resource.Error -> {
                     showLoading(false)
                     Toast.makeText(this, "Gagal mengirim OTP baru", Toast.LENGTH_SHORT).show()
-                    binding.ivRefresh.isEnabled = true // Re-enable refresh button on error
+                    binding.ivRefresh.isEnabled = true
                 }
                 else -> {}
             }

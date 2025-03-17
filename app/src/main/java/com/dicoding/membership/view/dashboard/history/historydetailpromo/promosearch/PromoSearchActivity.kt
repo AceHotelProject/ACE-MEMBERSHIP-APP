@@ -25,6 +25,7 @@ import com.dicoding.core.utils.constants.mapToUserRole
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ActivitySearchPromoBinding
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.HistoryDetailPromoActivity
+import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearchfilter.FilterSelectionListener
 import com.dicoding.membership.view.dashboard.history.historydetailpromo.promosearchfilter.PromoFilterBottomSheet
 import com.dicoding.membership.view.dashboard.history.promo.PromoHistoryAdapter
 import com.dicoding.membership.view.dashboard.promo.PromoAdapter
@@ -34,14 +35,19 @@ import com.dicoding.membership.view.popup.token.TokenExpiredDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@Suppress("KotlinConstantConditions")
 @AndroidEntryPoint
-class PromoSearchActivity : AppCompatActivity() {
+class PromoSearchActivity : AppCompatActivity(), FilterSelectionListener {
     private lateinit var binding: ActivitySearchPromoBinding
     private val viewModel: PromoSearchViewModel by viewModels()
 
     private var isFromHistory = false
     private lateinit var promoAdapter: PromoAdapter
     private lateinit var historyAdapter: PromoHistoryAdapter
+
+    private var savedDatePosition = 0
+    private var savedStatusPosition = 0
+    private var savedCategoryPosition = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,33 +77,31 @@ class PromoSearchActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun checkUserRole() {
         viewModel.getUser().observe(this) { loginDomain ->
-            val userRole = mapToUserRole(loginDomain.user.role)
+            ////            Testing
+//            val mockUserRole = UserRole.MEMBER
+//            setupUserVisibility(mockUserRole)
 
-//            Testing
-            val mockUserRole = UserRole.MEMBER
-            setupUserVisibility(mockUserRole)
+                        //            True
+            val finalUserRole = when (val userRole = mapToUserRole(loginDomain.user.role)) {
+                UserRole.USER -> {
+                    // If the role is USER, check isMember status
+                    if (loginDomain.user.isMember) {
+                        UserRole.MEMBER
+                    } else {
+                        UserRole.NONMEMBER
+                    }
+                }
+                // For other roles, keep them as is
+                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
+                else -> userRole // Handle any other cases
+            }
+            setupUserVisibility(finalUserRole)
 
-            //            //            True
-//            val finalUserRole = when (userRole) {
-//                UserRole.USER -> {
-//                    // If the role is USER, check isMember status
-//                    if (loginDomain.user.isMember) {
-//                        UserRole.MEMBER
-//                    } else {
-//                        UserRole.NONMEMBER
-//                    }
-//                }
-//                // For other roles, keep them as is
-//                UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST -> userRole
-//                else -> userRole // Handle any other cases
-//            }
-//            Use This For Real
-//            setupUserVisibility(userRole)
-//            setupAdapters(userRole)
+            setupAdapters(finalUserRole)
 
             setupViews()
 
-            setupAdapters(mockUserRole)
+            setupAdapters(finalUserRole)
 
             setupRecyclerView()
 
@@ -106,17 +110,17 @@ class PromoSearchActivity : AppCompatActivity() {
             setupSwipeRefresh()
 
 
-            when (mockUserRole) {
+            when (finalUserRole) {
                 UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
                     validateToken()
                     observeData()
                 }
                 else -> {
-                    Log.d("PromoSearchActivity", "Unauthorized role: ${mockUserRole.name}, skipping data load")
+                    Log.d("PromoSearchActivity", "Unauthorized role: ${finalUserRole.name}, skipping data load")
                 }
             }
 
-            Log.d("HistoryPromoFragment", "Current User Role: ${mockUserRole.name}")
+            Log.d("HistoryPromoFragment", "Current User Role: ${finalUserRole.name}")
         }
     }
 
@@ -170,7 +174,7 @@ class PromoSearchActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
-        viewModel.getUser().observe(this) { loginDomain ->
+        viewModel.getUser().observe(this) { _ ->
 //            val userRole = mapToUserRole(loginDomain.user.role)
 
             val userRole = UserRole.MEMBER
@@ -194,11 +198,14 @@ class PromoSearchActivity : AppCompatActivity() {
 
     private fun showFilterBottomSheet() {
         val filterBottomSheet = PromoFilterBottomSheet().apply {
-
             arguments = Bundle().apply {
                 putBoolean("isFromHistory", isFromHistory)
+                putInt("initialDatePosition", savedDatePosition)
+                putInt("initialStatusPosition", savedStatusPosition)
+                putInt("initialCategoryPosition", savedCategoryPosition)
             }
 
+            // Set listener untuk callback filter
             setOnFilterSelectedListener { filterType, selectedValue ->
                 when (filterType) {
                     PromoFilterBottomSheet.FilterType.DATE -> {
@@ -215,8 +222,18 @@ class PromoSearchActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            // Set listener untuk menyimpan posisi
+            setFilterSelectionListener(this@PromoSearchActivity)
         }
+
         filterBottomSheet.show(supportFragmentManager, PromoFilterBottomSheet.TAG)
+    }
+
+    override fun onFilterSaved(datePosition: Int, statusPosition: Int, categoryPosition: Int) {
+        savedDatePosition = datePosition
+        savedStatusPosition = statusPosition
+        savedCategoryPosition = categoryPosition
     }
 
     private fun refreshData() {
@@ -304,7 +321,7 @@ class PromoSearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearchInput() {
-        viewModel.getUser().observe(this) { loginDomain ->
+        viewModel.getUser().observe(this) { _ ->
 //            val userRole = mapToUserRole(loginDomain.user.role)
 
             val userRole = UserRole.MEMBER
@@ -401,19 +418,19 @@ class PromoSearchActivity : AppCompatActivity() {
                         }
 
                         launch {
-                            viewModel.selectedStatus.collect { status ->
+                            viewModel.selectedStatus.collect { _ ->
                                 historyAdapter.refresh()
                             }
                         }
 
                         launch {
-                            viewModel.selectedCategory.collect { category ->
+                            viewModel.selectedCategory.collect { _ ->
                                 historyAdapter.refresh()
                             }
                         }
 
                         launch {
-                            viewModel.selectedDate.collect { date ->
+                            viewModel.selectedDate.collect { _ ->
                                 historyAdapter.refresh()
                             }
                         }
@@ -456,19 +473,19 @@ class PromoSearchActivity : AppCompatActivity() {
                         }
 
                         launch {
-                            viewModel.selectedStatus.collect { status ->
+                            viewModel.selectedStatus.collect { _ ->
                                 promoAdapter.refresh()
                             }
                         }
 
                         launch {
-                            viewModel.selectedCategory.collect { category ->
+                            viewModel.selectedCategory.collect { _ ->
                                 promoAdapter.refresh()
                             }
                         }
 
                         launch {
-                            viewModel.selectedDate.collect { date ->
+                            viewModel.selectedDate.collect { _ ->
                                 promoAdapter.refresh()
                             }
                         }

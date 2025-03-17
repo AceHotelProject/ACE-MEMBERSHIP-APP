@@ -38,6 +38,8 @@ class ManajemenMitraActivity : AppCompatActivity() {
     private val viewModel: ManajemenMitraViewModel by viewModels()
     private lateinit var merchantAdapter: MerchantPagingAdapter
 
+    private var savedMerchantIdToSelect: String? = null
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -199,6 +201,15 @@ class ManajemenMitraActivity : AppCompatActivity() {
     }
 
     private fun observeMerchants() {
+
+        viewModel.getMerchantId().observe(this) { savedMerchantId ->
+            if (!savedMerchantId.isNullOrEmpty()) {
+                Log.d("ManajemenMitra", "Retrieved saved merchant ID: $savedMerchantId")
+                // Simpan ID untuk digunakan nanti setelah data dimuat
+                savedMerchantIdToSelect = savedMerchantId
+            }
+        }
+
         // Observe Paging Data
         lifecycleScope.launch {
             viewModel.getMerchants().collectLatest { pagingData ->
@@ -233,6 +244,62 @@ class ManajemenMitraActivity : AppCompatActivity() {
                             binding.clBody.visibility = View.VISIBLE  // Tampilkan ScrollView
                             binding.swipeRefresh.isRefreshing = false
                             Log.d("ManajemenMitraActivity", "Merchants loaded successfully")
+
+                            // Cek apakah data kosong setelah dimuat
+                            if (merchantAdapter.itemCount == 0) {
+                                Log.d("ManajemenMitra", "No merchants found in adapter")
+                                return@collectLatest
+                            }
+
+                            // Setelah data dimuat, pilih merchant berdasarkan prioritas:
+                            // 1. Merchant dengan ID yang tersimpan
+                            // 2. Jika tidak ada yang tersimpan, pilih merchant pertama
+                            if (!savedMerchantIdToSelect.isNullOrEmpty()) {
+                                // Coba temukan merchant dengan ID yang tersimpan
+                                Log.d("ManajemenMitra", "Trying to select merchant with ID: $savedMerchantIdToSelect")
+
+                                // Cek jika item dengan ID tersebut ada dalam daftar
+                                val merchantExists = merchantAdapter.snapshot().items.any { it.id == savedMerchantIdToSelect }
+
+                                if (merchantExists) {
+                                    // Set merchant terpilih
+                                    merchantAdapter.setSelectedMerchantId(savedMerchantIdToSelect!!)
+                                    Log.d("ManajemenMitra", "Selected merchant with saved ID: $savedMerchantIdToSelect")
+                                } else {
+                                    // Jika merchant dengan ID tersimpan tidak ditemukan, pilih item pertama
+                                    val firstMerchantId = merchantAdapter.getItemIdAt(0)
+                                    Log.d("ManajemenMitra", "Saved merchant ID not found, selecting first merchant with ID: $firstMerchantId")
+
+                                    if (firstMerchantId != null) {
+                                        // Simpan merchant ID yang baru
+                                        viewModel.saveMerchantId(firstMerchantId).observe(this@ManajemenMitraActivity) { success ->
+                                            if (success) {
+                                                Log.d("ManajemenMitra", "Successfully saved first merchant ID: $firstMerchantId")
+                                                merchantAdapter.setSelectedPosition(0)
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Jika tidak ada ID yang tersimpan, pilih merchant pertama
+                                Log.d("ManajemenMitra", "No saved merchant ID, selecting first merchant")
+                                val firstMerchant = merchantAdapter.getMerchantAt(0)
+                                if (firstMerchant != null) {
+                                    val firstMerchantId = firstMerchant.id
+                                    Log.d("ManajemenMitra", "Selecting first merchant with ID: $firstMerchantId")
+
+                                    // Simpan merchant ID yang baru
+                                    viewModel.saveMerchantId(firstMerchantId).observe(this@ManajemenMitraActivity) { success ->
+                                        if (success) {
+                                            Log.d("ManajemenMitra", "Successfully saved first merchant ID: $firstMerchantId")
+                                            merchantAdapter.setSelectedPosition(0)
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Reset setelah digunakan
+                            savedMerchantIdToSelect = null
                         }
                     }
                 }
