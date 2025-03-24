@@ -6,12 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".view.dashboard.history.poin.HistoryTransferPointFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_poin"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/item_history_poin"
-        />
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:visibility="visible">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_poin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_history_poin" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!--    Tidak Memiliki riwayat-->
     <TextView
@@ -116,7 +124,7 @@
         android:id="@+id/loading_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="0dp"

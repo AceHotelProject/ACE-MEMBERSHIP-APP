@@ -19,7 +19,13 @@ interface IUserRepository {
         subscriptionEndDate: String? = null
     ): Flow<Resource<User>>
 
-    fun getAllUsersData(page: Int): Flow<Resource<UserList>>
+    fun getAllUsersData(
+        page: Int,
+        search: String? = null,
+        member: Boolean? = null,
+        subscriptionType: String? = null,
+        startDate: String? = null
+    ): Flow<Resource<UserList>>
 
     fun getUserData(id: String): Flow<Resource<User>>
 

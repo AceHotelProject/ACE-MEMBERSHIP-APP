@@ -4,34 +4,28 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.dicoding.core.domain.membership.model.Subscription
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemCardMemberBinding
 
 class HistoryMemberAdapter : RecyclerView.Adapter<HistoryMemberAdapter.ViewHolder>() {
-    private val subscriptions = mutableListOf<Subscription>()
+    private var userList = ArrayList<User>()
     private var onItemClickListener: ((String) -> Unit)? = null
-    private var onLoadMoreListener: (() -> Unit)? = null
 
     fun setOnItemClickListener(listener: (String) -> Unit) {
         onItemClickListener = listener
     }
 
-    fun setOnLoadMoreListener(listener: () -> Unit) {
-        onLoadMoreListener = listener
+    fun setData(newList: List<User>) {
+        userList.clear()
+        userList.addAll(newList)
+        notifyDataSetChanged()
     }
 
-    fun submitList(newSubscriptions: List<Subscription>, isRefresh: Boolean) {
-        if (isRefresh) {
-            subscriptions.clear()
-        }
-        val startPosition = subscriptions.size
-        subscriptions.addAll(newSubscriptions)
-        if (isRefresh) {
-            notifyDataSetChanged()
-        } else {
-            notifyItemRangeInserted(startPosition, newSubscriptions.size)
-        }
+    fun addData(newList: List<User>) {
+        val oldSize = userList.size
+        userList.addAll(newList)
+        notifyItemRangeInserted(oldSize, newList.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,28 +35,25 @@ class HistoryMemberAdapter : RecyclerView.Adapter<HistoryMemberAdapter.ViewHolde
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = subscriptions.size
+    override fun getItemCount(): Int = userList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(subscriptions[position])
-
-        // Trigger load more when we're at the end of the list
-        if (position == subscriptions.size - 1) {
-            onLoadMoreListener?.invoke()
-        }
+        holder.bind(userList[position])
     }
 
     inner class ViewHolder(private val binding: ItemCardMemberBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(subscription: Subscription) {
+        fun bind(user: User) {
             with(binding) {
-                // Set membership type
-                labelMembershipType.text = subscription.subscriptionType
+                // Set subscription type
+                labelMembershipType.text = user.membership?.subscriptionType?.type ?: "-"
 
                 // Set status with appropriate color
-                labelPeriodType.text = subscription.status
-                if (subscription.status.equals("active", ignoreCase = true)) {
+                val status = user.membership?.status ?: "-"
+                labelPeriodType.text = status
+
+                if (status.equals("active", ignoreCase = true)) {
                     labelPeriodType.setBackgroundResource(R.drawable.chip_category_green)
                     labelPeriodType.setTextColor(ContextCompat.getColor(root.context, R.color.green))
                 } else {
@@ -71,13 +62,13 @@ class HistoryMemberAdapter : RecyclerView.Adapter<HistoryMemberAdapter.ViewHolde
                 }
 
                 // Set user information
-                tvUserName.text = subscription.userId?.name ?: "-"
-                tvUserEmail.text = subscription.userId?.id ?: "-"
-                tvUserPhone.text = "-" // Phone not available in subscription data
+                tvUserName.text = user.name ?: "-"
+                tvUserEmail.text = user.email ?: "-"
+                tvUserPhone.text = user.phone ?: "-"
 
                 // Set click listener
                 root.setOnClickListener {
-                    subscription.userId?.id?.let { userId ->
+                    user.id?.let { userId ->
                         onItemClickListener?.invoke(userId)
                     }
                 }

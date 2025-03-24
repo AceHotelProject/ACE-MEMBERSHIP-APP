@@ -76,6 +76,7 @@ class HistoryTransferPointFragment : Fragment() {
                 when (finalUserRole) {
                     UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
                         setupRecyclerView(data.user.id)
+                        setupSwipeRefresh(data.user.id)
                         viewModel.getUserHistory(data.user.id)
 
                         // Observe point history data
@@ -94,7 +95,7 @@ class HistoryTransferPointFragment : Fragment() {
             UserRole.ADMIN, UserRole.MITRA, UserRole.RECEPTIONIST, UserRole.MEMBER -> {
                 binding.apply {
                     Log.d("debug2", "MEMBER")
-                    rvPoin.visibility = View.VISIBLE
+                    swipeRefresh.visibility = View.VISIBLE
                     layoutNonMember.visibility = View.GONE
                     loadingOverlay.visibility = View.GONE
                     layoutPending.visibility = View.GONE
@@ -102,8 +103,8 @@ class HistoryTransferPointFragment : Fragment() {
             }
             UserRole.PENDINGMEMBER -> {
                 binding.apply {
-                    Log.d("debug2", "MEMBER")
-                    rvPoin.visibility = View.GONE
+                    Log.d("debug2", "PENDING MEMBER")
+                    swipeRefresh.visibility = View.GONE
                     layoutNonMember.visibility = View.GONE
                     loadingOverlay.visibility = View.GONE
                     layoutPending.visibility = View.VISIBLE
@@ -120,7 +121,7 @@ class HistoryTransferPointFragment : Fragment() {
             UserRole.NONMEMBER -> {
                 binding.apply {
                     Log.d("debug2", "NMEMBER")
-                    rvPoin.visibility = View.GONE
+                    swipeRefresh.visibility = View.GONE
                     loadingOverlay.visibility = View.GONE
                     layoutPending.visibility = View.GONE
 
@@ -136,7 +137,7 @@ class HistoryTransferPointFragment : Fragment() {
             }
             else -> {
                 binding.apply {
-                    rvPoin.visibility = View.GONE
+                    swipeRefresh.visibility = View.GONE
                     loadingOverlay.visibility = View.GONE
                     layoutNonMember.visibility = View.GONE
                 }
@@ -144,11 +145,29 @@ class HistoryTransferPointFragment : Fragment() {
         }
     }
 
+    private fun setupSwipeRefresh(userId: String) {
+        binding.swipeRefresh.setOnRefreshListener {
+            // Don't show the loading overlay, only use the SwipeRefresh indicator
+            // Reload data
+            viewModel.getUserHistory(userId)
+
+            // The swipe refresh indicator will be dismissed in observePointHistory()
+        }
+    }
+
     private fun observePointHistory() {
         lifecycleScope.launch {
             viewModel.userHistory.collect { resource ->
+                // Always manage the SwipeRefresh indicator state
+                binding.swipeRefresh.isRefreshing = false
+
                 when (resource) {
-                    is Resource.Loading -> showLoading(true)
+                    is Resource.Loading -> {
+                        // Only show loading overlay if this was NOT triggered by SwipeRefresh
+                        if (!binding.swipeRefresh.isRefreshing) {
+                            showLoading(true)
+                        }
+                    }
                     is Resource.Success -> {
                         showLoading(false)
                         resource.data?.let { history ->
@@ -165,7 +184,9 @@ class HistoryTransferPointFragment : Fragment() {
                         showLoading(false)
                         showEmptyState()
                     }
-                    else -> {}
+                    else -> {
+                        showLoading(false)
+                    }
                 }
             }
         }

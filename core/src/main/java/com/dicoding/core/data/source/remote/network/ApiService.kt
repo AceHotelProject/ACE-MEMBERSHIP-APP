@@ -160,7 +160,11 @@ interface ApiService {
 
     @GET("v1/users")
     suspend fun getAllUsersData(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("search") search: String? = null,
+        @Query("member") member: Boolean? = null,
+        @Query("subscriptionType") subscriptionType: String? = null,
+        @Query("startDate") startDate: String? = null
     ): UserListResponse
 
     @GET("v1/users/{id}")

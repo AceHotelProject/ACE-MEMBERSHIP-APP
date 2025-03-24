@@ -52,14 +52,26 @@ class UserRepository @Inject constructor(
         }.asFlow()
     }
 
-    override fun getAllUsersData(page: Int): Flow<Resource<UserList>> {
+    override fun getAllUsersData(
+        page: Int,
+        search: String?,
+        member: Boolean?,
+        subscriptionType: String?,
+        startDate: String?
+    ): Flow<Resource<UserList>> {
         return object : NetworkBoundResource<UserList, UserListResponse>() {
             override suspend fun fetchFromApi(response: UserListResponse): UserList {
                 return UserDataMapper.mapResponsesToDomain(response)
             }
 
             override suspend fun createCall(): Flow<ApiResponse<UserListResponse>> {
-                return remoteDataSource.getAllUsersData(page)
+                return remoteDataSource.getAllUsersData(
+                    page = page,
+                    search = search,
+                    member = member,
+                    subscriptionType = subscriptionType,
+                    startDate = startDate
+                )
             }
         }.asFlow()
     }

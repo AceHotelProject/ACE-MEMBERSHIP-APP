@@ -9,6 +9,8 @@ import com.dicoding.core.domain.auth.model.LoginDomain
 import com.dicoding.core.domain.auth.usecase.AuthUseCase
 import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
+import com.dicoding.core.domain.user.model.UserList
+import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HistoryMemberViewModel @Inject constructor(
     private val membershipUseCase: MembershipUseCase,
+    private val userUseCase: UserUseCase,
     private val authUseCase: AuthUseCase
 ): ViewModel() {
     private val _userData = MutableLiveData<LoginDomain>()
@@ -24,8 +27,17 @@ class HistoryMemberViewModel @Inject constructor(
     private val _subscriptionHistory = MutableLiveData<Resource<SubscriptionHistory>>()
     val subscriptionHistory: LiveData<Resource<SubscriptionHistory>> = _subscriptionHistory
 
+    private val _userList = MutableLiveData<Resource<UserList>>()
+    val userList: LiveData<Resource<UserList>> = _userList
+
+
     var currentPage = 1
-        private set
+    private var maxPage = 1
+    var isLastPage = false
+
+    private var currentSearch: String? = null
+    private var currentSubscriptionType: String? = null
+    private var currentStartDate: String? = null
 
     fun getUserData() {
         viewModelScope.launch {
@@ -36,19 +48,28 @@ class HistoryMemberViewModel @Inject constructor(
         }
     }
 
-    fun getSubscriptionHistory(isRefresh: Boolean = false) {
-        if (isRefresh) currentPage = 1
-
-        viewModelScope.launch {
-            membershipUseCase.getSubscriptionHistory(currentPage)
-                .collect { result ->
-                    _subscriptionHistory.value = result
+    fun getAllUsers() {
+        if (!isLastPage) {
+            viewModelScope.launch {
+                userUseCase.getAllUsersData(
+                    page = currentPage,
+                    search = currentSearch,
+                    member = true, // Always true as per requirement
+                    subscriptionType = currentSubscriptionType,
+                    startDate = currentStartDate
+                ).collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let {
+                                maxPage = it.totalPages
+                                isLastPage = currentPage >= maxPage
+                            }
+                        }
+                        else -> {}
+                    }
+                    _userList.value = result
                 }
+            }
         }
-    }
-
-    fun loadNextPage() {
-        currentPage++
-        getSubscriptionHistory()
     }
 }

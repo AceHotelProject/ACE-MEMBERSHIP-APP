@@ -165,10 +165,22 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getAllUsersData(page: Int): Flow<ApiResponse<UserListResponse>> {
+    suspend fun getAllUsersData(
+        page: Int,
+        search: String? = null,
+        member: Boolean? = null,
+        subscriptionType: String? = null,
+        startDate: String? = null
+    ): Flow<ApiResponse<UserListResponse>> {
         return flow {
             try {
-                val response = apiService.getAllUsersData(page)
+                val response = apiService.getAllUsersData(
+                    page = page,
+                    search = search,
+                    member = member,
+                    subscriptionType = subscriptionType,
+                    startDate = startDate
+                )
                 if (response.data.isNotEmpty()) {
                     emit(ApiResponse.Success(response))
                 } else {

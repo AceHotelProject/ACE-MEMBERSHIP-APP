@@ -13,6 +13,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.core.data.source.Resource
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.databinding.FragmentMemberBinding
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.HistoryDetailRiwayatActivity
 import com.dicoding.membership.view.dashboard.history.historydetailriwayat.pencarian.PencarianMemberActivity
@@ -25,7 +26,7 @@ class MemberFragment : Fragment() {
 
     private var _binding: FragmentMemberBinding? = null
     private val binding get() = _binding!!
-    private lateinit var subscriptionAdapter: SubscriptionAdapter
+    private lateinit var userAdapter: UserAdapter
 
     private val memberViewModel: MemberViewModel by viewModels()
 
@@ -44,72 +45,102 @@ class MemberFragment : Fragment() {
         // RecyclerView implementation
         setupRecyclerView()
 
-        // Observe data
-        observeSubscriptionData()
-        observeMembershipStats()
+        // Setup SwipeRefreshLayout
+        setupSwipeRefresh()
 
-        // Load data
-        memberViewModel.getSubscriptionHistory()
+        // Observe data
+        observeUserData()
+
+        // Set default member filter to true and load data
+        memberViewModel.getAllUsers()
 
         validateToken()
         handleMenuButton()
     }
 
-    private fun observeSubscriptionData() {
-        memberViewModel.subscriptionHistory.observe(viewLifecycleOwner) { resource ->
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            // Reset data and reload
+            memberViewModel.currentPage = 1
+            memberViewModel.isLastPage = false
+            memberViewModel.getAllUsers()
+        }
+    }
+
+    private fun observeUserData() {
+        memberViewModel.userList.observe(viewLifecycleOwner) { resource ->
             when(resource) {
-                is Resource.Loading -> showLoading(true)
+                is Resource.Loading -> {
+                    showLoading(true)
+                }
                 is Resource.Success -> {
+                    // Always stop refreshing and hide loading when success
+                    binding.swipeRefresh.isRefreshing = false
                     showLoading(false)
-                    resource.data?.let { subscriptionHistory ->
-                        if (memberViewModel.subscriptionPage == 1) {
-                            subscriptionAdapter.setData(subscriptionHistory.results)
+
+                    resource.data?.let { userList ->
+                        if (memberViewModel.currentPage == 1) {
+                            userAdapter.setData(userList.data)
                         } else {
-                            subscriptionAdapter.addData(subscriptionHistory.results)
+                            userAdapter.addData(userList.data)
                         }
+
+                        // Update membership stats
+                        updateMembershipStats(userList.data)
                     }
                 }
                 is Resource.Error -> {
+                    // Always stop refreshing and hide loading when error
+                    binding.swipeRefresh.isRefreshing = false
                     showLoading(false)
                     Toast.makeText(requireContext(), "Error: ${resource.message}", Toast.LENGTH_SHORT).show()
                 }
-                else -> { showLoading(false) }
+                else -> {
+                    binding.swipeRefresh.isRefreshing = false
+                    showLoading(false)
+                }
             }
         }
     }
 
-    private fun observeMembershipStats() {
-        memberViewModel.membershipStats.observe(viewLifecycleOwner) { stats ->
-            // Set total members
-            binding.tvTotalMember.text = stats.totalMembers.toString()
+    private fun updateMembershipStats(users: List<User>) {
+        val totalMembers = users.size
 
-            // Get top 3 membership types by count
-            val topMemberships = stats.membershipCounts
-                .entries
-                .sortedByDescending { it.value }
-                .take(3)
-                .toList()
+        // Group by subscription type and count
+        val membershipCounts = users
+            .mapNotNull { it.membership?.subscriptionType?.type }
+            .groupingBy { it }
+            .eachCount()
 
-            // Fill the stats boxes
-            if (topMemberships.isNotEmpty()) {
-                binding.tvMember2.text = "Member ${topMemberships[0].key}"
-                binding.tvMember2Count.text = topMemberships[0].value.toString()
-            }
+        // Set total members
+        binding.tvTotalMember.text = totalMembers.toString()
 
-            if (topMemberships.size > 1) {
-                binding.tvMember3.text = "Member ${topMemberships[1].key}"
-                binding.tvMember3Count.text = topMemberships[1].value.toString()
-            }
+        // Get top 3 membership types by count
+        val topMemberships = membershipCounts
+            .entries
+            .sortedByDescending { it.value }
+            .take(3)
+            .toList()
 
-            if (topMemberships.size > 2) {
-                binding.tvMember4.text = "Member ${topMemberships[2].key}"
-                binding.tvMember4Count.text = topMemberships[2].value.toString()
-            }
+        // Fill the stats boxes
+        if (topMemberships.isNotEmpty()) {
+            binding.tvMember2.text = "Member ${topMemberships[0].key}"
+            binding.tvMember2Count.text = topMemberships[0].value.toString()
+        }
+
+        if (topMemberships.size > 1) {
+            binding.tvMember3.text = "Member ${topMemberships[1].key}"
+            binding.tvMember3Count.text = topMemberships[1].value.toString()
+        }
+
+        if (topMemberships.size > 2) {
+            binding.tvMember4.text = "Member ${topMemberships[2].key}"
+            binding.tvMember4Count.text = topMemberships[2].value.toString()
         }
     }
 
     private fun setupRecyclerView() {
-        subscriptionAdapter = SubscriptionAdapter().apply {
+        userAdapter = UserAdapter().apply {
             setOnItemClickListener { userId ->
                 val intent = Intent(requireContext(), HistoryDetailRiwayatActivity::class.java).apply {
                     putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
@@ -125,7 +156,7 @@ class MemberFragment : Fragment() {
             layoutManager = LinearLayoutManager(context).apply {
                 isAutoMeasureEnabled = true
             }
-            adapter = subscriptionAdapter
+            adapter = userAdapter
         }
 
         // Update scroll listener for pagination
@@ -133,7 +164,7 @@ class MemberFragment : Fragment() {
             if (scrollY > oldScrollY) { // Scrolling down
                 val bottomReached = scrollY + v.height >= v.getChildAt(0).height - 150 // 150dp threshold
                 if (bottomReached) {
-                    memberViewModel.loadMoreSubscriptions()
+                    memberViewModel.loadMoreUsers()
                 }
             }
         })

@@ -33,8 +33,20 @@ class UserInteractor @Inject constructor(private val userRepository: UserReposit
         )
     }
 
-    override fun getAllUsersData(page: Int): Flow<Resource<UserList>> {
-        return userRepository.getAllUsersData(page)
+    override fun getAllUsersData(
+        page: Int,
+        search: String?,
+        member: Boolean?,
+        subscriptionType: String?,
+        startDate: String?
+    ): Flow<Resource<UserList>> {
+        return userRepository.getAllUsersData(
+            page = page,
+            search = search,
+            member = member,
+            subscriptionType = subscriptionType,
+            startDate = startDate
+        )
     }
 
     override fun getUserData(id: String): Flow<Resource<User>> =

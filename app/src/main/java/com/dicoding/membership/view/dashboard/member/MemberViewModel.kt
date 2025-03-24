@@ -29,7 +29,7 @@ class MemberViewModel @Inject constructor(
 
     var currentPage = 1
     private var maxPage = 1
-    private var isLastPage = false
+    var isLastPage = false
 
     fun loadMoreUsers() {
         if (currentPage < maxPage) {
@@ -38,26 +38,57 @@ class MemberViewModel @Inject constructor(
         }
     }
 
+    // Add these for filter options
+    private var currentSearch: String? = null
+    private var currentSubscriptionType: String? = null
+    private var currentStartDate: String? = null
+    // We'll always filter for members only as per requirement
+    private val isMember: Boolean = true
+
+    fun resetFilters() {
+        currentSearch = null
+        currentSubscriptionType = null
+        currentStartDate = null
+    }
+
+    fun applyFilters(search: String?, subscriptionType: String?, startDate: String?) {
+        // Update filter values
+        currentSearch = search
+        currentSubscriptionType = subscriptionType
+        currentStartDate = startDate
+
+        // Reset pagination and load with new filters
+        currentPage = 1
+        maxPage = 1
+        isLastPage = false
+        _userList.value = Resource.Loading()
+        getAllUsers()
+    }
+
     fun getAllUsers() {
         if (!isLastPage) {
             viewModelScope.launch {
-                userUseCase.getAllUsersData(currentPage)
-                    .collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                result.data?.let {
-                                    maxPage = it.totalPages
-                                    isLastPage = currentPage >= maxPage
-                                }
+                userUseCase.getAllUsersData(
+                    page = currentPage,
+                    search = currentSearch,
+                    member = isMember, // Always true as per requirement
+                    subscriptionType = currentSubscriptionType,
+                    startDate = currentStartDate
+                ).collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            result.data?.let {
+                                maxPage = it.totalPages
+                                isLastPage = currentPage >= maxPage
                             }
-                            else -> {}
                         }
-                        _userList.value = result
+                        else -> {}
                     }
+                    _userList.value = result
+                }
             }
         }
     }
-
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
 
@@ -75,6 +106,19 @@ class MemberViewModel @Inject constructor(
     private var isLoadingMore = false
     private var isSubscriptionLastPage = false
 
+    // Reset subscription data for pull-to-refresh
+    fun resetSubscriptionData() {
+        // Reset pagination values
+        subscriptionPage = 1
+        subscriptionMaxPage = 1
+        isSubscriptionLastPage = false
+        isLoadingMore = false
+        allSubscriptions.clear()
+
+        // Set loading state - this will trigger the SwipeRefreshLayout
+        _subscriptionHistory.value = Resource.Loading()
+    }
+
     fun getSubscriptionHistory() {
         if (!isSubscriptionLastPage && !isLoadingMore) {
             isLoadingMore = true
@@ -86,6 +130,11 @@ class MemberViewModel @Inject constructor(
                                 result.data?.let {
                                     subscriptionMaxPage = it.totalPages
                                     isSubscriptionLastPage = subscriptionPage >= subscriptionMaxPage
+
+                                    // If it's page 1 (refresh), clear before adding
+                                    if (subscriptionPage == 1) {
+                                        allSubscriptions.clear()
+                                    }
 
                                     // Add to our full collection
                                     allSubscriptions.addAll(it.results)
@@ -133,4 +182,5 @@ class MemberViewModel @Inject constructor(
             _membershipStats.value = stats
         }
     }
+
 }
