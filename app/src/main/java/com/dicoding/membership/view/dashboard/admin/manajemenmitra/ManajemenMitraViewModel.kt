@@ -17,6 +17,8 @@ class ManajemenMitraViewModel @Inject constructor(
 
     fun getRefreshToken() = authUseCase.getRefreshToken().asLiveData()
 
+    fun getMerchantId() = authUseCase.getMerchantId().asLiveData()
+
     fun getMerchants() = merchantUseCase.getMerchants().cachedIn(viewModelScope)
 
     fun deleteMerchant(id: String) = merchantUseCase.deleteMerchant(id).asLiveData()

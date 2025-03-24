@@ -63,10 +63,9 @@ class PromoHistoryAdapter : PagingDataAdapter<PromoHistoryDomain, PromoHistoryAd
                     }
                 }
 
-                tvPromoDate.text = formatDate(history.createdAt)
+                tvPromoDate.text = formatDate(history.expiredDate)
                 tvPromoAuthor.text = history.userName
 
-                // Tambahkan onClickListener
                 root.setOnClickListener {
                     onItemClickCallback?.onItemClicked(history)
                 }

@@ -179,6 +179,15 @@
                 android:src="@drawable/vector_line" />
 
             <TextView
+                android:id="@+id/tv_berlaku"
+                style="@style/textStyleMedium_14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/dark_grey"
+                android:text="Berlaku 14 Mei 2020 s.d 15 Mei 2020" />
+
+            <TextView
                 android:id="@+id/tv_deskripsi_title"
                 style="@style/textStyleMedium_14"
                 android:layout_width="wrap_content"

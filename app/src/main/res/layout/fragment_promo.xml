@@ -111,6 +111,10 @@
                     android:clipToPadding="false"
                     android:orientation="horizontal"
                     android:visibility="gone"
+                    android:scrollbars="horizontal"
+                    android:fadeScrollbars="false"
+                    android:scrollbarStyle="outsideOverlay"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="1"
                     tools:listitem="@layout/item_dashboard_promo" />
 

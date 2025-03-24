@@ -32,6 +32,22 @@ object DateUtils {
         }
     }
 
+    fun convertDateBerlaku(dateStr: String): String {
+        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val desiredFormat = SimpleDateFormat("d MMMM yyyy", Locale("id", "ID"))
+
+        sourceFormat.timeZone = TimeZone.getTimeZone("UTC") // Input dianggap UTC
+        desiredFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta") // Output untuk zona waktu Indonesia
+
+        return try {
+            val date = sourceFormat.parse(dateStr) ?: return ""
+            desiredFormat.format(date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun formatToWIB(dateString: String?): String {
         // Return teks default jika dateString null atau kosong

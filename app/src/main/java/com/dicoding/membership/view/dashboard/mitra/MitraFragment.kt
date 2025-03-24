@@ -55,6 +55,8 @@ class MitraFragment : Fragment() {
         setupImageAdapter()
 
         handleMenuButton()
+
+        setupSwipeRefresh()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -165,6 +167,28 @@ class MitraFragment : Fragment() {
         }
     }
 
+    private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            // Dapatkan ID merchant yang telah disimpan atau sedang aktif
+            viewModel.getMerchantId().observe(viewLifecycleOwner) { merchantId ->
+                if (merchantId.isNotEmpty()) {
+                    loadMerchantData(merchantId)
+                } else {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    // Jika tidak ada merchant ID yang tersimpan, refresh dengan mendapatkan merchant pertama
+                    getFirstMerchant()
+                }
+            }
+        }
+
+        // Kustomisasi warna loading indicator jika diperlukan
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.orange_100,
+            android.R.color.holo_green_light,
+            android.R.color.holo_blue_light
+        )
+    }
+
     private fun getFirstMerchant() {
         lifecycleScope.launch {
             Log.d("MitraFragment", "Starting getFirstMerchant")
@@ -231,10 +255,27 @@ class MitraFragment : Fragment() {
 
     private fun loadMerchantData(merchantId: String) {
         Log.d("MitraFragment", "Loading merchant data for ID: $merchantId")
+
+        // Tampilkan loading terlebih dahulu
+        showLoading()
+
+        // Gunakan collection untuk memantau status loading kedua request
+        val loadingStates = mutableMapOf(
+            "merchantData" to true,
+            "statistics" to true
+        )
+
+        // Fungsi untuk memeriksa apakah semua loading telah selesai
+        fun checkAllLoaded() {
+            if (loadingStates.values.none { it }) {
+                hideLoading()
+            }
+        }
+
         viewModel.getMerchantsById(merchantId).observe(viewLifecycleOwner) { result ->
             when(result) {
                 is Resource.Success -> {
-                    hideLoading()
+                    loadingStates["merchantData"] = false
                     result.data?.let { merchant ->
                         binding.apply {
                             Log.d("MitraFragment", "Successfully loaded merchant: ${result.data?.name}")
@@ -244,28 +285,32 @@ class MitraFragment : Fragment() {
                             }
                             tvMitraType.text = merchant.merchantType
                             tvMitraName.text = merchant.name
-//                            tvMitraPromo.text = merchant
-//                            tvMitraPromoUse.text = merchant
-//                            tvMitraPoin.text = merchant.point
-//                            tvMitraPoinTerima.text = merchant
-//                            tvMitraPoinTransfer.text = merchant
                             tvMitraDescription.text = merchant.detail
                             // Update other UI elements
                         }
                     }
+                    checkAllLoaded()
                 }
-                is Resource.Loading -> showLoading()
+                is Resource.Loading -> {
+                    loadingStates["merchantData"] = true
+                    showLoading()
+                }
                 is Resource.Error -> {
-                    hideLoading()
+                    loadingStates["merchantData"] = false
                     Log.e("MitraFragment", "Failed to load merchant: ${result.message}")
+                    checkAllLoaded()
                 }
-                else -> { }
+                else -> {
+                    loadingStates["merchantData"] = false
+                    checkAllLoaded()
+                }
             }
         }
 
         viewModel.getMerchantStatistic(merchantId).observe(viewLifecycleOwner) { result ->
             when(result) {
                 is Resource.Success -> {
+                    loadingStates["statistics"] = false
                     result.data?.let { statistic ->
                         binding.apply {
                             Log.d("MitraFragment", "Successfully loaded merchant statistics")
@@ -276,11 +321,21 @@ class MitraFragment : Fragment() {
                             tvMitraPoinTransfer.text = statistic.pointOut.toString()
                         }
                     }
+                    checkAllLoaded()
+                }
+                is Resource.Loading -> {
+                    loadingStates["statistics"] = true
+                    showLoading()
                 }
                 is Resource.Error -> {
+                    loadingStates["statistics"] = false
                     Log.e("MitraFragment", "Failed to load merchant statistics: ${result.message}")
+                    checkAllLoaded()
                 }
-                else -> { }
+                else -> {
+                    loadingStates["statistics"] = false
+                    checkAllLoaded()
+                }
             }
         }
     }
@@ -316,14 +371,25 @@ class MitraFragment : Fragment() {
     private fun showLoading() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
+            loadingOverlay.visibility = View.VISIBLE
             layoutMitra.visibility = View.GONE
+
+            if (swipeRefreshLayout.isRefreshing) {
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
+
 
     private fun hideLoading() {
         binding.apply {
             progressBar.visibility = View.GONE
+            loadingOverlay.visibility = View.GONE
             layoutMitra.visibility = View.VISIBLE
+
+            if (swipeRefreshLayout.isRefreshing) {
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

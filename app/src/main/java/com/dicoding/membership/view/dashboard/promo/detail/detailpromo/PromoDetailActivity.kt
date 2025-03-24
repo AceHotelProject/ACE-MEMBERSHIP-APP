@@ -227,6 +227,7 @@ class PromoDetailActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+            tvBerlaku.text = ("Berlaku ${DateUtils.convertDateBerlaku(history.validatedDate)} s.d ${DateUtils.convertDateBerlaku(history.expiredDate)}")
             tvDeskripsi.text = history.promoDetail
             tvPromoTitle.text = "Detail Riwayat Promo"
 
@@ -296,6 +297,8 @@ class PromoDetailActivity : AppCompatActivity() {
                 }
             }
             Log.d("PromoDetail", "Merchant Id ${promo?.merchantId?.isEmpty()}")
+
+            tvBerlaku.text = ("Berlaku ${DateUtils.convertDateBerlaku(promo!!.startDate)} s.d ${DateUtils.convertDateBerlaku(promo.endDate)}")
 
             tvDeskripsi.text = promo?.detail ?: "Deskripsi Tidak Tersedia"
             tvExpiryTime.text = formatToWIB(promo?.expiredDate ?: " ")

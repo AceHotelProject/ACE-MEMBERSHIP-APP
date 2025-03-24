@@ -29,6 +29,14 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
     private lateinit var statusAdapter: FilterChipAdapter
     private lateinit var categoryAdapter: FilterChipAdapter
 
+    private var onFilterSelected: ((FilterType, String) -> Unit)? = null
+
+    private var filterSelectionListener: FilterSelectionListener? = null
+
+    private var initialDatePosition = 0
+    private var initialStatusPosition = 0
+    private var initialCategoryPosition = 0
+
     private val dates = listOf(
         "Semua",
         "Hari Ini",
@@ -44,8 +52,6 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
         "Hiburan", "Sekolah", "Kesehatan", "Pariwisata", "Gym"
     )
 
-    private var onFilterSelected: ((FilterType, String) -> Unit)? = null
-
     private var isFromHistory = false
 
     override fun onCreateView(
@@ -54,23 +60,32 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = BottomSheetFilterBinding.inflate(inflater, container, false)
+
         isFromHistory = arguments?.getBoolean("isFromHistory") ?: false
+        initialDatePosition = arguments?.getInt("initialDatePosition", 0) ?: 0
+        initialStatusPosition = arguments?.getInt("initialStatusPosition", 0) ?: 0
+        initialCategoryPosition = arguments?.getInt("initialCategoryPosition", 0) ?: 0
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.setDatePosition(initialDatePosition)
+        viewModel.setStatusPosition(initialStatusPosition)
+        viewModel.setCategoryPosition(initialCategoryPosition)
+
         checkUserRole()
     }
 
     private fun checkUserRole() {
         viewModel.getUser().observe(viewLifecycleOwner) { loginDomain ->
-            val userRole = mapToUserRole(loginDomain.user.role)
-//            //            Testing
+            //            //            Testing
 //            val mockUserRole = UserRole.MEMBER
 
                         //            True
-            val finalUserRole = when (userRole) {
+            val finalUserRole = when (val userRole = mapToUserRole(loginDomain.user.role)) {
                 UserRole.USER -> {
                     // If the role is USER, check isMember status
                     if (loginDomain.user.isMember) {
@@ -189,6 +204,17 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
                 setupRecyclerViews(showStatusFilter = false)
             }
         }
+        viewModel.selectedDatePosition.value.let { position ->
+            dateAdapter.setSelectedPosition(position)
+        }
+
+        viewModel.selectedStatusPosition.value.let { position ->
+            statusAdapter.setSelectedPosition(position)
+        }
+
+        viewModel.selectedCategoryPosition.value.let { position ->
+            categoryAdapter.setSelectedPosition(position)
+        }
     }
 
     private fun setupRecyclerViews(showStatusFilter: Boolean, statusList: List<String> = emptyList()) {
@@ -256,12 +282,23 @@ class PromoFilterBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    fun setFilterSelectionListener(listener: FilterSelectionListener) {
+        filterSelectionListener = listener
+    }
+
     fun setOnFilterSelectedListener(listener: (FilterType, String) -> Unit) {
         onFilterSelected = listener
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
+
+        filterSelectionListener?.onFilterSaved(
+            viewModel.selectedDatePosition.value,
+            viewModel.selectedStatusPosition.value,
+            viewModel.selectedCategoryPosition.value
+        )
+
         _binding = null
     }
 
