@@ -5,19 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.auth.model.LoginDomain
-import com.dicoding.core.domain.auth.usecase.AuthUseCase
-import com.dicoding.core.domain.membership.usecase.MembershipUseCase
-import com.dicoding.core.domain.points.model.UserPointHistory
-import com.dicoding.core.domain.points.usecase.PointsUseCase
 import com.dicoding.core.domain.user.model.User
-import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -50,7 +44,7 @@ class HistoryDetailMemberViewModel @Inject constructor(
                     if (result is Resource.Success && result.data != null) {
                         // Safely access the verificatorId
                         val verificatorId = result.data!!.membership?.verificatorId
-                        if (verificatorId != null && verificatorId.isNotEmpty()) {
+                        if (!verificatorId.isNullOrEmpty()) {
                             getVerificatorData(verificatorId)
                         }
                     }
@@ -74,13 +68,15 @@ class HistoryDetailMemberViewModel @Inject constructor(
     fun deleteUser(userId: String) {
         viewModelScope.launch {
             _deleteUserResult.value = Resource.Loading()
-            userUseCase.deleteUser(userId)
-                .catch { e ->
-                    _deleteUserResult.value = Resource.Error(e.message ?: "Failed to delete user")
+            try {
+                withContext(Dispatchers.IO) {
+                    userUseCase.deleteUser(userId)
                 }
-                .collect { result ->
-                    _deleteUserResult.value = result
-                }
+                // If we get here, it means the API call succeeded
+                _deleteUserResult.value = Resource.Success(Unit)
+            } catch (e: Exception) {
+                _deleteUserResult.value = Resource.Error(e.message ?: "Failed to delete user")
+            }
         }
     }
 

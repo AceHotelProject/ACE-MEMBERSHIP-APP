@@ -4,27 +4,33 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.dicoding.core.domain.membership.model.Subscription
+import com.dicoding.core.domain.user.model.User
 import com.dicoding.membership.R
 import com.dicoding.membership.databinding.ItemCardMemberBinding
 
-class SubscriptionSearchAdapter : RecyclerView.Adapter<SubscriptionSearchAdapter.ViewHolder>() {
-    private var subscriptionList = ArrayList<Subscription>()
+class UserSearchAdapter : RecyclerView.Adapter<UserSearchAdapter.ViewHolder>() {
+    private var userList = ArrayList<User>()
     private var onItemClickListener: ((String) -> Unit)? = null
-
-    fun setData(newList: List<Subscription>) {
-        subscriptionList.clear()
-        subscriptionList.addAll(newList)
-        notifyDataSetChanged()
-    }
-
-    fun clearData() {
-        subscriptionList.clear()
-        notifyDataSetChanged()
-    }
 
     fun setOnItemClickListener(listener: (String) -> Unit) {
         onItemClickListener = listener
+    }
+
+    fun setData(newList: List<User>) {
+        userList.clear()
+        userList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun addData(newList: List<User>) {
+        val oldSize = userList.size
+        userList.addAll(newList)
+        notifyItemRangeInserted(oldSize, newList.size)
+    }
+
+    fun clearData() {
+        userList.clear()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,23 +40,25 @@ class SubscriptionSearchAdapter : RecyclerView.Adapter<SubscriptionSearchAdapter
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = subscriptionList.size
+    override fun getItemCount(): Int = userList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(subscriptionList[position])
+        holder.bind(userList[position])
     }
 
     inner class ViewHolder(private val binding: ItemCardMemberBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(subscription: Subscription) {
+        fun bind(user: User) {
             with(binding) {
                 // Set subscription type
-                labelMembershipType.text = subscription.subscriptionType
+                labelMembershipType.text = user.membership?.subscriptionType?.type ?: "-"
 
                 // Set status with appropriate color
-                labelPeriodType.text = subscription.status
-                if (subscription.status.equals("active", ignoreCase = true)) {
+                val status = user.membership?.status ?: "-"
+                labelPeriodType.text = status
+
+                if (status.equals("active", ignoreCase = true)) {
                     labelPeriodType.setBackgroundResource(R.drawable.chip_category_green)
                     labelPeriodType.setTextColor(ContextCompat.getColor(root.context, R.color.green))
                 } else {
@@ -59,13 +67,13 @@ class SubscriptionSearchAdapter : RecyclerView.Adapter<SubscriptionSearchAdapter
                 }
 
                 // Set user information
-                tvUserName.text = subscription.userId?.name ?: "-"
-                tvUserEmail.text = subscription.userId?.id ?: "-"
-                tvUserPhone.text = "-"  // Not available in subscription data
+                tvUserName.text = user.name ?: "-"
+                tvUserEmail.text = user.email ?: "-"
+                tvUserPhone.text = user.phone ?: "-"
 
-                // Set click listener to pass the user ID
+                // Set click listener
                 root.setOnClickListener {
-                    subscription.userId?.id?.let { userId ->
+                    user.id.let { userId ->
                         onItemClickListener?.invoke(userId)
                     }
                 }

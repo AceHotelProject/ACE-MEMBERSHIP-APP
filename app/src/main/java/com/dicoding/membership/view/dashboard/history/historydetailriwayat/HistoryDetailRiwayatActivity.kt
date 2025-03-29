@@ -2,17 +2,13 @@ package com.dicoding.membership.view.dashboard.history.historydetailriwayat
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.dicoding.core.data.source.Resource
 import com.dicoding.core.domain.user.model.User
@@ -27,6 +23,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryDetailRiwayatBinding
     private val viewModel: HistoryDetailMemberViewModel by viewModels()
     private var currentUser: User? = null
+    private var currentUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +32,11 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
 
         setupCloseButton()
         setupMenuButton()
+        setupSwipeRefresh()
 
         // Get user ID and load data
-        intent.getStringExtra(EXTRA_USER_ID)?.let { userId ->
+        currentUserId = intent.getStringExtra(EXTRA_USER_ID)
+        currentUserId?.let { userId ->
             viewModel.getUserData(userId)
         }
 
@@ -45,6 +44,23 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
         observeVerificatorData()
         observeDeleteResult()
         setupEditButton()
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.apply {
+            setColorSchemeResources(
+                R.color.orange_100,
+                R.color.green,
+                R.color.dark_grey
+            )
+
+            setOnRefreshListener {
+                // Reload user data when swipe refreshing
+                currentUserId?.let { userId ->
+                    viewModel.getUserData(userId)
+                }
+            }
+        }
     }
 
     private fun setupCloseButton() {
@@ -88,7 +104,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
             setDialogTitle("Hapus User?")
             setDialogMessage("Apakah anda yakin ingin menghapus user ini?")
             setOnYesClickListener {
-                intent.getStringExtra(EXTRA_USER_ID)?.let { userId ->
+                currentUserId?.let { userId ->
                     viewModel.deleteUser(userId)
                 }
             }
@@ -100,12 +116,15 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
         viewModel.userData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.loadingOverlay.visibility = View.VISIBLE
-                    binding.scrollableContent.visibility = View.GONE
+                    if (!binding.swipeRefresh.isRefreshing) {
+                        binding.loadingOverlay.visibility = View.VISIBLE
+                        binding.scrollableContent.visibility = View.GONE
+                    }
                 }
                 is Resource.Success -> {
                     binding.loadingOverlay.visibility = View.GONE
                     binding.scrollableContent.visibility = View.VISIBLE
+                    binding.swipeRefresh.isRefreshing = false
 
                     resource.data?.let { user ->
                         currentUser = user
@@ -152,7 +171,6 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                                 .centerCrop()
                                 .into(ivBuktipembayaran)
 
-
                             // Log verificator ID for debugging
                             Log.d("HistoryDetail", "VerificatorId: ${user.membership?.verificatorId}")
                         }
@@ -160,9 +178,12 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     binding.loadingOverlay.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
                 }
-                else -> {}
+                else -> {
+                    binding.swipeRefresh.isRefreshing = false
+                }
             }
         }
     }
@@ -171,8 +192,7 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
         viewModel.verificatorData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // You might want to show a loading indicator for the verificator field
-                    // but we'll keep it simple for now
+                    // No need to show loading for just the verificator field
                 }
                 is Resource.Success -> {
                     resource.data?.let { verificator ->
@@ -199,14 +219,18 @@ class HistoryDetailRiwayatActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.loadingOverlay.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     Toast.makeText(this, "User berhasil dihapus", Toast.LENGTH_SHORT).show()
                     finish()
                 }
                 is Resource.Error -> {
                     binding.loadingOverlay.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                     Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
                 }
-                else -> {}
+                else -> {
+                    binding.swipeRefresh.isRefreshing = false
+                }
             }
         }
     }

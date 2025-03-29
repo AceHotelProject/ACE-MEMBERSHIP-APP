@@ -5,21 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dicoding.core.data.source.Resource
-import com.dicoding.core.domain.membership.model.Subscription
-import com.dicoding.core.domain.membership.model.SubscriptionHistory
 import com.dicoding.core.domain.membership.usecase.MembershipUseCase
-import com.dicoding.membership.view.dashboard.history.historydetailpoin.pencarian.dataclass.DateFilter
+import com.dicoding.core.domain.user.model.User
+import com.dicoding.core.domain.user.model.UserList
+import com.dicoding.core.domain.user.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PencarianMemberViewModel @Inject constructor(
-    private val membershipUseCase: MembershipUseCase
+    private val membershipUseCase: MembershipUseCase,
+    private val userUseCase: UserUseCase // Add the user use case
 ) : ViewModel() {
 
-    private val _subscriptionHistory = MutableLiveData<Resource<SubscriptionHistory>>()
-    val subscriptionHistory: LiveData<Resource<SubscriptionHistory>> = _subscriptionHistory
+    // Change from SubscriptionHistory to UserList
+    private val _userList = MutableLiveData<Resource<UserList>>()
+    val userList: LiveData<Resource<UserList>> = _userList
 
     private val _membershipTypes = MutableLiveData<List<String>>()
     val membershipTypes: LiveData<List<String>> = _membershipTypes
@@ -32,44 +34,34 @@ class PencarianMemberViewModel @Inject constructor(
     private var isLastPage = false
 
     init {
-        loadMembershipTypes()
+        loadMembershipTypes() // Keep this for the membership type filter
     }
 
-    fun searchSubscriptions(
+    // Change method to search users instead of subscriptions
+    fun searchUsers(
         search: String? = null,
-        time: String? = null,
-        type: String? = null
+        startDate: String? = null,
+        subscriptionType: String? = null
     ) {
         viewModelScope.launch {
-            _subscriptionHistory.value = Resource.Loading()
+            _userList.value = Resource.Loading()
             currentPage = 1
             isLastPage = false
 
-            membershipUseCase.getSubscriptionHistory(
+            userUseCase.getAllUsersData(
                 page = currentPage,
-                limit = 10,
                 search = search,
-                time = time,
-                type = type
+                member = true, // Always true as per requirement
+                subscriptionType = subscriptionType,
+                startDate = startDate
             ).collect { result ->
-                _subscriptionHistory.value = when (result) {
+                _userList.value = when (result) {
                     is Resource.Success -> {
-                        if (result.data?.results?.isEmpty() == true) {
-                            // If results is empty, pass an empty subscription history
-                            Resource.Success(SubscriptionHistory(
-                                results = emptyList(),
-                                page = 1,
-                                limit = 10,
-                                totalPages = 0,
-                                totalResults = 0
-                            ))
-                        } else {
-                            result.data?.let {
-                                maxPage = it.totalPages
-                                isLastPage = currentPage >= maxPage
-                            }
-                            result
+                        result.data?.let {
+                            maxPage = it.totalPages
+                            isLastPage = currentPage >= maxPage
                         }
+                        result
                     }
                     else -> result
                 }
@@ -79,35 +71,35 @@ class PencarianMemberViewModel @Inject constructor(
         }
     }
 
-    fun loadMoreSubscriptions(
+    fun loadMoreUsers(
         search: String? = null,
-        time: String? = null,
-        type: String? = null
+        startDate: String? = null,
+        subscriptionType: String? = null
     ) {
         if (!isLastPage) {
             viewModelScope.launch {
                 currentPage++
 
-                membershipUseCase.getSubscriptionHistory(
+                userUseCase.getAllUsersData(
                     page = currentPage,
-                    limit = 10,
                     search = search,
-                    time = time,
-                    type = type
+                    member = true,
+                    subscriptionType = subscriptionType,
+                    startDate = startDate
                 ).collect { result ->
                     if (result is Resource.Success) {
-                        val currentList = _subscriptionHistory.value?.data?.results ?: emptyList()
-                        val newList = result.data?.results ?: emptyList()
+                        val currentUsers = _userList.value?.data?.data ?: emptyList()
+                        val newUsers = result.data?.data ?: emptyList()
 
-                        val combinedList = SubscriptionHistory(
-                            results = currentList + newList,
+                        val combinedList = UserList(
+                            data = currentUsers + newUsers,
                             page = result.data?.page ?: 1,
                             limit = result.data?.limit ?: 10,
                             totalPages = result.data?.totalPages ?: 1,
                             totalResults = result.data?.totalResults ?: 0
                         )
 
-                        _subscriptionHistory.value = Resource.Success(combinedList)
+                        _userList.value = Resource.Success(combinedList)
 
                         result.data?.let {
                             maxPage = it.totalPages
@@ -119,6 +111,7 @@ class PencarianMemberViewModel @Inject constructor(
         }
     }
 
+    // Keep this for membership type filters
     private fun loadMembershipTypes() {
         viewModelScope.launch {
             membershipUseCase.getAllMemberships()

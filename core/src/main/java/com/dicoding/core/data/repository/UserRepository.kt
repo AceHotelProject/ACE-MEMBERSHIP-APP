@@ -13,6 +13,7 @@ import com.dicoding.core.domain.user.model.UserList
 import com.dicoding.core.domain.user.repository.IUserRepository
 import com.dicoding.core.utils.datamapper.UserDataMapper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -155,15 +156,29 @@ class UserRepository @Inject constructor(
     }
 
     override fun deleteUser(id: String): Flow<Resource<Unit>> {
-        return object : NetworkBoundResource<Unit, Unit>() {
-            override suspend fun fetchFromApi(response: Unit): Unit {
-                return response
+        return flow {
+            emit(Resource.Loading())
+            try {
+                // Call remote data source directly
+                remoteDataSource.deleteUser(id).collect { apiResponse ->
+                    when (apiResponse) {
+                        is ApiResponse.Success -> {
+                            // Directly emit success without trying to process the Unit value
+                            emit(Resource.Success(Unit))
+                        }
+                        is ApiResponse.Error -> {
+                            emit(Resource.Error(apiResponse.errorMessage))
+                        }
+                        is ApiResponse.Empty -> {
+                            // Handle as success for 204 responses
+                            emit(Resource.Success(Unit))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "An unknown error occurred"))
             }
-
-            override suspend fun createCall(): Flow<ApiResponse<Unit>> {
-                return remoteDataSource.deleteUser(id)
-            }
-        }.asFlow()
+        }
     }
 
     override suspend fun createReferralToken(referralToken: String): Result<ReferralToken> {

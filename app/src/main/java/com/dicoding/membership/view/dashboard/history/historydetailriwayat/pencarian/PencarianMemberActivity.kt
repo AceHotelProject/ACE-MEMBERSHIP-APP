@@ -9,7 +9,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +31,7 @@ import kotlinx.coroutines.launch
 class PencarianMemberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPencarianMemberBinding
     private val viewModel: PencarianMemberViewModel by viewModels()
-    private lateinit var subscriptionAdapter: SubscriptionSearchAdapter
+    private lateinit var userAdapter: UserSearchAdapter
 
     // Filter states
     private var selectedDateFilter: DateFilter? = null
@@ -54,17 +53,17 @@ class PencarianMemberActivity : AppCompatActivity() {
 
         // Initial data load with no filters
         showLoading(true) // Show loading indicator for initial load
-        viewModel.searchSubscriptions()
+        viewModel.searchUsers()
     }
 
     private fun setupRecyclerView() {
-        subscriptionAdapter = SubscriptionSearchAdapter()
+        userAdapter = UserSearchAdapter()
         binding.rvPoin.apply {
-            adapter = subscriptionAdapter
+            adapter = userAdapter
             layoutManager = LinearLayoutManager(this@PencarianMemberActivity)
         }
 
-        subscriptionAdapter.setOnItemClickListener { userId ->
+        userAdapter.setOnItemClickListener { userId ->
             val intent = Intent(this, HistoryDetailRiwayatActivity::class.java).apply {
                 putExtra(HistoryDetailRiwayatActivity.EXTRA_USER_ID, userId)
             }
@@ -73,19 +72,19 @@ class PencarianMemberActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.subscriptionHistory.observe(this) { resource ->
+        viewModel.userList.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     showLoading(true)
                 }
                 is Resource.Success -> {
                     showLoading(false)
-                    resource.data?.let { history ->
+                    resource.data?.let { userList ->
                         if (viewModel.currentPage == 1) {
-                            subscriptionAdapter.setData(history.results)
+                            userAdapter.setData(userList.data)
                         }
 
-                        updateEmptyState(history.results.isEmpty())
+                        updateEmptyState(userList.data.isEmpty())
                     }
                 }
                 is Resource.Error -> {
@@ -93,7 +92,7 @@ class PencarianMemberActivity : AppCompatActivity() {
                     Toast.makeText(this, resource.message ?: "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
 
                     // Clear adapter data and show empty state
-                    subscriptionAdapter.clearData()
+                    userAdapter.clearData()
                     updateEmptyState(true)
                 }
                 else -> {}
@@ -250,7 +249,7 @@ class PencarianMemberActivity : AppCompatActivity() {
 
     private fun applyFilters() {
         // Convert DateFilter to API parameter
-        val timeParam = when (selectedDateFilter) {
+        val startDateParam = when (selectedDateFilter) {
             DateFilter.TODAY -> "today"
             DateFilter.THIS_MONTH -> "this_month"
             DateFilter.THIS_YEAR -> "this_year"
@@ -258,10 +257,10 @@ class PencarianMemberActivity : AppCompatActivity() {
         }
 
         // Reset to page 1 and search with new filters
-        viewModel.searchSubscriptions(
+        viewModel.searchUsers(
             search = currentSearchQuery,
-            time = timeParam,
-            type = selectedMemberType
+            startDate = startDateParam,
+            subscriptionType = selectedMemberType
         )
     }
 

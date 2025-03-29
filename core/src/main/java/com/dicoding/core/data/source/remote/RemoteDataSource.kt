@@ -293,8 +293,11 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     suspend fun deleteUser(id: String): Flow<ApiResponse<Unit>> {
         return flow {
             try {
-                val response = apiService.deleteUser(id)
-                emit(ApiResponse.Success(response))
+                // Call the API service
+                apiService.deleteUser(id)
+                // Since the API returns Unit (void), we need to explicitly create a success response
+                // with Unit as the data payload
+                emit(ApiResponse.Success(Unit))
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.toString()))
                 Timber.tag("RemoteDataSource").e(e.toString())
